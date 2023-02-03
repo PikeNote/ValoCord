@@ -1,0 +1,88 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:i="clr-namespace:Projektanker.Icons.Avalonia;assembly=Projektanker.Icons.Avalonia"
+        xmlns:tabs="clr-namespace:ValCord.Views.Tabs"
+        mc:Ignorable="d" d:DesignWidth="1000" d:DesignHeight="450"
+        x:Class="ValCord.Views.MainWindow"
+        Title="ValCord"
+        ExtendClientAreaToDecorationsHint="True"
+        ExtendClientAreaChromeHints="NoChrome"
+        ExtendClientAreaTitleBarHeightHint="-1"
+        CanResize="False"
+        Width="1000" Height="450"
+        >
+    <Window.Styles>
+        <Style Selector="#TopBarButtons Button">
+            <Setter Property="CornerRadius" Value="0"></Setter>
+            <Setter Property="BorderThickness" Value="0"></Setter>
+            <Setter Property="Height" Value="30"></Setter>
+            <Setter Property="Width" Value="250"></Setter>
+        </Style>
+        <Style Selector="#TopBarButtons Button Grid TextBlock">
+            <Setter Property="FontSize" Value="15"></Setter>
+        </Style>
+        <Style Selector="#TitleBar Button">
+            <Setter Property="Width" Value="30"></Setter>
+            <Setter Property="Margin" Value="2,0,0,0"></Setter>
+        </Style>
+    </Window.Styles>
+    
+    <Viewbox Stretch="Uniform" Width="1000" Height="450">
+        <DockPanel Width="1000" Height="450" Background="#424549">
+            <RelativePanel  Width="1000" Height="22" DockPanel.Dock="Top" Background="#1e2124" Name="TitleBar">
+                <Image Source="/Assets/icons8-valorant-100.png" RelativePanel.AlignLeftWithPanel="True" Name="BarLogo"/>
+                <TextBlock Text="ValoCord - VOD Recording Software for Valorant" FontSize="15" Margin="30 0 0 0 "/>
+                <Button RelativePanel.AlignRightWithPanel="True" Name="Close"> <i:Icon Value="fa-light fa-x"/> </Button>
+                <Button HorizontalAlignment="Right" RelativePanel.LeftOf="Close"> <i:Icon Value="fa-light fa-window-minimize"/> </Button>
+            </RelativePanel>
+            <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Width="1000" Height="30" Name="TopBarButtons">
+                <Button Click="OnButtonClick" Name="Home">
+                    <Grid RowDefinitions="Auto, Auto" ColumnDefinitions="Auto, Auto, Auto">
+                        <i:Icon Value="fa-light fa-house" Grid.Row="0" Grid.Column="0"/>
+                        <TextBlock Text="Home" Grid.Row="0" Grid.Column="1" Margin="5 0 0 0 "/>
+                    </Grid>
+                </Button>
+                <Button Click="OnButtonClick" Name="Vods">
+                    <Grid  RowDefinitions="Auto, Auto" ColumnDefinitions="Auto, Auto, Auto">
+                        <i:Icon Value="fa-light fa-video" Grid.Row="0" Grid.Column="0"/>
+                        <TextBlock Text="VODs" Grid.Row="0" Grid.Column="1" Margin="5 0 0 0 "/>
+                    </Grid>
+                </Button>
+                <Button Click="OnButtonClick" Name="Clips">
+                    <Grid  RowDefinitions="Auto, Auto" ColumnDefinitions="Auto, Auto, Auto">
+                        <i:Icon Value="fa-light fa-film" Grid.Row="0" Grid.Column="0"/>
+                        <TextBlock Text="Clips" Grid.Row="0" Grid.Column="1" Margin="5 0 0 0 "/>
+                    </Grid>
+                </Button>
+                <Button Click="OnButtonClick" Name="Settings">
+                    <Grid  RowDefinitions="Auto, Auto" ColumnDefinitions="Auto, Auto, Auto">
+                        <i:Icon Value="fa-light fa-gear" Grid.Row="0" Grid.Column="0"/>
+                        <TextBlock Text="Settings" Grid.Row="0" Grid.Column="1" Margin="5 0 0 0 "/>
+                    </Grid>
+                </Button>
+  
+            </StackPanel>
+           
+            <Carousel DockPanel.Dock="Top" Name="TabCaro" >
+                			<Carousel.PageTransition>
+				<PageSlide Duration="0.25" Orientation="Horizontal" />
+			</Carousel.PageTransition>
+                <ItemsControl>
+                    <tabs:Home/>
+                </ItemsControl>
+                <ItemsControl>
+                    <tabs:Vods/>
+                </ItemsControl>
+                <ItemsControl>
+                    <tabs:Clips/>
+                </ItemsControl>
+                <ItemsControl>
+                    <tabs:Settings/>
+                </ItemsControl>
+            </Carousel>
+            
+        </DockPanel>
+    </Viewbox>
+</Window>

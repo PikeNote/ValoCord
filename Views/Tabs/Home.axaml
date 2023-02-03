@@ -1,0 +1,29 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:viewModels="clr-namespace:ValCord.ViewModels"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="ValCord.Views.Tabs.Home">
+    
+            <Design.DataContext>
+                <viewModels:HomeViewModel/>
+            </Design.DataContext>
+                
+    <DockPanel LastChildFill="True">
+                <Border Height="25" Background="LemonChiffon" BorderBrush="Black" BorderThickness="1" DockPanel.Dock="Bottom">
+                    
+                </Border>
+                <Border Width="300"  BorderBrush="Black" BorderThickness="1" DockPanel.Dock="Left">
+                    <StackPanel>
+                        <TextBlock HorizontalAlignment="Center" Text="Welcome to ValoCord!" FontSize="18"></TextBlock>
+                        <TextBlock HorizontalAlignment="Center" Text="{Binding Date}" FontSize="14"></TextBlock>
+                    </StackPanel>
+                </Border>
+                <Border Background="White" BorderBrush="Black" BorderThickness="1">
+                    
+                </Border>
+                
+            </DockPanel>
+            
+</UserControl>
