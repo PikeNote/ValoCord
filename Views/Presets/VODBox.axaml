@@ -1,0 +1,41 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" d:DesignWidth="266" d:DesignHeight="150" 
+             x:Class="ValCord.Views.Presets.VODBox"
+             Background="Transparent"
+             
+             Opacity="1"
+             FontFamily="../../Assets/Font/Valorant_Font.ttf#">
+
+                    
+            <Panel>
+                
+                <Panel Width="266" Height="150">
+                    <Image Source="../../Assets/Maps/Ascent.png" Opacity="0.6" ></Image>
+                    <Border
+                        CornerRadius="10" ClipToBounds="true">
+                        <Panel Width="100" Height="15" VerticalAlignment="Top" Background="#36393e">
+                            <TextBlock Text="13-11" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="11"></TextBlock>
+                        </Panel>
+                    </Border>
+                    <StackPanel VerticalAlignment="Bottom">
+                        <Panel Width="30" Height="30" HorizontalAlignment="Right">
+                            <Image Source="../../Assets/AgentIcons/Jett.png"></Image>
+                        </Panel>
+
+                        <Panel Width="266" Height="20" VerticalAlignment="Bottom" Background="#36393e">
+                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Spacing="25">
+                                <TextBlock Text="24/18/12" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="12" Padding="5,0,0,0"></TextBlock>
+                                <TextBlock Text="Unrated" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="12" Padding="0,0,0,0"></TextBlock>
+                                <TextBlock Text="6/4/2023" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="12" Padding="0,0,0,0"></TextBlock>
+                            </StackPanel>
+                        </Panel>
+                    </StackPanel>
+                    
+                </Panel>
+        </Panel>
+        
+
+</UserControl>

@@ -17,7 +17,7 @@
                 <Border Width="300"  BorderBrush="Black" BorderThickness="1" DockPanel.Dock="Left">
                     <StackPanel>
                         <TextBlock HorizontalAlignment="Center" Text="Welcome to ValoCord!" FontSize="18"></TextBlock>
-                        <TextBlock HorizontalAlignment="Center" Text="{Binding Date}" FontSize="14"></TextBlock>
+                        <TextBlock HorizontalAlignment="Center"  FontSize="14"></TextBlock> 
                     </StackPanel>
                 </Border>
                 <Border Background="White" BorderBrush="Black" BorderThickness="1">

@@ -12,7 +12,7 @@
         ExtendClientAreaTitleBarHeightHint="-1"
         CanResize="False"
         Width="1000" Height="450"
-        >
+>
     <Window.Styles>
         <Style Selector="#TopBarButtons Button">
             <Setter Property="CornerRadius" Value="0"></Setter>
@@ -39,25 +39,25 @@
             </RelativePanel>
             <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Width="1000" Height="30" Name="TopBarButtons">
                 <Button Click="OnButtonClick" Name="Home">
-                    <Grid RowDefinitions="Auto, Auto" ColumnDefinitions="Auto, Auto, Auto">
+                    <Grid RowDefinitions="Auto, Auto" ColumnDefinitions="Auto, Auto, Auto" HorizontalAlignment="Center">
                         <i:Icon Value="fa-light fa-house" Grid.Row="0" Grid.Column="0"/>
-                        <TextBlock Text="Home" Grid.Row="0" Grid.Column="1" Margin="5 0 0 0 "/>
+                        <TextBlock Text="Home" Grid.Row="0" Grid.Column="1" Margin="4 0 0 0 " />
                     </Grid>
                 </Button>
                 <Button Click="OnButtonClick" Name="Vods">
-                    <Grid  RowDefinitions="Auto, Auto" ColumnDefinitions="Auto, Auto, Auto">
+                    <Grid  RowDefinitions="Auto, Auto" ColumnDefinitions="Auto, Auto, Auto" HorizontalAlignment="Center">
                         <i:Icon Value="fa-light fa-video" Grid.Row="0" Grid.Column="0"/>
                         <TextBlock Text="VODs" Grid.Row="0" Grid.Column="1" Margin="5 0 0 0 "/>
                     </Grid>
                 </Button>
                 <Button Click="OnButtonClick" Name="Clips">
-                    <Grid  RowDefinitions="Auto, Auto" ColumnDefinitions="Auto, Auto, Auto">
+                    <Grid  RowDefinitions="Auto, Auto" ColumnDefinitions="Auto, Auto, Auto" HorizontalAlignment="Center">
                         <i:Icon Value="fa-light fa-film" Grid.Row="0" Grid.Column="0"/>
                         <TextBlock Text="Clips" Grid.Row="0" Grid.Column="1" Margin="5 0 0 0 "/>
                     </Grid>
                 </Button>
                 <Button Click="OnButtonClick" Name="Settings">
-                    <Grid  RowDefinitions="Auto, Auto" ColumnDefinitions="Auto, Auto, Auto">
+                    <Grid  RowDefinitions="Auto, Auto" ColumnDefinitions="Auto, Auto, Auto" HorizontalAlignment="Center">
                         <i:Icon Value="fa-light fa-gear" Grid.Row="0" Grid.Column="0"/>
                         <TextBlock Text="Settings" Grid.Row="0" Grid.Column="1" Margin="5 0 0 0 "/>
                     </Grid>

@@ -1,24 +1,15 @@
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Runtime.CompilerServices;
-using System.Text;
+using CommunityToolkit.Mvvm.ComponentModel;
 
 namespace ValCord.ViewModels;
-public class HomeViewModel
-{
-    public event PropertyChangedEventHandler? PropertyChanged;
 
-    private void RaisePropertyChanged([CallerMemberName] string? propertyName = null)
+public partial class HomeViewModel : ObservableObject
+{
+    [ObservableProperty]
+    private string date = "Today is ";
+
+    private static string getDate()
     {
-        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-    }
-    
-    public string Date
-    {
-        get
-        {
-            return "Today is " + DateTime.Now.Date.ToString("MM/dd/yyyy");
-        }
+        return DateTime.Now.Date.ToString("MM/dd/yyyy");
     }
 }

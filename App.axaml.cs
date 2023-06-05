@@ -1,6 +1,7 @@
 using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
+using ValCord.ViewModels;
 
 namespace ValCord
 {
@@ -16,6 +17,7 @@ namespace ValCord
             if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
             {
                 desktop.MainWindow = new Views.MainWindow();
+                DataContext = new MainViewModel();
             }
 
             base.OnFrameworkInitializationCompleted();
