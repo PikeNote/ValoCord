@@ -1,0 +1,59 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+    <PropertyGroup>
+        <OutputType>WinExe</OutputType>
+        <Nullable>enable</Nullable>
+        <!--Avalonia doesen't support TrimMode=link currently,but we are working on that https://github.com/AvaloniaUI/Avalonia/issues/6892 -->
+        <TrimMode>copyused</TrimMode>
+        <BuiltInComInteropSupport>true</BuiltInComInteropSupport>
+        <Configurations>Release;Debug</Configurations>
+        <Platforms>x86</Platforms>
+        <TargetFrameworks>net8.0;net8.0-windows</TargetFrameworks>
+    </PropertyGroup>
+    <PropertyGroup>
+        <ApplicationManifest>app.manifest</ApplicationManifest>
+        <GenerateApplicationManifest>true</GenerateApplicationManifest>
+    </PropertyGroup>
+    <ItemGroup>
+        <Folder Include="Models\" />
+        <AvaloniaResource Include="Assets\**" />
+        <AvaloniaResource Include="Assets\**\*.*" />
+        <None Remove=".gitignore" />
+    </ItemGroup>
+    <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
+        <PlatformTarget>x86</PlatformTarget>
+        <Platform>x86</Platform>
+    </PropertyGroup>
+    <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
+        <PlatformTarget>x86</PlatformTarget>
+        <Platform>x86</Platform>
+    </PropertyGroup>
+    <ItemGroup>
+        <!--This helps with theme dll-s trimming.
+        If you will publish your application in self-contained mode with p:PublishTrimmed=true and it will use Fluent theme Default theme will be trimmed from the output and vice versa.
+        https://github.com/AvaloniaUI/Avalonia/issues/5593 -->
+        <TrimmableAssembly Include="Avalonia.Themes.Fluent" />
+        <TrimmableAssembly Include="Avalonia.Themes.Default" />
+    </ItemGroup>
+    <ItemGroup>
+        <PackageReference Include="Avalonia" Version="11.3.0" />
+        <PackageReference Include="Avalonia.Desktop" Version="11.3.0" />
+        <!--Condition below is needed to remove Avalonia.Diagnostics package from build output in Release configuration.-->
+        <PackageReference Condition="'$(Configuration)' == 'Debug'" Include="Avalonia.Diagnostics" Version="11.2.3" />
+        <PackageReference Include="Avalonia.ReactiveUI" Version="11.3.0" />
+        <PackageReference Include="Avalonia.Svg.Skia" Version="11.2.0.2" />
+        <PackageReference Include="Avalonia.Themes.Fluent" Version="11.3.0" />
+        <PackageReference Include="FluentAvaloniaUI" Version="2.3.0" />
+        <PackageReference Include="LibVLCSharp" Version="3.9.3" />
+        <PackageReference Include="LibVLCSharp.Avalonia" Version="3.9.3" />
+        <PackageReference Include="Live.Avalonia" Version="1.4.1" />
+        <PackageReference Include="NLog" Version="5.3.4" />
+        <PackageReference Include="Pike.ValAPI.Net" Version="1.3.2" />
+        <PackageReference Include="Projektanker.Icons.Avalonia" Version="9.6.0" />
+        <PackageReference Include="Projektanker.Icons.Avalonia.FontAwesome" Version="9.6.0" />
+        <PackageReference Include="Projektanker.Icons.Avalonia.MaterialDesign" Version="9.6.0" />
+        <PackageReference Include="ScreenRecorderLib" Version="6.5.1" />
+        <PackageReference Include="System.Text.Json" Version="9.0.5" />
+        <PackageReference Include="VideoLAN.LibVLC.Windows" Version="3.0.21" />
+        <PackageReference Include="XamlNameReferenceGenerator" Version="1.3.4" />
+    </ItemGroup>
+</Project>
