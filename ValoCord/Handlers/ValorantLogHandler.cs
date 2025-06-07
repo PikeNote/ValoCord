@@ -24,7 +24,7 @@ public static class ValorantLogHandler
     private static readonly String path = Path.Combine(Environment.GetFolderPath(
         Environment.SpecialFolder.LocalApplicationData), "VALORANT\\Saved\\Logs\\ShooterGame.log");
     private static readonly String MapLoadRegex =
-        @"\[Map Name: ([A-Za-z0-9]+) \| Changed: [A-Za-z0-9]+\] \[Local World: [A-Za-z0-9]+ \| Changed: [A-Za-z0-9]+\] \[Match Setup: [A-Za-z0-9]+ \| Changed: [A-Za-z0-9]+\] \[Map Ready: ([A-Za-z0-9]+) \| Changed: [A-Za-z0-9]+\] \[Map Complete: ([A-Za-z0-9]+) \| Changed: [A-Za-z0-9]+\] \[URL: (?:(?:25[0-5]|(?:2[0-4]|1\d|[1-9]|)\d)\.?\b){4}:(?:[+-]?(?=\.\d|\d)(?:\d+)?(?:\.?\d*))(?:[eE](?:[+-]?\d+))?\/Game\/Maps\/[A-Za-z0-9]+\/[A-Za-z0-9]+\?Name=[\p{L}\p{N} ]+\?SubjectBase64=[A-Za-z0-9]+\?game=\/Game\/GameModes\/[A-Za-z0-9]+\/([A-Za-z0-9]+(?:\.[A-Za-z0-9]+)+)_C#([a-zA-Z]+)]";
+        @"\[Map Name: ([A-Za-z0-9]+) \| Changed: [A-Za-z0-9]+\] \[Local World: [A-Za-z0-9]+ \| Changed: [A-Za-z0-9]+\] \[Match Setup: [A-Za-z0-9]+ \| Changed: [A-Za-z0-9]+\] \[Map Ready: ([A-Za-z0-9]+) \| Changed: [A-Za-z0-9]+\] \[Map Complete: ([A-Za-z0-9]+) \| Changed: [A-Za-z0-9]+\] \[URL: (?:(?:25[0-5]|(?:2[0-4]|1\d|[1-9]|)\d)\.?\b){4}:(?:[+-]?(?=\.\d|\d)(?:\d+)?(?:\.?\d*))(?:[eE](?:[+-]?\d+))?\/Game\/Maps\/[A-Za-z0-9]+\/[A-Za-z0-9]+\?Name=[\p{L}\p{N} ]+\?SubjectBase64=[A-Za-z0-9]+\?game=\/Game\/GameModes\/[\/_A-Za-z0-9]+\/([_A-Za-z0-9]+(?:\.[_A-Za-z0-9]+)+)_C#([a-zA-Z]+)]";
     private static readonly String RoundStartRegex =
         @"Warning: Gameplay started at local time [0-9]*\.[0-9]+ \(server time ([+-]?(?=\.\d|\d)(?:\d+)?(?:\.?\d*))(?:[eE]([+-]?\d+))?\)";
     private static readonly String MainMenuRegex =
@@ -112,7 +112,9 @@ public static class ValorantLogHandler
                         {
                             _logger.Info("Mid match ID invalid");
                             mid = ValorantAPI.GetPreMatchID();
+                            _logger.Info("Prematch ID fetching: " + mid);
                         } // Attempt to get both pre and core to see which one can be gotten
+                        _logger.Info("Match ID Fetched: " + mid);
                         if (!string.IsNullOrWhiteSpace(mid))
                         {
                             _gameData = new GameData(mapLine.Groups[1].Value, mapLine.Groups[5].Value, mid);
@@ -128,10 +130,15 @@ public static class ValorantLogHandler
                         }
                         else
                         {
-                            _logger.Info("Skip recording");
-                            _logger.Info(input);
-                            ValorantRecorder.StopRecording();
-                            _gameData.SkipWritingData();
+                            if (_gameData != null)
+                            {
+                                _logger.Info("Skip recording");
+                                _logger.Info(input);
+                                // Skip writing if the game data was ever initialized at all in the first place
+                                
+                                ValorantRecorder.StopRecording();
+                                _gameData.SkipWritingData();
+                            }
                             // how did we get here? 
                             // if game started and is marked as so- this has to be a leave game, dc
                             // dump recording for now amd skip writing :derp:
@@ -144,12 +151,8 @@ public static class ValorantLogHandler
 
                     if (_gameData != null)
                     {
-                        _logger.Info("Getting data");
                         Match lobbyCheck = Regex.Match(ld.Msg, MainMenuRegex);
                         System.Diagnostics.Debug.WriteLine(lobbyCheck.Groups.Count);
-                        var test1 = lobbyCheck.Captures.Count;
-                        var test2 = lobbyCheck.Groups.Count;
-                        var test3 = lobbyCheck.Groups[1].Value.Contains("MainMenu");
                         System.Threading.Thread.Sleep(5000);
                         if (lobbyCheck.Captures.Count > 0 && lobbyCheck.Groups.Count >= 4 &&
                             lobbyCheck.Groups[1].Value.Contains("MainMenu"))
@@ -229,7 +232,9 @@ class GameData
     public List<String> _roundStartTimeStamps = new List<string>();
     public List<RoundData> _roundEvents = new List<RoundData>();
     public List<PlayerData> _players = new List<PlayerData>();
-    public String recordingUser;
+    public String playerUUID;
+    public String playerTeam;
+    public List<MatchData.Team> teams = new List<MatchData.Team>();
     
     static Logger logger = LogManager.GetLogger("Game Data");
     private bool skipWriting = false;
@@ -241,15 +246,20 @@ class GameData
         this.map = map;
         this.agent = agent;
         this.matchId = matchId;
-        this.recordingUser = ValorantAPI.getCurrentUser();
+        this.playerUUID = ValorantAPI.getCurrentUser();
     }
 
     public void RetrieveMatchData() // Should be only called at the end of game as designated by log
     {
         System.Diagnostics.Debug.WriteLine(matchId);
         MatchData md = ValorantAPI.GetMatchData(matchId);
+        logger.Info("MD Status:" + md.StatusCode);
+        logger.Info("Match Data:" + matchId); 
+        
         if (md != null & md.StatusCode == 200)
         {
+            teams = md.teams;
+            this.playerTeam = md.players.First(user => user.subject == playerUUID).teamId; 
             System.Diagnostics.Debug.WriteLine(md.StatusCode);
             foreach (var userInfo in md.players)
             {

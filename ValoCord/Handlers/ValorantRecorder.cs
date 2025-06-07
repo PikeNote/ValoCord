@@ -36,7 +36,7 @@ public static class ValorantRecorder
     private static readonly string path = Path.Combine(Environment.GetFolderPath(
         Environment.SpecialFolder.LocalApplicationData), "ValoCord\\recorder.log");
     private static readonly string DefaultVideoPath = Path.Combine(Environment.GetFolderPath(
-        Environment.SpecialFolder.LocalApplicationData), "ValoCord\\");
+        Environment.SpecialFolder.LocalApplicationData), "ValoCord\\videos");
     private static Logger logger = LogManager.GetLogger("Video Recordinng");
     private static DisplayRecordingSource dispRecordingSource = null;
     private static WindowWatcher winWatcher = new WindowWatcher(ValorantWindowHandler);

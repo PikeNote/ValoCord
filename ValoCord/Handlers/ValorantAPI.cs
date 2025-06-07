@@ -44,13 +44,13 @@ public class ValorantAPI
     {
         //return MatchData.GetMatchData(localAuth, matchID);
         new MatchData();
-        RestClient obj = new RestClient("https://pd." + localAuth.region.ToString() + ".a.pvp.net/match-details/v1/matches/" + matchID) {
+        RestClient obj = new RestClient("https://pd." + localAuth.region + ".a.pvp.net/match-details/v1/matches/" + matchID) {
             CookieContainer = localAuth.cookies
         };
         RestRequest restRequest = new RestRequest(Method.GET);
         restRequest.AddHeader("Authorization", "Bearer " + localAuth.AccessToken);
         restRequest.AddHeader("X-Riot-Entitlements-JWT", localAuth.EntitlementToken);
-        restRequest.AddHeader("X-Riot-ClientPlatform", "ewU2LjY0Yml0IiwNCgkicGxhdGZvcm1DaGlwc2V0IjogIlVua25vd24iDQp9");
+        restRequest.AddHeader("X-Riot-ClientPlatform", "ew0KCSJwbGF0Zm9ybVR5cGUiOiAiUEMiLA0KCSJwbGF0Zm9ybU9TIjogIldpbmRvd3MiLA0KCSJwbGF0Zm9ybU9TVmVyc2lvbiI6ICIxMC4wLjE5MDQyLjEuMjU2LjY0Yml0IiwNCgkicGxhdGZvcm1DaGlwc2V0IjogIlVua25vd24iDQp9");
         restRequest.AddHeader("X-Riot-ClientVersion", localAuth.version ?? "");
         IRestResponse restResponse = obj.Execute(restRequest);
         System.Diagnostics.Debug.WriteLine(restResponse.Content);
