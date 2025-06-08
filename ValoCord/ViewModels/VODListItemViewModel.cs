@@ -1,6 +1,8 @@
 ﻿using System;
 using System.ComponentModel;
 using System.Linq;
+using Avalonia.Media.Imaging;
+using Avalonia.Platform;
 using ValAPINet;
 using ValoCord.Data;
 using ValoCord.Extentions;
@@ -17,7 +19,14 @@ public class VODListItemViewModel : ViewModelBase, INotifyPropertyChanged
     public string Date => _gameData.date;
     public string Agent => _gameData.agent;
     public string Standing => _gameData.standing.ToOrdinal();
+    public Bitmap AgentIcon => LoadFromResource(new Uri($"avares://Valocord{AgentIcons.GetAgentIcons(Agent)}"));
+    public Bitmap MapImage => LoadFromResource(new Uri($"avares://Valocord{MapList.GetFileName(_gameData.map)}"));
 
+    public static Bitmap LoadFromResource(Uri resourceUri)
+    {
+        return new Bitmap(AssetLoader.Open(resourceUri));
+    }
+    
     public String CombatScore
     {
         get
@@ -104,6 +113,7 @@ public class VODListItemViewModel : ViewModelBase, INotifyPropertyChanged
     public VODListItemViewModel(GameData gameData)
     {
         _gameData = gameData;
+        Console.WriteLine(AgentIcons.GetAgentIcons(Agent));
     }
 
 }

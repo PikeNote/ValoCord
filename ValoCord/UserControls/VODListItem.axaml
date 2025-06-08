@@ -39,7 +39,7 @@
             <Border Grid.Column="1" Width="230" VerticalAlignment="Stretch" ClipToBounds="True">
                 <Grid>
                     <Image
-                        Source="/Assets/Ascent.png"
+                        Source="{Binding MapImage}"
                         Stretch="UniformToFill"
                         HorizontalAlignment="Center"
                         VerticalAlignment="Stretch" 
@@ -68,7 +68,7 @@
                 </TextBlock>
                 <TextBlock Grid.Row="1" Text="{Binding Date}"/>
                 <StackPanel  Grid.Row="2" Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
-                    <Image Source="/Assets/Agents/Jett.png" Width="37" RenderOptions.BitmapInterpolationMode="LowQuality"/>
+                    <Image Source="{Binding AgentIcon}" Width="37" RenderOptions.BitmapInterpolationMode="LowQuality"/>
                     <Border CornerRadius="25" Height="22" Width="80" Background="#C3C750">
                         <TextBlock TextAlignment="Center" Text="{Binding Standing}"/>
                     </Border>
