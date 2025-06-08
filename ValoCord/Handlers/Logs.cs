@@ -6,17 +6,14 @@ namespace ValoCord.Handlers;
 
 public static class Logs
 {
-    private static string path = Path.Combine(Environment.GetFolderPath(
-        Environment.SpecialFolder.LocalApplicationData), "ValoCord");
-    
     public static void Initialize() { 
-        DirectoryInfo logDir = System.IO.Directory.CreateDirectory(path);
-        System.IO.Directory.CreateDirectory(Path.Combine(path,"data"));
+        DirectoryInfo logDir = System.IO.Directory.CreateDirectory(Paths.ValoCordPath);
+        System.IO.Directory.CreateDirectory(Path.Combine(Paths.ValoCordPath,"data"));
         
         var config = new NLog.Config.LoggingConfiguration();
 
 // Targets where to log to: File and Console
-        var logfile = new NLog.Targets.FileTarget("logfile") { FileName = Path.Combine(path,"log.txt"), MaxArchiveFiles = 10};
+        var logfile = new NLog.Targets.FileTarget("logfile") { FileName = Path.Combine(Paths.ValoCordPath,"log.txt"), MaxArchiveFiles = 10};
         var logconsole = new NLog.Targets.ConsoleTarget("logconsole");
             
         //
@@ -34,7 +31,7 @@ public static class Logs
         
         System.Diagnostics.Debug.WriteLine("Logging started");
         
-        Logger logger = LogManager.GetLogger("foo");
+        Logger logger = LogManager.GetLogger("ValoCord");
         logger.Info("Program started");
         
     }

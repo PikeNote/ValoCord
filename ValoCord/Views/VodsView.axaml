@@ -3,18 +3,27 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:userControls="clr-namespace:ValoCord.UserControls"
+             xmlns:viewModels="clr-namespace:ValoCord.ViewModels"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-             x:Class="ValoCord.Views.VodsView">
+             x:Class="ValoCord.Views.VodsView"
+             x:DataType="viewModels:VodsViewViewmodel">
+    <UserControl.DataContext>
+        <viewModels:VodsViewViewmodel />
+    </UserControl.DataContext>
     <StackPanel>
         <userControls:FilterVOD/>
-        <StackPanel  Margin="10" Spacing="10">
-            <userControls:GameVOD/>
-            <userControls:GameVOD/>
-            <userControls:GameVOD/>
-            <userControls:GameVOD/>
-            <userControls:GameVOD/>
-            <userControls:GameVOD/>
-            <userControls:GameVOD/>
-        </StackPanel>
+        <ItemsControl ItemsSource="{Binding RecordedVODs}">
+            <ItemsControl.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <StackPanel  Margin="10" Spacing="10" Background="Transparent"/>
+                </ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
+            <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                    <userControls:VODListItem />
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+        </ItemsControl>
+        
     </StackPanel>
 </UserControl>

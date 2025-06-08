@@ -33,10 +33,6 @@ public static class ValorantRecorder
     private static bool _recordingInProgress = false;
     // ReSharper disable once InconsistentNaming
     private static IntPtr ValorantWindowHandler = IntPtr.Zero;
-    private static readonly string path = Path.Combine(Environment.GetFolderPath(
-        Environment.SpecialFolder.LocalApplicationData), "ValoCord\\recorder.log");
-    private static readonly string DefaultVideoPath = Path.Combine(Environment.GetFolderPath(
-        Environment.SpecialFolder.LocalApplicationData), "ValoCord\\videos");
     private static Logger logger = LogManager.GetLogger("Video Recordinng");
     private static DisplayRecordingSource dispRecordingSource = null;
     private static WindowWatcher winWatcher = new WindowWatcher(ValorantWindowHandler);
@@ -123,7 +119,7 @@ public static class ValorantRecorder
                 LogOptions = new LogOptions
                 {
                     IsLogEnabled = true,
-                    LogFilePath = path,
+                    LogFilePath = Paths.RecordingLogPath,
                     LogSeverityLevel = ScreenRecorderLib.LogLevel.Debug
                 }
             };
@@ -135,7 +131,7 @@ public static class ValorantRecorder
             rec.OnRecordingFailed += Rec_OnRecordingFailed;
             rec.OnStatusChanged += Rec_OnStatusChanged;
             
-            String videoPath = Path.Combine(DefaultVideoPath, $"{fileName}.mp4");
+            String videoPath = Path.Combine(Paths.DefaultVideoPath, $"{fileName}.mp4");
             rec.Record(videoPath);
             winWatcher.Start();
         }

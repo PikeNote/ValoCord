@@ -4,9 +4,9 @@ using Avalonia.Markup.Xaml;
 
 namespace ValoCord.UserControls;
 
-public partial class GameVOD : UserControl
+public partial class VODListItem : UserControl
 {
-    public GameVOD()
+    public VODListItem()
     {
         InitializeComponent();
     }

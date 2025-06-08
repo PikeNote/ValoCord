@@ -11,9 +11,6 @@ namespace ValoCord.Views
         {
             InitializeComponent();
             TitleBar.ExtendsContentIntoTitleBar = true;
-            
-            var window = new VODViewer();
-            window.Show();
         }
 
         private void NavView_ItemInvoked(
