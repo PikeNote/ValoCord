@@ -15,7 +15,7 @@
         <ItemsControl ItemsSource="{Binding RecordedVODs}">
             <ItemsControl.ItemsPanel>
                 <ItemsPanelTemplate>
-                    <StackPanel  Margin="10" Spacing="10" Background="Transparent"/>
+                    <StackPanel  Margin="5" Spacing="10" Background="Transparent"/>
                 </ItemsPanelTemplate>
             </ItemsControl.ItemsPanel>
             <ItemsControl.ItemTemplate>

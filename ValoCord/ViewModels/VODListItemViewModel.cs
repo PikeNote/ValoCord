@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using Avalonia.Media.Imaging;
@@ -17,7 +18,7 @@ public class VODListItemViewModel : ViewModelBase, INotifyPropertyChanged
     public string MapName => $"{MapList.GetDisplayName(_gameData.map)}";
     public string GameMode => _gameData.mode;
     public string Date => _gameData.date;
-    public string Agent => _gameData.agent;
+    public string Agent => AgentIcons.GetAgentNames(_gameData.agent);
     public string Standing => _gameData.standing.ToOrdinal();
     public Bitmap AgentIcon => LoadFromResource(new Uri($"avares://Valocord{AgentIcons.GetAgentIcons(Agent)}"));
     public Bitmap MapImage => LoadFromResource(new Uri($"avares://Valocord{MapList.GetFileName(_gameData.map)}"));
@@ -114,6 +115,11 @@ public class VODListItemViewModel : ViewModelBase, INotifyPropertyChanged
     {
         _gameData = gameData;
         Console.WriteLine(AgentIcons.GetAgentIcons(Agent));
+    }
+
+    public GameData GetGameData()
+    {
+        return _gameData;
     }
 
 }

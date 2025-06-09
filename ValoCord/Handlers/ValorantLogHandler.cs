@@ -208,10 +208,13 @@ public static class ValorantLogHandler
         
         if (md != null & md.StatusCode == 200)
         {
+            MatchData.Player currentPlayer = md.players.First(user => user.subject == gd.playerUUID);
             gd.date = DateTime.Today.ToString("MM/dd/yyyy");
             gd.mode = md.matchInfo.gameMode;
             gd.teams = md.teams;
-            gd.playerTeam = md.players.First(user => user.subject == gd.playerUUID).teamId; 
+            gd.playerTeam = currentPlayer.teamId;
+            gd.startTime = md.matchInfo.gameStartMillis;
+            gd.agent = currentPlayer.characterId;
             System.Diagnostics.Debug.WriteLine(md.StatusCode);
             foreach (var userInfo in md.players)
             {
@@ -263,8 +266,15 @@ public static class ValorantLogHandler
                 }
                 gk.Sort((x,y)=>x.TimeKillIntoRound.CompareTo(y.TimeKillIntoRound));
 
-                gd._roundEvents.Add(new RoundData(mdRoundResult.winningTeam, mdRoundResult.roundResult,
-                    mdRoundResult.defuseRoundTime, mdRoundResult.plantRoundTime, gk));
+                gd._roundEvents.Add(new RoundData()
+                    {
+                        BombDefuseTime = mdRoundResult.defuseRoundTime,
+                        BombPlantTime = mdRoundResult.plantRoundTime,
+                        EndType = mdRoundResult.roundResult,
+                        KillEvents = gk,
+                        RoundNumber = mdRoundResult.roundNum,
+                        TeamWon = mdRoundResult.winningTeam
+                    });
             }
             logger.Info("Match data processed");
             return true;

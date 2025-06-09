@@ -13,4 +13,9 @@ public static class Paths
         Environment.SpecialFolder.LocalApplicationData), "ValoCord\\videos");
     public static readonly string DefaultDataPath = Path.Combine(Environment.GetFolderPath(
         Environment.SpecialFolder.LocalApplicationData), "ValoCord\\data");
+
+    public static String generateVideoPath(string matchID)
+    {
+        return Path.Combine(DefaultVideoPath, matchID + ".mp4");
+    }
 }

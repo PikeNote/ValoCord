@@ -13,20 +13,32 @@
     using FluentAvalonia.UI.Windowing;
     using LibVLCSharp.Avalonia;
     using LibVLCSharp.Shared;
+    using ValoCord.Data;
     using ValoCord.ViewModels;
 
     namespace ValoCord.Views;
 
     public partial class VODViewer : AppWindow
     {
-        private readonly LibVLC _liwbVLC;
         private VODViewerViewModel _viewModel;
         
-        public VODViewer()
+        private readonly LibVLC _libVLC;
+        private readonly MediaPlayer _mediaPlayer;
+        
+        public VODViewer(GameData gd)
         {
+            _libVLC = new LibVLC();
+            _mediaPlayer = new MediaPlayer(_libVLC) {EnableHardwareDecoding = true};
+
             InitializeComponent();
-            //MainMediaPlayer = new(_libVLC);
-            _viewModel = new VODViewerViewModel();
+            
+            _viewModel = new VODViewerViewModel()
+            {
+                _libVLC = _libVLC,
+                MediaPlayer = _mediaPlayer,
+                gd = gd
+            };
+            
             DataContext = _viewModel;
             
             Opened += MainWindow_Opened;
@@ -72,7 +84,7 @@
         
         private void RangeBase_OnValueChanged(object? sender, RangeBaseValueChangedEventArgs e)
         {
-            if (_viewModel.IsSeeking && !_viewModel.MediaPlayer.IsPlaying)
+            if (_viewModel.IsSeeking)
             {
                 _viewModel.MediaPlayer.Position = (float) e.NewValue;
             }
@@ -82,5 +94,11 @@
         private void Visual_OnAttachedToVisualTree(object? sender, VisualTreeAttachmentEventArgs e)
         {
             throw new NotImplementedException();
+        }
+
+        private void Window_OnClosing(object? sender, WindowClosingEventArgs e)
+        {
+            _viewModel.MediaPlayer?.Stop();
+            _viewModel.MediaPlayer = null;
         }
     }

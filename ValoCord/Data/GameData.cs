@@ -18,7 +18,7 @@ public class GameData
     public String mode { get; set; }
     public string date  { get; set; }
     public int standing { get; set; }
-    
+    public long startTime { get; set; }
     public void AddRoundTimestamp()
     {
         _roundStartTimeStamps.Add(DateTimeOffset.Now.ToUnixTimeSeconds().ToString());
@@ -61,27 +61,10 @@ public class RoundData
 {
     public String TeamWon { get; set; }
     public String EndType { get; set; }
-    public float? BombPlantTime { get; set; }
-    public float? BombDefuseTime { get; set; }
+    public int BombPlantTime { get; set; }
+    public int BombDefuseTime { get; set; }
     public List<GameKill> KillEvents { get; set; }
-
-    public RoundData(String teamWon, String endType, float? bombDefuseTime, float? bombPlantTime, List<GameKill> killEvents)
-    {
-        if (bombDefuseTime == null)
-        {
-            bombDefuseTime = 0;
-        }
-
-        if (bombPlantTime == null)
-        {
-            bombPlantTime = 0;
-        }
-
-        this.TeamWon = teamWon;
-        this.EndType = endType;
-        this.BombPlantTime = bombPlantTime;
-        this.BombDefuseTime = bombDefuseTime;
-        this.KillEvents = killEvents;
-    }  
+    public int RoundNumber { get; set; }
+    
 }
 
