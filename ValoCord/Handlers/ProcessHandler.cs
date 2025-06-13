@@ -1,6 +1,7 @@
 using System;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Timers;
@@ -27,6 +28,7 @@ public static class ProcessHandler
             {
                 if (_activeProcess)
                 {
+                    Console.WriteLine("VALORANT closed!");
                     ValorantLogHandler.StopLogging();
                     ValorantAPI.ResetAuth();
                 }
@@ -35,7 +37,7 @@ public static class ProcessHandler
             }
             else
             {
-                
+                Console.WriteLine("VALORANT found!");
                 if (!_activeProcess)
                 {
                     _activeProcess = true;

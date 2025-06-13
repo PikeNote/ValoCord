@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.IO;
-using System.Linq;
+using System.ComponentModel;
 using System.Reactive.Linq;
 using System.Threading.Tasks;
 using LibVLCSharp.Shared;
@@ -12,7 +10,7 @@ using ValoCord.Handlers;
 
 namespace ValoCord.ViewModels;
 
-public class VODViewerViewModel : ViewModelBase {
+public class VODViewerViewModel : ViewModelBase, INotifyPropertyChanged {
     private double _progress = 0.0;
     private bool _isPlaying;
     private MediaPlayer? _mediaPlayer;
@@ -32,41 +30,78 @@ public class VODViewerViewModel : ViewModelBase {
     private string _totalDuration = "00:00";
     
     public GameData gd {get; set;}
-
-    public String PlayerTeam => gd.playerTeam;
+    
     
     public double Progress
-    { 
-        get => _progress; 
-        set => this.RaiseAndSetIfChanged(ref _progress, value); 
+    {
+        get => _progress;
+        set
+        {
+            this.RaiseAndSetIfChanged(ref _progress, value);
+            OnPropertyChanged(nameof(Progress));
+        }
     }
-    
+
     public bool IsPlaying
     {
         get => _isPlaying;
         set
         {
             this.RaiseAndSetIfChanged(ref _isPlaying, value);
+            OnPropertyChanged(nameof(IsPlaying));
         }
     }
     
     public string CurrentTime
     {
         get => _currentTime;
-        set => this.RaiseAndSetIfChanged(ref _currentTime, value);
+        set
+        {
+            this.RaiseAndSetIfChanged(ref _currentTime, value);
+            OnPropertyChanged(nameof(CurrentTime));
+        }
     }
 
     public string TotalDuration
     {
         get => _totalDuration;
-        set => this.RaiseAndSetIfChanged(ref _totalDuration, value);
+        set
+        {
+            this.RaiseAndSetIfChanged(ref _totalDuration, value);
+            OnPropertyChanged(nameof(TotalDuration));
+        }
+    }
+
+    public int _selectedRound = 0;
+    public int SelectedRound
+    {
+        get => _selectedRound;
+        set
+        {
+            if (_selectedRound == value) return;
+            _selectedRound = value;
+            OnPropertyChanged(nameof(CurrentRound));
+        }
     }
 
     public List<RoundData> RoundDataList => gd._roundEvents;
     public string TeamWon => gd.playerTeam;
-    public string GameTime => DateTimeOffset.FromUnixTimeSeconds(gd.startTime).ToString("yyyy'/MM/dd - hh:mm tt");
-    public string GameDescription => $"{gd.mode} - {MapList.GetDisplayName(gd.map)}";
-    public string WindowTitle => $"ValoCord - {gd.mode} ({MapList.GetDisplayName(gd.map)}) - {AgentIcons.GetAgentNames(gd.agent)}";
+    public string PlayerTeam => gd.playerTeam;
+    public string GameTime => DateTimeOffset.FromUnixTimeMilliseconds(gd.matchStartTime).ToString("yyyy/MM/dd - hh:mm tt");
+    public string GameDescription => $"{GameMode} - {MapData.GetDisplayName(gd.map)}";
+    public string WindowTitle => $"ValoCord - {GameMode} ({MapData.GetDisplayName(gd.map)}) - {AgentData.GetAgentNames(gd.agent)}";
+    private string GameMode => GameModes.ConvertGameMode(gd.mode);
+    public Dictionary<string, PlayerData> AllPlayers => gd._players;
+
+    public RoundData CurrentRound => gd._roundEvents[_selectedRound];
+    
+    public event PropertyChangedEventHandler PropertyChanged;
+
+    protected virtual void OnPropertyChanged(string propertyName)
+    {
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+    }
+    
     private string FormatTime(long timeInMilliseconds)
     {
         TimeSpan timeSpan = TimeSpan.FromMilliseconds(timeInMilliseconds);
@@ -82,27 +117,17 @@ public class VODViewerViewModel : ViewModelBase {
     }
 
     public string VideoDirectory => Paths.generateVideoPath(gd.matchId);
-    
-    public ObservableCollection<Person> Items { get; }
 
     public Boolean IsSeeking = false;
 
     public VODViewerViewModel()
     {
-        Items = new ObservableCollection<Person>
-        {
-            new Person { Name = "1" },
-            new Person { Name = "2" },
-            new Person { Name = "3" },
-            new Person { Name = "4" },
-            new Person { Name = "5" },
-            new Person { Name = "6" },
-            new Person { Name = "7" },
-            new Person { Name = "8" },
-            new Person { Name = "9" },
-            new Person { Name = "10" },
-            // etc.
-        };
+    }
+    
+    public void RoundChanged(object roundNum)
+    {
+        if (roundNum is not int num) return;
+        SelectedRound = num - 1;
     }
     
     private void InitializeMediaPlayerEvents(MediaPlayer? player)
@@ -138,7 +163,7 @@ public class VODViewerViewModel : ViewModelBase {
             .ObserveOn(RxApp.MainThreadScheduler)
             .Subscribe(_ => IsPlaying = false);
     }
-    
+
     public void TogglePlayPause()
     {
         Console.WriteLine(IsPlaying);
@@ -163,12 +188,16 @@ public class VODViewerViewModel : ViewModelBase {
         );
 
         MediaPlayer.Play(media);
+        MediaPlayer.Pause(); // Start paused
         media.Dispose();
     }
-    
-    public class Person
+
+    public void ChangeTime(object round)
     {
-        public string Name { get; set; }
-        // other properties...
+        if (round is not GameKill roundKill) return;
+        if (_mediaPlayer != null) _mediaPlayer.Position = (roundKill.TimeKillIntoGame - (gd.recordingStartTime - gd.matchStartTime)) / _mediaPlayer.Length;
+        Console.WriteLine(roundKill.TimeKillIntoGame);
+        Console.WriteLine(_mediaPlayer.Length);
+        Console.WriteLine(roundKill.TimeKillIntoGame / _mediaPlayer.Length);
     }
 }

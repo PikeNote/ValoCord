@@ -15,13 +15,13 @@ public class VODListItemViewModel : ViewModelBase, INotifyPropertyChanged
 {
     private readonly GameData _gameData;
 
-    public string MapName => $"{MapList.GetDisplayName(_gameData.map)}";
-    public string GameMode => _gameData.mode;
+    public string MapName => $"{MapData.GetDisplayName(_gameData.map)}";
+    public string GameMode => GameModes.ConvertGameMode(_gameData.mode);
     public string Date => _gameData.date;
-    public string Agent => AgentIcons.GetAgentNames(_gameData.agent);
+    public string Agent => AgentData.GetAgentNames(_gameData.agent);
     public string Standing => _gameData.standing.ToOrdinal();
-    public Bitmap AgentIcon => LoadFromResource(new Uri($"avares://Valocord{AgentIcons.GetAgentIcons(Agent)}"));
-    public Bitmap MapImage => LoadFromResource(new Uri($"avares://Valocord{MapList.GetFileName(_gameData.map)}"));
+    public Bitmap AgentIcon => LoadFromResource(new Uri($"avares://Valocord{AgentData.GetAgentIcons(Agent)}"));
+    public Bitmap MapImage => LoadFromResource(new Uri($"avares://Valocord{MapData.GetFileName(_gameData.map)}"));
 
     public static Bitmap LoadFromResource(Uri resourceUri)
     {
@@ -32,7 +32,7 @@ public class VODListItemViewModel : ViewModelBase, INotifyPropertyChanged
     {
         get
         {
-            return $"{_gameData._players.First(player => player.uuid == _gameData.playerUUID).combat_score/_gameData.teams.First().roundsPlayed} ACS";
+            return $"{_gameData._players[_gameData.playerUUID].combat_score/_gameData.teams.First().roundsPlayed} ACS";
         }
     }
     
@@ -40,7 +40,7 @@ public class VODListItemViewModel : ViewModelBase, INotifyPropertyChanged
         get
         {
             var damage = new MatchData.Damage();
-            var damageList = _gameData._players.First(player => player.uuid == _gameData.playerUUID).damage_breakdown;
+            var damageList = _gameData._players[_gameData.playerUUID].damage_breakdown;
             foreach (var roundDamages in damageList)
             {
                 foreach (var damageGiven in roundDamages)
@@ -114,7 +114,7 @@ public class VODListItemViewModel : ViewModelBase, INotifyPropertyChanged
     public VODListItemViewModel(GameData gameData)
     {
         _gameData = gameData;
-        Console.WriteLine(AgentIcons.GetAgentIcons(Agent));
+        Console.WriteLine(AgentData.GetAgentIcons(Agent));
     }
 
     public GameData GetGameData()

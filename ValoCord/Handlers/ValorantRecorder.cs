@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Runtime.InteropServices;
+using System.Threading.Tasks;
 using NLog;
 using ScreenRecorderLib;
 
@@ -35,19 +36,24 @@ public static class ValorantRecorder
     private static IntPtr ValorantWindowHandler = IntPtr.Zero;
     private static Logger logger = LogManager.GetLogger("Video Recordinng");
     private static DisplayRecordingSource dispRecordingSource = null;
-    private static WindowWatcher winWatcher = new WindowWatcher(ValorantWindowHandler);
+    private static WindowWatcher _winWatcher = new WindowWatcher(ValorantWindowHandler);
 
     private static Recorder rd;
-    public static void SetWindowHandler()
+    public static async void SetWindowHandler()
     {
+        await Task.Delay(3000);
         foreach (Process pList in Process.GetProcesses())
         {
             if (pList.MainWindowTitle.Contains("VALORANT"))
             {
                 ValorantWindowHandler = pList.MainWindowHandle;
+                if (ValorantWindowHandler == IntPtr.Zero)
+                {
+                    Console.WriteLine("Window handle not grabbed! Trying again...");
+                    SetWindowHandler();
+                }
             }
-        }
-        
+        }   
     }
     
     public static void StartRecording(String fileName)
@@ -133,7 +139,11 @@ public static class ValorantRecorder
             
             String videoPath = Path.Combine(Paths.DefaultVideoPath, $"{fileName}.mp4");
             rec.Record(videoPath);
-            winWatcher.Start();
+            _winWatcher.Start();
+        }
+        else
+        {
+            Console.WriteLine("Video recording request failed; Window not grabbed?");
         }
             
        
@@ -168,7 +178,7 @@ public static class ValorantRecorder
     {
         //Get the file path if recorded to a file
         string path = e.FilePath;	
-        winWatcher.Stop();
+        _winWatcher.Stop();
     }
     private static void Rec_OnRecordingFailed(object? sender, RecordingFailedEventArgs e)
     {

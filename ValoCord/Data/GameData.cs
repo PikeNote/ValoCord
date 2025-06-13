@@ -9,19 +9,21 @@ public class GameData
     public String agent { get; set; }
     public String map { get; set; }
     public String matchId { get; set; }
-    public List<String> _roundStartTimeStamps { get; set; }
-    public List<RoundData> _roundEvents { get; set; }
-    public List<PlayerData> _players { get; set; }
+    public List<long> _roundStartTimeStamps { get; } = new List<long>();
+    public List<RoundData> _roundEvents { get; } = new List<RoundData>();
+    public Dictionary<String, PlayerData> _players { get; } = new Dictionary<String, PlayerData>();
     public String playerUUID { get; set; }
     public String playerTeam { get; set; }
     public List<MatchData.Team> teams { get; set; }
+    public Boolean isCompetetive { get; set; }
     public String mode { get; set; }
     public string date  { get; set; }
     public int standing { get; set; }
-    public long startTime { get; set; }
+    public long matchStartTime { get; set; }
+    public long recordingStartTime { get; set; }
     public void AddRoundTimestamp()
     {
-        _roundStartTimeStamps.Add(DateTimeOffset.Now.ToUnixTimeSeconds().ToString());
+        _roundStartTimeStamps.Add(DateTimeOffset.Now.ToUnixTimeSeconds());
     }
 }
 

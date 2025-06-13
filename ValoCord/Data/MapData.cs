@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace ValoCord.Data;
 
-public class MapList
+public static  class MapData
 {
     private static readonly Dictionary<string, string> _mapNameMappings = 
         new(StringComparer.OrdinalIgnoreCase)

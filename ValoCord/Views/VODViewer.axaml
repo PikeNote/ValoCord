@@ -127,54 +127,71 @@
                 </StackPanel>
                 
             </Grid>
-            
-            <StackPanel Background="#171717" Grid.Column="1" 
-                        VerticalAlignment="Stretch" 
-                        HorizontalAlignment="Stretch" Margin="10 0 10 0">
-                <userControls:KillEvent/>
-                <userControls:KillEvent/>
-                <userControls:KillEvent/>
-                <userControls:KillEvent/>
-                <userControls:KillEvent/>
-            </StackPanel>
+            <ListBox Grid.Column="1" ItemsSource="{Binding CurrentRound.KillEvents}">
+                <ListBox.Styles>
+                    <Style Selector="ListBoxItem">
+                        <Setter Property="Margin" Value="0" />
+                        <Setter Property="HorizontalContentAlignment" Value="Stretch"></Setter>
+                    </Style>
+                </ListBox.Styles>
+                <ListBox.ItemContainerTheme>
+                    <ControlTheme TargetType="ListBoxItem">
+                        <Setter Property="Margin" Value="0"/>
+                    </ControlTheme>
+                </ListBox.ItemContainerTheme>
+                <ListBox.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <StackPanel Background="#171717" Grid.Column="1" 
+                                    VerticalAlignment="Stretch" 
+                                    HorizontalAlignment="Stretch" Margin="10 0 10 0" />
+                    </ItemsPanelTemplate>
+                </ListBox.ItemsPanel>
+                <ListBox.ItemTemplate>
+                    <DataTemplate>
+                        <userControls:KillEvent/>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
         
         </Grid>
-        <ListBox ItemsSource="{Binding RoundDataList}" HorizontalAlignment="Stretch" Grid.Row="3" >
-            <ListBox.Styles>
+        <ItemsControl ItemsSource="{Binding RoundDataList}" HorizontalAlignment="Stretch" Grid.Row="3" >
+            <ItemsControl.Styles>
                 <Style Selector="ListBoxItem">
                     <Setter Property="Margin" Value="0" />
                     <Setter Property="HorizontalContentAlignment" Value="Stretch"></Setter>
                 </Style>
-            </ListBox.Styles>
-            <ListBox.ItemContainerTheme>
+            </ItemsControl.Styles>
+            <ItemsControl.ItemContainerTheme>
                 <ControlTheme TargetType="ListBoxItem">
                     <Setter Property="Margin" Value="0"/>
                 </ControlTheme>
-            </ListBox.ItemContainerTheme>
-            <ListBox.ItemsPanel>
+            </ItemsControl.ItemContainerTheme>
+            <ItemsControl.ItemsPanel>
                 <ItemsPanelTemplate>
                     <UniformGrid Columns="{Binding RoundDataList.Count}" 
                                  HorizontalAlignment="Stretch" />
                 </ItemsPanelTemplate>
-            </ListBox.ItemsPanel>
-            <ListBox.ItemTemplate>
+            </ItemsControl.ItemsPanel>
+            <ItemsControl.ItemTemplate>
                 <DataTemplate>
                     <Button BorderThickness="2.5" 
-                            Background="#fe4554" 
+                            Background="#66c2a9" 
                             BorderBrush="#171717" HorizontalAlignment="Stretch" 
-                            VerticalAlignment="Stretch" CornerRadius="0">
+                            VerticalAlignment="Stretch" CornerRadius="0" 
+                            Command="{Binding $parent[ItemsControl].((viewModels:VODViewerViewModel)DataContext).RoundChanged}"
+                            CommandParameter="{Binding RoundNumber}">
                         <Interaction.Behaviors>
-                            <DataTriggerBehavior Binding="{Binding TeamWon}" ComparisonCondition="Equal" Value="{Binding $parent[ItemsControl].((viewModels:VODViewerViewModel)DataContext).TeamWon}">
-                                <ChangePropertyAction PropertyName="Background" Value="#008000" />
+                            <DataTriggerBehavior Binding="{Binding TeamWon}" ComparisonCondition="Equal" Value="{Binding DataContext.TeamWon, RelativeSource={RelativeSource AncestorType=wnd:AppWindow}}">
+                                <ChangePropertyAction PropertyName="Background" Value="#66c2a9" />
                             </DataTriggerBehavior>
-                            <DataTriggerBehavior Binding="{Binding TeamWon}" ComparisonCondition="NotEqual" Value="{Binding $parent[ItemsControl].((viewModels:VODViewerViewModel)DataContext).TeamWon}">
-                                <ChangePropertyAction PropertyName="Background" Value="#fe4554" />
+                            <DataTriggerBehavior Binding="{Binding TeamWon}" ComparisonCondition="NotEqual" Value="{Binding DataContext.TeamWon, RelativeSource={RelativeSource AncestorType=wnd:AppWindow}}">
+                                <ChangePropertyAction PropertyName="Background" Value="#f35a57" />
                             </DataTriggerBehavior>
                         </Interaction.Behaviors>
                         <TextBlock Text="{Binding RoundNumber}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" TextAlignment="Center"/>
                     </Button>
                 </DataTemplate>
-            </ListBox.ItemTemplate>
-        </ListBox>
+            </ItemsControl.ItemTemplate>
+        </ItemsControl>
     </Grid>
 </wnd:AppWindow>

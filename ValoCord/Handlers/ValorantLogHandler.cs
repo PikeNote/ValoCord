@@ -17,80 +17,93 @@ using ValoCord.Data;
 
 namespace ValoCord.Handlers;
 
-public static class ValorantLogHandler
+public static partial class ValorantLogHandler
 {
     private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
-    private static FileStream _activeFileStream;
-    private static StreamReader _activeStreamReader;
-    private static readonly String path = Path.Combine(Environment.GetFolderPath(
-        Environment.SpecialFolder.LocalApplicationData), "VALORANT\\Saved\\Logs\\ShooterGame.log");
-    private static readonly String MapLoadRegex =
-        @"\[Map Name: ([_A-Za-z0-9]+) \| Changed: [A-Za-z0-9]+\] \[Local World: [A-Za-z0-9]+ \| Changed: [A-Za-z0-9]+\] \[Match Setup: [A-Za-z0-9]+ \| Changed: [A-Za-z0-9]+\] \[Map Ready: ([A-Za-z0-9]+) \| Changed: [A-Za-z0-9]+\] \[Map Complete: ([A-Za-z0-9]+) \| Changed: [A-Za-z0-9]+\] \[URL: (?:(?:25[0-5]|(?:2[0-4]|1\d|[1-9]|)\d)\.?\b){4}:(?:[+-]?(?=\.\d|\d)(?:\d+)?(?:\.?\d*))(?:[eE](?:[+-]?\d+))?\/Game\/Maps\/[A-Za-z0-9]+\/[\/_A-Za-z0-9]+\?Name=[\p{L}\p{N} ]+\?SubjectBase64=[A-Za-z0-9]+\?game=\/Game\/GameModes\/[\/_A-Za-z0-9]+\/([_A-Za-z0-9]+(?:\.[_A-Za-z0-9]+)+)_C#([a-zA-Z]+)]";
-    private static readonly String RoundStartRegex =
-        @"Warning: Gameplay started at local time [0-9]*\.[0-9]+ \(server time ([+-]?(?=\.\d|\d)(?:\d+)?(?:\.?\d*))(?:[eE]([+-]?\d+))?\)";
-    private static readonly String MainMenuRegex =
-        @"\[Map Name: ([A-Za-z0-9]+) \| Changed: [A-Za-z0-9]+\] \[Local World: [A-Za-z0-9]+ \| Changed: [A-Za-z0-9]+\] \[Match Setup: [A-Za-z0-9]+ \| Changed: [A-Za-z0-9]+\] \[Map Ready: ([A-Za-z0-9]+) \| Changed: [A-Za-z0-9]+\] \[Map Complete: ([A-Za-z0-9]+) \| Changed: [A-Za-z0-9]+\] \[URL: \/Game\/Maps\/[A-Za-z0-9]+\/[A-Za-z0-9]+\?Name=[\p{L}\p{N} ]+\?SubjectBase64=[A-Za-z0-9#]+]";
 
-    private static readonly String[] PlayableMaps =
+    private static readonly string ValorantLogPath = Path.Combine(Environment.GetFolderPath(
+        Environment.SpecialFolder.LocalApplicationData), "VALORANT\\Saved\\Logs\\ShooterGame.log");
+    private static readonly string ValorantLogFolderPath = Path.Combine(Environment.GetFolderPath(
+        Environment.SpecialFolder.LocalApplicationData), "VALORANT\\Saved\\Logs");
+
+    private const string MapLoadRegex = @"\[Map Name: ([_A-Za-z0-9]+) \| Changed: [A-Za-z0-9]+\] \[Local World: [A-Za-z0-9]+ \| Changed: [A-Za-z0-9]+\] \[Match Setup: [A-Za-z0-9]+ \| Changed: [A-Za-z0-9]+\] \[Map Ready: ([A-Za-z0-9]+) \| Changed: [A-Za-z0-9]+\] \[Map Complete: ([A-Za-z0-9]+) \| Changed: [A-Za-z0-9]+\] \[URL: (?:(?:25[0-5]|(?:2[0-4]|1\d|[1-9]|)\d)\.?\b){4}:(?:[+-]?(?=\.\d|\d)(?:\d+)?(?:\.?\d*))(?:[eE](?:[+-]?\d+))?\/Game\/Maps\/[A-Za-z0-9]+\/[\/_A-Za-z0-9]+\?Name=[\p{L}\p{N} ]+\?SubjectBase64=[A-Za-z0-9]+\?game=\/Game\/GameModes\/[\/_A-Za-z0-9]+\/([_A-Za-z0-9]+(?:\.[_A-Za-z0-9]+)+)_C#([a-zA-Z]+)]";
+    private const string RoundStartRegex = @"Warning: Gameplay started at local time [0-9]*\.[0-9]+ \(server time ([+-]?(?=\.\d|\d)(?:\d+)?(?:\.?\d*))(?:[eE]([+-]?\d+))?\)";
+    private const string MainMenuRegex = @"\[Map Name: ([A-Za-z0-9]+) \| Changed: [A-Za-z0-9]+\] \[Local World: [A-Za-z0-9]+ \| Changed: [A-Za-z0-9]+\] \[Match Setup: [A-Za-z0-9]+ \| Changed: [A-Za-z0-9]+\] \[Map Ready: ([A-Za-z0-9]+) \| Changed: [A-Za-z0-9]+\] \[Map Complete: ([A-Za-z0-9]+) \| Changed: [A-Za-z0-9]+\] \[URL: \/Game\/Maps\/[A-Za-z0-9]+\/[A-Za-z0-9]+\?Name=[\p{L}\p{N} ]+\?SubjectBase64=[A-Za-z0-9#]+]";
+
+    private static readonly string[] PlayableMaps =
         { "Ascent", "Triad", "Duality", "Bonsai", "Port", "Foxtrot", "Canyon", "Pitt", "Infinity", "Juliett", "Jam", "HURM_Alley", "HURM_Yard", "HURM_Bowl", "HURM_Helix" };
 
     private static GameData? _gameData = null;
     static readonly Logger _logger = LogManager.GetLogger("Log Handler");
     
+    private static readonly FileSystemWatcher Watcher;
+
+    private static CancellationTokenSource? _cts;
+    private static Task? _loggingTask;
+    private static object _lock = new();
+    
+    private static FileStream? _activeFileStream;
+    private static StreamReader? _activeStreamReader;
 
     static ValorantLogHandler()
     {
-        
+        Watcher = new FileSystemWatcher(ValorantLogFolderPath);
+        Watcher.Changed += OnCreated;
+        Watcher.EnableRaisingEvents = true;
+    }
+
+    private static void OnCreated(object sender, FileSystemEventArgs e)
+    {
+        Console.WriteLine(e.FullPath);
+        if (!e.FullPath.Equals(ValorantLogPath, StringComparison.OrdinalIgnoreCase) || _cts == null ||
+            _cts is { Token.IsCancellationRequested: true }) return;
+        StopLogging();
+        StartLogging();
+    }
+
+    public static void StartLogging()
+    {
+        lock (_lock)
+        {
+            if (_loggingTask != null && !_loggingTask.IsCompleted)
+                return;
+
+            _logger.Info("Logging started!");
+            
+            _cts = new CancellationTokenSource();
+            _loggingTask = Task.Run(() => MonitorLog(_cts.Token));
+        }
     }
     
-    public async static void StartLogging()
+    private static async Task MonitorLog(CancellationToken token)
     {
-        
-        await Task.Delay(3000);
-        if (File.Exists(path))
+        if (!File.Exists(ValorantLogPath))
+            return;
+
+        try
         {
-            _activeFileStream = File.Open(path, FileMode.Open,
-                FileAccess.Read, FileShare.ReadWrite);
-
+            _activeFileStream = File.Open(ValorantLogPath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
             _activeStreamReader = new StreamReader(_activeFileStream);
-            
-            _activeStreamReader.ReadToEnd();  // Get old stuff out
 
-            String line;
-            while (true)  // <= Check for end of file
+            _activeStreamReader.ReadToEnd(); // Skip existing content
+
+            while (!token.IsCancellationRequested)
             {
                 if (!_activeStreamReader.EndOfStream)
                 {
-                    line = Regex.Replace(_activeStreamReader.ReadLine(), @"\t|\r", "");
-                    ;
+                    string line = Regex.Replace(_activeStreamReader.ReadLine(), @"\t|\r", "");
                     ProcessLogging(line);
                 }
-                
-            }
-            /*
-            for (;;)
-            {
-                // Sleep for 0.5 seconds before trying to read the logs again
-                Thread.Sleep(TimeSpan.FromSeconds(0.5));
-
-                String endMessage = Regex.Replace(_activeStreamReader.ReadToEnd(), @"\t|\r", ""); // Clean up inputs through regex (remove any new lines)
-
-                String[] endMessageList = endMessage.Split("\n");
-                
-                foreach (var s in endMessageList)
+                else
                 {
-                    if (s != "" && s != "\n")
-                    {
-                        
-                    
-                    }
+                    await Task.Delay(100); // Avoid tight loop
                 }
-                
-                
             }
-            */
         }
-        
+        catch (Exception ex)
+        {
+            Console.WriteLine("Log monitoring error: " + ex);
+        }
     }
 
     private static void ProcessLogging(String input)
@@ -160,7 +173,7 @@ public static class ValorantLogHandler
 
                     if (_gameData != null)
                     {
-                        Match lobbyCheck = Regex.Match(ld.Msg, MainMenuRegex);
+                        Match lobbyCheck = GeneratedMainMenuRegex().Match(ld.Msg);
                         System.Diagnostics.Debug.WriteLine(lobbyCheck.Groups.Count);
                         System.Threading.Thread.Sleep(1000);
                         if (lobbyCheck.Captures.Count > 0 && lobbyCheck.Groups.Count >= 4 &&
@@ -202,7 +215,7 @@ public static class ValorantLogHandler
         Logger logger = LogManager.GetLogger("Match Data");
         gd.playerUUID = ValorantAPI.getCurrentUser();
         System.Diagnostics.Debug.WriteLine(gd.matchId);
-        MatchData md = ValorantAPI.GetMatchData(gd.matchId);
+        MatchData? md = ValorantAPI.GetMatchData(gd.matchId);
         logger.Info("MD Status:" + md.StatusCode);
         logger.Info("Match Data:" + gd.matchId); 
         
@@ -210,11 +223,13 @@ public static class ValorantLogHandler
         {
             MatchData.Player currentPlayer = md.players.First(user => user.subject == gd.playerUUID);
             gd.date = DateTime.Today.ToString("MM/dd/yyyy");
+            if(md.matchInfo.isRanked)
             gd.mode = md.matchInfo.gameMode;
             gd.teams = md.teams;
             gd.playerTeam = currentPlayer.teamId;
-            gd.startTime = md.matchInfo.gameStartMillis;
+            gd.matchStartTime = md.matchInfo.gameStartMillis;
             gd.agent = currentPlayer.characterId;
+            gd.isCompetetive = md.matchInfo.isRanked;
             System.Diagnostics.Debug.WriteLine(md.StatusCode);
             foreach (var userInfo in md.players)
             {
@@ -230,7 +245,7 @@ public static class ValorantLogHandler
                     
                 }
 
-                gd._players.Add(new PlayerData()
+                gd._players.Add(userInfo.subject, new PlayerData()
                 {
                     uuid = userInfo.subject,
                     character_played = userInfo.characterId,
@@ -244,7 +259,7 @@ public static class ValorantLogHandler
                     damage_breakdown = damages
                 });
                 
-                gd.standing = gd._players
+                gd.standing = gd._players.Values
                     .OrderByDescending(player => player.combat_score)
                     .ToList()
                     .FindIndex(p => p.uuid == gd.playerUUID) + 1;
@@ -260,7 +275,10 @@ public static class ValorantLogHandler
                     {
                         foreach (var playerStatKill in playerStat.kills)
                         { 
-                            gk.Add(new GameKill(playerStatKill.roundTime,playerStatKill.gameTime, playerStatKill.finishingDamage.damageItem, playerStatKill.victim, playerStatKill.killer));
+                            gk.Add(new GameKill(playerStatKill.roundTime,playerStatKill.gameTime, 
+                                playerStatKill.finishingDamage.damageItem, 
+                                playerStatKill.victim, 
+                                playerStatKill.killer));
                         }
                     }
                 }
@@ -272,7 +290,7 @@ public static class ValorantLogHandler
                         BombPlantTime = mdRoundResult.plantRoundTime,
                         EndType = mdRoundResult.roundResult,
                         KillEvents = gk,
-                        RoundNumber = mdRoundResult.roundNum,
+                        RoundNumber = mdRoundResult.roundNum + 1,
                         TeamWon = mdRoundResult.winningTeam
                     });
             }
@@ -298,18 +316,28 @@ public static class ValorantLogHandler
 
     public static void StopLogging()
     {
-        _activeStreamReader.Close();
-        _activeFileStream.Dispose();
-        
-        // Null the readers just in case
-        _activeFileStream = null;
-        _activeStreamReader = null;
+        lock (_lock)
+        {
+            _logger.Info("Stopping logger...");
+            _cts?.Cancel();
+            _cts?.Dispose();
+            _cts = null;
+
+            _activeStreamReader?.Dispose();
+            _activeFileStream?.Dispose();
+
+            _activeStreamReader = null;
+            _activeFileStream = null;
+        }
     }
 
     public static void ResetGd()
     {
         _gameData = null;
     }
+
+    [GeneratedRegex(MainMenuRegex)]
+    private static partial Regex GeneratedMainMenuRegex();
 }
 
 class LogData

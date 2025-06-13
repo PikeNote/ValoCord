@@ -3,19 +3,56 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:controls="clr-namespace:FluentAvalonia.UI.Controls;assembly=FluentAvalonia"
+             xmlns:data="clr-namespace:ValoCord.Data"
+             xmlns:converters="clr-namespace:ValoCord.Converters"
+             xmlns:views="clr-namespace:ValoCord.Views"
+             xmlns:viewModels="clr-namespace:ValoCord.ViewModels"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-             x:Class="ValoCord.UserControls.KillEvent">
-    <Grid ColumnDefinitions="* 2* * 1.25*" Height="50" HorizontalAlignment="Stretch" ColumnSpacing="5" Margin="10">
+             x:Class="ValoCord.UserControls.KillEvent"
+             >
+    <UserControl.Resources>
+        <converters:AgentIconNameConverter x:Key="AgentImageConverter" />
+        <converters:WeaponIconNameConverter x:Key="WeaponImageConverter" />
+        <converters:AgentTeamToBrushConverter x:Key="AgentTeamToBrushConverter" />
+    </UserControl.Resources>
+    
+    
+    <UserControl.Background>
+        <MultiBinding Converter="{StaticResource AgentTeamToBrushConverter}">
+            <Binding Path="AgentKilling"/>
+            <Binding Path="DataContext.AllPlayers" RelativeSource="{RelativeSource AncestorType=views:VODViewer}"/>
+            <Binding Path="DataContext.TeamWon" RelativeSource="{RelativeSource AncestorType=views:VODViewer}"/>
+        </MultiBinding>
+    </UserControl.Background>
+    <Grid ColumnDefinitions="* 2* * 1.25*" Height="50" HorizontalAlignment="Stretch" ColumnSpacing="5" Margin="0 10 0 10 ">
         <Border Grid.Column="0" ClipToBounds="True" CornerRadius="180">
-            <Image Source="/Assets/Agents/Jett.png" HorizontalAlignment="Center"/>
+            <Image>
+                <Image.Source>
+                    <MultiBinding Converter="{StaticResource AgentImageConverter}">
+                        <Binding Path="AgentKilling"/>
+                        <Binding Path="DataContext.AllPlayers" RelativeSource="{RelativeSource AncestorType=views:VODViewer}"/>
+                    </MultiBinding>
+                </Image.Source>
+            </Image>
         </Border>
-        <Image Grid.Column="1"  Source="/Assets/KillFeed/Vandal.png"/>
+        <Image Grid.Column="1"  Source="{Binding GunUsed, Converter={StaticResource WeaponImageConverter}}"/>
         <Border Grid.Column="2"  ClipToBounds="True" CornerRadius="180">
-            <Image Source="/Assets/Agents/Clove.png" HorizontalAlignment="Center"/>
+            <Image HorizontalAlignment="Center">
+                <Image.Source>
+                    <MultiBinding Converter="{StaticResource AgentImageConverter}">
+                        <Binding Path="AgentKilled"/>
+                        <Binding Path="DataContext.AllPlayers" RelativeSource="{RelativeSource AncestorType=views:VODViewer}"/>
+                    </MultiBinding>
+                </Image.Source>
+            </Image>
         </Border>
         <Border Grid.Column="3" ClipToBounds="True" CornerRadius="180" BorderBrush="White" BorderThickness="2" Width="40" Height="40"
                 HorizontalAlignment="Center" VerticalAlignment="Center">
-            <controls:SymbolIcon Symbol="Play" FontSize="25" Foreground="White" />
+            <Button Command="{Binding $parent[views:VODViewer].((viewModels:VODViewerViewModel)DataContext).ChangeTime}"
+                    CommandParameter="{Binding}">
+                <controls:SymbolIcon Symbol="Play" FontSize="25" Foreground="White" />  
+            </Button>
+            
         </Border>
     </Grid>
 </UserControl>

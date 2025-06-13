@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace ValoCord.Data;
 
-public class AgentIcons
+public static class AgentData
 {
     private static readonly Dictionary<string, string> _agentNameMappings = 
         new(StringComparer.OrdinalIgnoreCase)
