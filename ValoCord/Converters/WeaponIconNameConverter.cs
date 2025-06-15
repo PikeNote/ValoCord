@@ -14,12 +14,9 @@ public class WeaponIconNameConverter : IValueConverter
         if (value is string weaponUUID && !string.IsNullOrEmpty(weaponUUID))
         {
             weaponUUID = weaponUUID.ToLower().Trim();
-            Console.WriteLine(weaponUUID + ".v.");
-            Console.WriteLine(WeaponData.GetFileName("Bulldog"));
             try
             {
                 var uri = new Uri($"avares://Valocord{WeaponData.GetFileName(WeaponData.GetDisplayName(weaponUUID))}");
-                Console.WriteLine(uri);
                 return new Bitmap(AssetLoader.Open(uri));
             }
             catch (Exception)
