@@ -31,6 +31,17 @@ public class VODViewerViewModel : ViewModelBase, INotifyPropertyChanged {
     
     public GameData gd {get; set;}
     
+    private bool _isVideoLoading = true;
+    public bool IsVideoLoading
+    {
+        get => _isVideoLoading;
+        private set
+        {
+            this.RaiseAndSetIfChanged(ref _isVideoLoading, value); 
+            OnPropertyChanged(nameof(IsVideoLoading));
+        }
+
+    }
     
     public double Progress
     {
@@ -177,19 +188,32 @@ public class VODViewerViewModel : ViewModelBase, INotifyPropertyChanged {
         }
     }
 
-    public async Task DoPlay()
+    public async Task PrepareVideoAsync()
     {
         if (_libVLC == null || MediaPlayer == null) return;
         
-        Console.WriteLine(VideoDirectory);
-        using var media = new Media(
-            _libVLC,
-            new Uri(VideoDirectory) //new Uri("http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4"),
-        );
+        IsVideoLoading = true;
 
-        MediaPlayer.Play(media);
-        MediaPlayer.Pause(); // Start paused
-        media.Dispose();
+        try
+        {
+            Media? media = null;
+            await Task.Run(() => { media = new Media(_libVLC, new Uri(VideoDirectory)); });
+
+            if (media != null)
+            {
+                MediaPlayer.Play(media);
+                MediaPlayer.Pause(); // Start paused
+                media.Dispose();
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex);
+        }
+        finally
+        {
+            IsVideoLoading = false;
+        }
     }
 
     public void ChangeTime(object round)

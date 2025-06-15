@@ -69,7 +69,19 @@
                 </Grid.RowDefinitions>
                 
                 <avalonia:VideoView  x:Name="VODVideoView"  Grid.Row="0" HorizontalAlignment="Stretch"
-                                     VerticalAlignment="Stretch" /> 
+                                     VerticalAlignment="Stretch" 
+                                     IsVisible="{Binding !IsVideoLoading}"/> 
+                
+                <StackPanel Grid.Row="0" 
+                       Background="#1C1C1C"
+                       IsVisible="{Binding IsVideoLoading}"
+                       HorizontalAlignment="Stretch"
+                       VerticalAlignment="Stretch"
+                       Spacing="10">
+                    <controls:ProgressRing IsIndeterminate="True" BorderThickness="10" Width="150" HorizontalAlignment="Center" />
+                    <TextBlock Text="Loading Video..." HorizontalAlignment="Center" />
+                </StackPanel>
+                
                 <StackPanel Grid.Row="1"
                             Orientation="Vertical"
                             VerticalAlignment="Bottom"

@@ -1,6 +1,6 @@
 ﻿namespace ValoCord.ViewModels;
 
-public class ClipsViewModel
+public class ClipsViewModel : ViewModelBase
 {
     
 }

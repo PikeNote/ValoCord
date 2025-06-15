@@ -4,9 +4,9 @@ using Avalonia.Markup.Xaml;
 
 namespace ValoCord.Views;
 
-public partial class VodsView : UserControl
+public partial class SettingsView : UserControl
 {
-    public VodsView()
+    public SettingsView()
     {
         InitializeComponent();
     }

@@ -1,7 +1,9 @@
+using System.Reactive;
 using Avalonia.Controls;
 using Avalonia.Controls.Chrome;
 using FluentAvalonia.UI.Controls;
 using FluentAvalonia.UI.Windowing;
+using ValoCord.ViewModels;
 
 namespace ValoCord.Views
 {
@@ -12,23 +14,15 @@ namespace ValoCord.Views
             InitializeComponent();
             TitleBar.ExtendsContentIntoTitleBar = true;
         }
-
-        private void NavView_ItemInvoked(
-            object? sender,
-            NavigationViewItemInvokedEventArgs e)
+        
+        private void OnNavigationViewItemInvoked(object? sender, NavigationViewItemInvokedEventArgs e)
         {
-            // hide them all
-            HomeView.IsVisible = false;
-            VodsView.IsVisible = false;
-            ClipsView.IsVisible = false;
-
-            // show the one that was clicked
-            var tag = (e.InvokedItemContainer as NavigationViewItem)?.Tag as string;
-            switch (tag)
+            if (e.IsSettingsInvoked)
             {
-                case "Home":  HomeView.IsVisible = true; break;
-                case "Vods":  VodsView.IsVisible = true; break;
-                case "Clips": ClipsView.IsVisible = true; break;
+                if (this.DataContext is MainWindowViewModel vm)
+                {
+                    vm.NavigateToSettings();
+                }
             }
         }
     }

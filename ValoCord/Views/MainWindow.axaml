@@ -51,19 +51,22 @@
                 </TextBlock>
             </Grid>
         </Grid>
-        <controls:NavigationView x:Name="MainNav" PaneDisplayMode="Auto" ItemInvoked="NavView_ItemInvoked" Grid.Row="1">
-            <controls:NavigationView.MenuItems >
-                <controls:NavigationViewItem Content="Home" Tag="Home" IconSource="Home" IsSelected="True"/>
-                <controls:NavigationViewItem Content="VODs" Tag="Vods" IconSource="Video" />
-                <controls:NavigationViewItem Content="Clips" Tag="Clips" IconSource="SlideShow" />
+        <controls:NavigationView x:Name="MainNav" 
+                                 Grid.Row="1"
+                                 PaneDisplayMode="Auto"
+                                 MenuItemsSource="{Binding MenuItems}"
+                                 SelectedItem="{Binding SelectedMenuItem, Mode=TwoWay}"
+                                 ItemInvoked="OnNavigationViewItemInvoked">
+            <controls:NavigationView.MenuItemTemplate>
+                <DataTemplate>
+                    <controls:NavigationViewItem Content="{Binding Content}" 
+                                                 IconSource="{Binding IconSource}"
+                                                 Tag="{Binding ViewModel}"/>
+                </DataTemplate>
+            </controls:NavigationView.MenuItemTemplate>
 
-            </controls:NavigationView.MenuItems>
-        
-            <Grid Grid.Column="1">
-                <views:HomeView  x:Name="HomeView"  IsVisible="True"  />
-                <views:VodsView  x:Name="VodsView"  IsVisible="False" />
-                <views:ClipsView x:Name="ClipsView" IsVisible="False" />
-            </Grid>
+            <ContentControl Content="{Binding CurrentPage}"/>
+            
         </controls:NavigationView>
     </Grid>
 </wnd:AppWindow>

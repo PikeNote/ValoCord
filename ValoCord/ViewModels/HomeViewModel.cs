@@ -1,6 +1,6 @@
 ﻿namespace ValoCord.ViewModels;
 
-public class HomeViewModel
+public class HomeViewModel : ViewModelBase
 {
     
 }

@@ -47,7 +47,7 @@
             TitleBar.ExtendsContentIntoTitleBar = true;
         }
 
-        private void MainWindow_Opened(object? sender, System.EventArgs e)
+        private async void MainWindow_Opened(object? sender, System.EventArgs e)
         {
             if (DataContext is VODViewerViewModel ViewModel)
             {
@@ -55,7 +55,7 @@
                 {
                     VODVideoView.MediaPlayer = ViewModel.MediaPlayer;
 
-                    ViewModel.DoPlay();
+                    await ViewModel.PrepareVideoAsync();
                 }
             }
             
