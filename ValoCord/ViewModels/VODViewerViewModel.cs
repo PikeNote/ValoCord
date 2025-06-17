@@ -177,7 +177,6 @@ public class VODViewerViewModel : ViewModelBase, INotifyPropertyChanged {
 
     public void TogglePlayPause()
     {
-        Console.WriteLine(IsPlaying);
         if (!IsPlaying)
         {
             MediaPlayer.Play();
@@ -220,8 +219,5 @@ public class VODViewerViewModel : ViewModelBase, INotifyPropertyChanged {
     {
         if (round is not GameKill roundKill) return;
         if (_mediaPlayer != null) _mediaPlayer.Position = (roundKill.TimeKillIntoGame - (gd.recordingStartTime - gd.matchStartTime)) / _mediaPlayer.Length;
-        Console.WriteLine(roundKill.TimeKillIntoGame);
-        Console.WriteLine(_mediaPlayer.Length);
-        Console.WriteLine(roundKill.TimeKillIntoGame / _mediaPlayer.Length);
     }
 }

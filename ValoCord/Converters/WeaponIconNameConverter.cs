@@ -26,7 +26,7 @@ public class WeaponIconNameConverter : IValueConverter
         }
         else
         {
-            Console.WriteLine("Test");
+            Console.WriteLine("?");
         }
         return null;
     }

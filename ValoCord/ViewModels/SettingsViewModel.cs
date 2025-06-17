@@ -142,8 +142,7 @@ public class SettingsViewModel : ViewModelBase, INotifyPropertyChanged
         };
         outputDevices.AddRange(Recorder.GetSystemAudioDevices(AudioDeviceSource.OutputDevices));
         OutputAudioDevices = outputDevices;
-
-        Console.WriteLine(_settingsProvider.Value.SelectedInputDeviceName);
+        
         SelectedInputDevice = InputAudioDevices.FirstOrDefault(d => d.FriendlyName == _settingsProvider.Value.SelectedInputDeviceName.DeviceName)
                               ?? InputAudioDevices.First();
         SelectedOutputDevice = OutputAudioDevices.FirstOrDefault(d => d.FriendlyName == _settingsProvider.Value.SelectedOutputDeviceName.DeviceName)

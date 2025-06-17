@@ -114,7 +114,6 @@ public class VODListItemViewModel : ViewModelBase, INotifyPropertyChanged
     public VODListItemViewModel(GameData gameData)
     {
         _gameData = gameData;
-        Console.WriteLine(AgentData.GetAgentIcons(Agent));
     }
 
     public GameData GetGameData()

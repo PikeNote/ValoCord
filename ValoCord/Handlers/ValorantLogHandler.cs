@@ -54,7 +54,6 @@ public static partial class ValorantLogHandler
 
     private static void OnCreated(object sender, FileSystemEventArgs e)
     {
-        Console.WriteLine(e.FullPath);
         if (!e.FullPath.Equals(ValorantLogPath, StringComparison.OrdinalIgnoreCase) || _cts == null ||
             _cts is { Token.IsCancellationRequested: true }) return;
         StopLogging();

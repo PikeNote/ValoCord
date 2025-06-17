@@ -70,7 +70,6 @@ public static class WeaponData
         }
         if (_weaponUUIDMappings.TryGetValue(codeName, out var displayName))
         {
-            Console.WriteLine(displayName);
             return displayName;
         }
         return codeName;
