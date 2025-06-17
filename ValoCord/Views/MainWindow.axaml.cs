@@ -14,16 +14,5 @@ namespace ValoCord.Views
             InitializeComponent();
             TitleBar.ExtendsContentIntoTitleBar = true;
         }
-        
-        private void OnNavigationViewItemInvoked(object? sender, NavigationViewItemInvokedEventArgs e)
-        {
-            if (e.IsSettingsInvoked)
-            {
-                if (this.DataContext is MainWindowViewModel vm)
-                {
-                    vm.NavigateToSettings();
-                }
-            }
-        }
     }
 }

@@ -55,7 +55,7 @@
                 {
                     VODVideoView.MediaPlayer = ViewModel.MediaPlayer;
 
-                    await ViewModel.PrepareVideoAsync();
+                    ViewModel.PrepareVideoAsync();
                 }
             }
             

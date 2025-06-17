@@ -22,11 +22,9 @@ namespace ValoCord.ViewModels
             get => _selectedMenuItem;
             set => this.RaiseAndSetIfChanged(ref _selectedMenuItem, value);
         }
-        
-        public ReactiveCommand<Unit, Unit> NavigateToSettingsCommand { get; }
-
 
         public ObservableCollection<NavigationItem> MenuItems { get; }
+        public ObservableCollection<NavigationItem> FooterMenuItems { get; }
 
         public MainWindowViewModel()
         {
@@ -36,16 +34,16 @@ namespace ValoCord.ViewModels
                 new NavigationItem("VODs", "Video", new VodsListViewModel()),
                 new NavigationItem("Clips", "SlideShow", new ClipsViewModel())
             };
+            
+            FooterMenuItems = new ObservableCollection<NavigationItem>
+            {
+                new NavigationItem("Settings", "Setting", new SettingsViewModel())
+            };
 
             this.WhenAnyValue(vm => vm.SelectedMenuItem)
                 .Where(item => item != null)
                 .Subscribe(selectedItem => CurrentPage = selectedItem.ViewModel);
             SelectedMenuItem = MenuItems[0];
-        }
-
-        public void NavigateToSettings()
-        {
-            CurrentPage = new SettingsViewModel();
         }
     }
     

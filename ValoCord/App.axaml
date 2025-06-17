@@ -9,7 +9,7 @@
     </Application.DataTemplates>
 
     <Application.Styles>
-        <sty:FluentAvaloniaTheme PreferUserAccentColor="True"></sty:FluentAvaloniaTheme>
+        <sty:FluentAvaloniaTheme PreferUserAccentColor="True"/>
         <StyleInclude Source="avares://FluentAvalonia.ProgressRing/Styling/Controls/ProgressRing.axaml" />
         <FluentTheme/>
     </Application.Styles>

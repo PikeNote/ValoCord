@@ -1,6 +1,5 @@
 using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
-using Avalonia.Logging;
 using Avalonia.Markup.Xaml;
 using ValoCord.Handlers;
 using ValoCord.Video;

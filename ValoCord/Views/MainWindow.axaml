@@ -55,8 +55,10 @@
                                  Grid.Row="1"
                                  PaneDisplayMode="Auto"
                                  MenuItemsSource="{Binding MenuItems}"
+                                 FooterMenuItemsSource="{Binding FooterMenuItems}"
                                  SelectedItem="{Binding SelectedMenuItem, Mode=TwoWay}"
-                                 ItemInvoked="OnNavigationViewItemInvoked">
+                                 IsSettingsVisible="False"
+                                 >
             <controls:NavigationView.MenuItemTemplate>
                 <DataTemplate>
                     <controls:NavigationViewItem Content="{Binding Content}" 

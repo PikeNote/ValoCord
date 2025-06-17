@@ -33,4 +33,14 @@ public class GameModes
         }
         return "Unknown";
     }
+
+    public static List<GameModeSettings> GetDefaultGameModeSettings()
+    {
+        var gameModeSettings = new List<GameModeSettings>();
+        foreach (var value in _gameModeMappings.Values)
+        {
+            gameModeSettings.Add(new GameModeSettings(){ GameMode = value, Enabled = true});
+        }
+        return gameModeSettings;
+    }
 }
