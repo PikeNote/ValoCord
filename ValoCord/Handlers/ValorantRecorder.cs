@@ -188,8 +188,16 @@ public static class ValorantRecorder
     {
         if (e.Status == RecorderStatus.Recording)
         {
+            ProgramStatusHandler.CurrentStatus = ProgramStatusHandler.RecordingInProgress;
             _recordingInProgress = true;
             logger.Info("Recording started");
+        }
+        else
+        {
+            if (ProgramStatusHandler.CurrentStatus == ProgramStatusHandler.RecordingInProgress)
+            {
+                ProgramStatusHandler.CurrentStatus = ProgramStatusHandler.WaitingForGame;
+            }
         }
     }
 }

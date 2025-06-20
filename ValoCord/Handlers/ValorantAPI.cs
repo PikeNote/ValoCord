@@ -16,7 +16,7 @@ using System.Text;
 
 public class ValorantAPI
 {
-    private static Auth localAuth;
+    private static Auth? localAuth;
     static Logger logger = LogManager.GetLogger("Valorant API");
 
     public static async Task<Auth> reAuthAttempt()

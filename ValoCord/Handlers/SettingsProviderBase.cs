@@ -55,7 +55,6 @@ public class SettingsProviderBase<T>
         catch (Exception e)
         {
             Console.WriteLine(e);
-            // ignored
         }
     }
 }

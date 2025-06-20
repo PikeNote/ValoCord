@@ -28,6 +28,7 @@ public static class ProcessHandler
             {
                 if (_activeProcess)
                 {
+                    ProgramStatusHandler.CurrentStatus = ProgramStatusHandler.ValorantNotOpen;
                     Console.WriteLine("VALORANT closed!");
                     ValorantLogHandler.StopLogging();
                     ValorantAPI.ResetAuth();
@@ -38,14 +39,13 @@ public static class ProcessHandler
             else
             {
                 Console.WriteLine("VALORANT found!");
-                if (!_activeProcess)
-                {
-                    _activeProcess = true;
-                    await ValorantAPI.reAuthAttempt();
-                    ValorantLogHandler.StartLogging();
-                    ValorantRecorder.SetWindowHandler();
-                }
-                
+                if (_activeProcess) return;
+                ProgramStatusHandler.CurrentStatus = ProgramStatusHandler.WaitingForGame;
+                _activeProcess = true;
+                await ValorantAPI.reAuthAttempt();
+                ValorantLogHandler.StartLogging();
+                ValorantRecorder.SetWindowHandler();
+
             }
         }
     }
