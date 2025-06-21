@@ -69,4 +69,11 @@ public class ValorantAPI
     {
         return PregameGetPlayer.GetPlayer(localAuth).MatchID;
     }
+
+    public static string GetCorematchMap(string matchId)
+    {
+        var coreMatchData = CoreGetMatch.GetMatch(localAuth, matchId);
+        Console.WriteLine(coreMatchData.ModeID);
+        return coreMatchData.ModeID;
+    }
 }

@@ -48,8 +48,13 @@
         </Border>
         <Border Grid.Column="3" ClipToBounds="True" CornerRadius="180" BorderBrush="White" BorderThickness="2" Width="40" Height="40"
                 HorizontalAlignment="Center" VerticalAlignment="Center">
-            <Button Command="{Binding $parent[views:VODViewer].((viewModels:VODViewerViewModel)DataContext).ChangeTime}"
-                    CommandParameter="{Binding}">
+            <Button Command="{Binding DataContext.ChangeTimeCommand, RelativeSource={RelativeSource AncestorType=views:VODViewer}}">
+                <Button.CommandParameter>
+                    <MultiBinding>
+                        <Binding/>
+                        <Binding Path="DataContext.SelectedRound" RelativeSource="{RelativeSource AncestorType=views:VODViewer}"/>
+                    </MultiBinding>
+                </Button.CommandParameter>
                 <controls:SymbolIcon Symbol="Play" FontSize="25" Foreground="White" />  
             </Button>
             

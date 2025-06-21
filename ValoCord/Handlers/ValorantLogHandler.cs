@@ -122,6 +122,7 @@ public static partial class ValorantLogHandler
                         //https://glz-ap-1.ap.a.pvp.net/core-game/v1/players/{$playerId}
                         String mid = ValorantAPI.GetCoreMatchID();
                         
+                        
                         if (string.IsNullOrWhiteSpace(mid))
                         {
                             _logger.Info("Mid match ID invalid");
@@ -131,15 +132,15 @@ public static partial class ValorantLogHandler
                         _logger.Info("Match ID Fetched: " + mid);
                         if (!string.IsNullOrWhiteSpace(mid))
                         {
-                            _gameData = new GameData()
+                            ValorantRecorder.StartRecording(mid);
+                            _gameData = new GameData
                             {
                                 map = mapLine.Groups[1].Value,
                                 agent = mapLine.Groups[5].Value,
                                 matchId = mid,
-                                mode = mapLine.Groups[4].Value,
-                                recordingStartTime = DateTimeOffset.Now.ToUnixTimeMilliseconds()
+                                recordingStartTime = DateTimeOffset.Now.ToUnixTimeMilliseconds(),
+                                mode = ValorantAPI.GetCorematchMap(mid)
                             };
-                            ValorantRecorder.StartRecording(mid);
                         }
                     }
                     else
@@ -326,7 +327,7 @@ public static partial class ValorantLogHandler
             _cts?.Cancel();
             _cts?.Dispose();
             _cts = null;
-
+            
             _activeStreamReader?.Dispose();
             _activeFileStream?.Dispose();
 

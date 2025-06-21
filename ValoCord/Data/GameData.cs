@@ -23,7 +23,7 @@ public class GameData
     public long recordingStartTime { get; set; }
     public void AddRoundTimestamp()
     {
-        _roundStartTimeStamps.Add(DateTimeOffset.Now.ToUnixTimeSeconds());
+        _roundStartTimeStamps.Add(DateTimeOffset.Now.ToUnixTimeMilliseconds());
     }
 }
 

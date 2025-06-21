@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Reactive;
 using System.Reactive.Linq;
 using System.Threading.Tasks;
 using LibVLCSharp.Shared;
@@ -98,6 +99,7 @@ public class VODViewerViewModel : ViewModelBase, INotifyPropertyChanged {
     public List<RoundData> RoundDataList => gd._roundEvents;
     public string TeamWon => gd.playerTeam;
     public string PlayerTeam => gd.playerTeam;
+    public ReactiveCommand<IList<object>, Unit> ChangeTimeCommand { get; }
     public string GameTime => DateTimeOffset.FromUnixTimeMilliseconds(gd.matchStartTime).ToString("yyyy/MM/dd - hh:mm tt");
     public string GameDescription => $"{GameMode} - {MapData.GetDisplayName(gd.map)}";
     public string WindowTitle => $"ValoCord - {GameMode} ({MapData.GetDisplayName(gd.map)}) - {AgentData.GetAgentNames(gd.agent)}";
@@ -133,6 +135,7 @@ public class VODViewerViewModel : ViewModelBase, INotifyPropertyChanged {
 
     public VODViewerViewModel()
     {
+        ChangeTimeCommand = ReactiveCommand.Create<IList<object>>(ChangeTime);
     }
     
     public void RoundChanged(object roundNum)
@@ -215,9 +218,10 @@ public class VODViewerViewModel : ViewModelBase, INotifyPropertyChanged {
         }
     }
 
-    public void ChangeTime(object round)
+    public void ChangeTime(IList<object>? values)
     {
-        if (round is not GameKill roundKill) return;
-        if (_mediaPlayer != null) _mediaPlayer.Position = (roundKill.TimeKillIntoGame - (gd.recordingStartTime - gd.matchStartTime)) / _mediaPlayer.Length;
+        if (values[0] is not GameKill roundKill) return;
+        if (values[1] is not int roundNum) return;
+        if (_mediaPlayer != null) _mediaPlayer.Position = (gd._roundStartTimeStamps[roundNum] - gd.recordingStartTime - 2000 + roundKill.TimeKillIntoRound)  / _mediaPlayer.Length;
     }
 }
