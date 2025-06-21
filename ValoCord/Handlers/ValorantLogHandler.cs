@@ -135,7 +135,9 @@ public static partial class ValorantLogHandler
                             {
                                 map = mapLine.Groups[1].Value,
                                 agent = mapLine.Groups[5].Value,
-                                matchId = mid
+                                matchId = mid,
+                                mode = mapLine.Groups[4].Value,
+                                recordingStartTime = DateTimeOffset.Now.ToUnixTimeMilliseconds()
                             };
                             ValorantRecorder.StartRecording(mid);
                         }
@@ -221,8 +223,11 @@ public static partial class ValorantLogHandler
         if (md != null & md.StatusCode == 200)
         {
             MatchData.Player currentPlayer = md.players.First(user => user.subject == gd.playerUUID);
+            if (md.matchInfo.gameMode != null)
+            {
+                gd.mode = md.matchInfo.gameMode;
+            }
             gd.date = DateTime.Today.ToString("MM/dd/yyyy");
-            if(md.matchInfo.isRanked)
             gd.mode = md.matchInfo.gameMode;
             gd.teams = md.teams;
             gd.playerTeam = currentPlayer.teamId;
