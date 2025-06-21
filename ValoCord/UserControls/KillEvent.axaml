@@ -35,7 +35,15 @@
                 </Image.Source>
             </Image>
         </Border>
-        <Image Grid.Column="1"  Source="{Binding GunUsed, Converter={StaticResource WeaponImageConverter}}"/>
+        <Image Grid.Column="1">
+            <Image.Source>
+                <MultiBinding Converter="{StaticResource WeaponImageConverter}">
+                    <Binding Path="GunUsed"/>
+                    <Binding Path="AgentKilling"/>
+                    <Binding Path="DataContext.AllPlayers" RelativeSource="{RelativeSource AncestorType=views:VODViewer}"/>
+                </MultiBinding>
+            </Image.Source>
+        </Image>
         <Border Grid.Column="2"  ClipToBounds="True" CornerRadius="180">
             <Image HorizontalAlignment="Center">
                 <Image.Source>

@@ -33,6 +33,7 @@ public static class AgentData
             { "Viper", "/Assets/Agents/Viper.png" },
             { "Yoru", "/Assets/Agents/Yoru.png" },
             { "Waylay", "/Assets/Agents/Waylay.png" },
+            { "Vyse", "/Assets/Agents/Vyse.png" },
 
         };
     
@@ -67,6 +68,18 @@ public static class AgentData
             { "8e253930-4c05-31dd-1b6c-968525494517", "Omen" },
             { "add6443a-41bd-e414-f6ad-e58d267f4e95", "Jett" }
         };
+    
+    private static readonly Dictionary<string, string> _ultimateImageMappings = 
+        new(StringComparer.OrdinalIgnoreCase)
+        {
+            { "Brimstone", "/Assets/Ultimate/Brimstone.png" },
+            { "Clove", "/Assets/Ultimate/Clove.png" },
+            { "Deadlock", "/Assets/Ultimate/Deadlock.png" },
+            { "Neon", "/Assets/Ultimate/Neon.png" },
+            { "Raze", "/Assets/Ultimate/Raze.png" },
+            { "Sova", "/Assets/Ultimate/Sova.png" },
+            { "Tejo", "/Assets/Ultimate/Tejo.png" },
+        };
     public static string GetAgentIcons(string codeName)
     {
         if (string.IsNullOrEmpty(codeName))
@@ -77,7 +90,7 @@ public static class AgentData
         {
             return displayName;
         }
-        return _agentNameMappings["Jett"];
+        return "/Assets/Default/AssetNotFound.png";
     }
     
     public static string GetAgentNames(string uuid)
@@ -90,7 +103,19 @@ public static class AgentData
         {
             return displayName;
         }
-
-        return "Jett";
+        return "?";
+    }
+    
+    public static string GetUltimateName(string codeName)
+    {
+        if (string.IsNullOrEmpty(codeName))
+        {
+            return "";
+        }
+        if (_ultimateImageMappings.TryGetValue(codeName, out var filePath))
+        {
+            return filePath;
+        }
+        return "/Assets/Default/AssetNotFound.png";
     }
 }

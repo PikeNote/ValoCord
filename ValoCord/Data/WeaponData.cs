@@ -85,6 +85,6 @@ public static class WeaponData
         {
             return displayName;
         }
-        return "/Assets/KillFeed/Classic.png";
+        return "/Assets/Default/AssetNotFound.png";
     }
 }
