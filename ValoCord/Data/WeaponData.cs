@@ -57,17 +57,14 @@ public static class WeaponData
             { "Melee", "/Assets/KillFeed/Melee.png" },
             { "Golden Gun", "/Assets/KillFeed/Golden_Gun.png" },
             { "Spike", "/Assets/KillFeed/Spike.png"},
-            { "Headhunter", "/Assets/KillFeed/Headhunter.png"},
+            { "Headhunter", "/Assets/KillFeed/HeadHunter.png"},
             { "Tour de Force", "/Assets/KillFeed/TourDeForce.png"},
-            { "Overdrive", "/Assets/KillFeed/Overdrive.png"}
+            { "Overdrive", "/Assets/KillFeed/Overdrive.png"},
+            { "Outlaw", "/Assets/KillFeed/Outlaw.png" },
         };
     
     public static string GetDisplayName(string codeName)
     {
-        if (string.IsNullOrEmpty(codeName))
-        {
-            return "Unknown Weapon";
-        }
         if (_weaponUUIDMappings.TryGetValue(codeName, out var displayName))
         {
             return displayName;
@@ -77,10 +74,7 @@ public static class WeaponData
 
     public static string GetFileName(string codeName)
     {
-        if (string.IsNullOrEmpty(codeName))
-        {
-            return "";
-        }
+
         if (_weaponImageMappings.TryGetValue(codeName, out var displayName))
         {
             return displayName;

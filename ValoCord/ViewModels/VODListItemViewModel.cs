@@ -22,7 +22,8 @@ public class VODListItemViewModel : ViewModelBase, INotifyPropertyChanged
     public string Standing => _gameData.standing.ToOrdinal();
     public Bitmap AgentIcon => LoadFromResource(new Uri($"avares://Valocord{AgentData.GetAgentIcons(Agent)}"));
     public Bitmap MapImage => LoadFromResource(new Uri($"avares://Valocord{MapData.GetFileName(_gameData.map)}"));
-
+    public long RecordingStartTime => _gameData.recordingStartTime;
+    
     public static Bitmap LoadFromResource(Uri resourceUri)
     {
         return new Bitmap(AssetLoader.Open(resourceUri));

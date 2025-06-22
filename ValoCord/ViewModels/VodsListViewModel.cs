@@ -4,6 +4,7 @@ using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Reactive.Disposables;
+using System.Reactive.Linq;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 using ReactiveUI;
@@ -15,7 +16,9 @@ namespace ValoCord.ViewModels;
 public class VodsListViewModel : ViewModelBase, IActivatableViewModel
 {
     public ViewModelActivator Activator { get; } = new();
-    public ObservableCollection<VODListItemViewModel> RecordedVODs { get; } = new ObservableCollection<VODListItemViewModel>();
+    public ObservableCollection<VODListItemViewModel> RecordedVODs { get; set; } = new ObservableCollection<VODListItemViewModel>();
+    
+    private List<VODListItemViewModel> _completeRecordedVODs = new List<VODListItemViewModel>();
 
     private bool _isLoading;
     public bool IsLoading
@@ -59,8 +62,15 @@ public class VodsListViewModel : ViewModelBase, IActivatableViewModel
             
             foreach (var gameData in gameDataList)
             {
-                RecordedVODs.Add(new VODListItemViewModel(gameData));
+                _completeRecordedVODs.Add(new VODListItemViewModel(gameData));
+                //RecordedVODs.Add(new VODListItemViewModel(gameData));
             }
+            _completeRecordedVODs.Sort((x, y) => y.RecordingStartTime.CompareTo(x.RecordingStartTime));
+            foreach (var vodListItemViewModel in _completeRecordedVODs)
+            {
+                RecordedVODs.Add(vodListItemViewModel);
+            }
+
         }
         catch (Exception ex)
         {

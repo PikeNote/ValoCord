@@ -12,31 +12,42 @@ public class WeaponIconNameConverter : IMultiValueConverter
 {
     public object? Convert(IList<object>? values, Type targetType, object? parameter, CultureInfo culture)
     {
-        if(values[0] is not string weaponUUID || string.IsNullOrEmpty(weaponUUID) || values[2] is not Dictionary<String, PlayerData> players || values[1] is not string killerUUID) {
+        if(values[0] is not string weaponUUID || values[2] is not Dictionary<String, PlayerData> players || values[1] is not string killerUUID) {
             return null;
         }
 
         weaponUUID = weaponUUID.ToLower().Trim();
         try
         {
-            if (weaponUUID == "ultimate")
+            Uri uri;
+
+            switch (weaponUUID)
             {
-                var userAgent = AgentData.GetAgentNames(players[killerUUID].character_played);
-                var uri = new Uri($"avares://Valocord{AgentData.GetUltimateName(userAgent)}");
-                return new Bitmap(AssetLoader.Open(uri));
+                case "ultimate":
+                    uri = new Uri($"avares://Valocord{AgentData.GetUltimateImage(AgentData.GetAgentNames(players[killerUUID].character_played))}");
+                    break;
+                case "ability1":
+                    uri = new Uri($"avares://Valocord{AgentData.GetAbility1Image(AgentData.GetAgentNames(players[killerUUID].character_played))}");
+                    break;
+                case "ability2":
+                    uri = new Uri($"avares://Valocord{AgentData.GetAbility2Image(AgentData.GetAgentNames(players[killerUUID].character_played))}");
+                    break;
+                case "grenadeability":
+                    uri = new Uri($"avares://Valocord{AgentData.GetGrenadeImage(AgentData.GetAgentNames(players[killerUUID].character_played))}");
+                    break;
+                case "":
+                    uri = new Uri($"avares://Valocord{WeaponData.GetFileName("Melee")}");
+                    break;
+                default:
+                    uri = new Uri($"avares://Valocord{WeaponData.GetFileName(WeaponData.GetDisplayName(weaponUUID))}");
+                    break;
             }
-            else
-            {
-                var uri = new Uri($"avares://Valocord{WeaponData.GetFileName(WeaponData.GetDisplayName(weaponUUID))}");
-                return new Bitmap(AssetLoader.Open(uri));
-            }
+            return new Bitmap(AssetLoader.Open(uri));
         }
         catch (Exception)
         {
-            return null;
+            return new Uri("avares://Valocord/Assets/Default/AssetNotFound.png");
         }
-
-        return null;
     }
 
     public object? ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)

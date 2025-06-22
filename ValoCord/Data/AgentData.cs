@@ -72,13 +72,41 @@ public static class AgentData
     private static readonly Dictionary<string, string> _ultimateImageMappings = 
         new(StringComparer.OrdinalIgnoreCase)
         {
-            { "Brimstone", "/Assets/Ultimate/Brimstone.png" },
-            { "Clove", "/Assets/Ultimate/Clove.png" },
-            { "Deadlock", "/Assets/Ultimate/Deadlock.png" },
-            { "Neon", "/Assets/Ultimate/Neon.png" },
-            { "Raze", "/Assets/Ultimate/Raze.png" },
-            { "Sova", "/Assets/Ultimate/Sova.png" },
-            { "Tejo", "/Assets/Ultimate/Tejo.png" },
+            { "Brimstone", "/Assets/Abilities/Ultimate/Brimstone.png" },
+            { "Clove", "/Assets/Abilities/Ultimate/Clove.png" },
+            { "Deadlock", "/Assets/Abilities/Ultimate/Deadlock.png" },
+            { "Neon", "/Assets/Abilities/Ultimate/Neon.png" },
+            { "Raze", "/Assets/Abilities/Ultimate/Raze.png" },
+            { "Sova", "/Assets/Abilities/Ultimate/Sova.png" },
+            { "Tejo", "/Assets/Abilities/Ultimate/Tejo.png" },
+            { "Jett", "/Assets/Abilities/Ultimate/Jett.png" }
+        };
+    
+    private static readonly Dictionary<string, string> _ability1ImageMappings = 
+        new(StringComparer.OrdinalIgnoreCase)
+        {
+            { "Raze", "/Assets/Abilities/Ability1/Raze.png" },
+            { "Skye", "/Assets/Abilities/Ability1/Skye.png" },
+            { "Sova", "/Assets/Abilities/Ability1/Sova.png" }
+        };
+    
+    private static readonly Dictionary<string, string> _ability2ImageMappings = 
+        new(StringComparer.OrdinalIgnoreCase)
+        {
+            { "Killjoy", "/Assets/Abilities/Ability2/Killjoy.png" },
+            { "Raze", "/Assets/Abilities/Ability2/Raze.png" },
+            { "Tejo", "/Assets/Abilities/Ability2/Tejo.png" }
+        };
+    
+    private static readonly Dictionary<string, string> _grenadeImageMappings = 
+        new(StringComparer.OrdinalIgnoreCase)
+        {
+            { "Breach", "/Assets/Abilities/Grenade/Killjoy.png" },
+            { "KAY/O", "/Assets/Abilities/Grenade/KAYO.png" },
+            { "Killjoy", "/Assets/Abilities/Grenade/Killjoy.png" },
+            { "Raze", "/Assets/Abilities/Grenade/Raze.png" },
+            { "Viper", "/Assets/Abilities/Grenade/Viper.png" },
+            { "Vyse", "/Assets/Abilities/Grenade/Vyse.png" }
         };
     public static string GetAgentIcons(string codeName)
     {
@@ -106,13 +134,52 @@ public static class AgentData
         return "?";
     }
     
-    public static string GetUltimateName(string codeName)
+    public static string GetUltimateImage(string codeName)
     {
         if (string.IsNullOrEmpty(codeName))
         {
             return "";
         }
         if (_ultimateImageMappings.TryGetValue(codeName, out var filePath))
+        {
+            return filePath;
+        }
+        return "/Assets/Default/AssetNotFound.png";
+    }
+    
+    public static string GetAbility1Image(string codeName)
+    {
+        if (string.IsNullOrEmpty(codeName))
+        {
+            return "";
+        }
+        if (_ability1ImageMappings.TryGetValue(codeName, out var filePath))
+        {
+            return filePath;
+        }
+        return "/Assets/Default/AssetNotFound.png";
+    }
+    
+    public static string GetAbility2Image(string codeName)
+    {
+        if (string.IsNullOrEmpty(codeName))
+        {
+            return "";
+        }
+        if (_ability2ImageMappings.TryGetValue(codeName, out var filePath))
+        {
+            return filePath;
+        }
+        return "/Assets/Default/AssetNotFound.png";
+    }
+    
+    public static string GetGrenadeImage(string codeName)
+    {
+        if (string.IsNullOrEmpty(codeName))
+        {
+            return "";
+        }
+        if (_grenadeImageMappings.TryGetValue(codeName, out var filePath))
         {
             return filePath;
         }
