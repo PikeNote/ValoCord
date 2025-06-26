@@ -18,7 +18,7 @@ public static class DatabaseHandler
     public static List<GameData> GetRecentGames()
     {
         var results = GameCollection.Query()
-            .OrderBy(x => x.recordingStartTime)
+            .OrderByDescending(x => x.recordingStartTime)
             .Limit(6)
             .ToList();
         return results;
