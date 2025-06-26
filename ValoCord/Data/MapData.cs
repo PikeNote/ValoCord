@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace ValoCord.Data;
 
@@ -20,6 +21,7 @@ public static  class MapData
             { "Jam", "Lotus" },
             { "Juliett", "Sunset" },
             { "Infinity", "Abyss" },
+            { "Rook", "Corrode"},
     
             // TDM Maps
             { "HURM_Alley", "Piazza" },
@@ -43,6 +45,7 @@ public static  class MapData
             { "Jam", "/Assets/Maps/Lotus.png" },
             { "Juliett", "/Assets/Maps/Sunset.png" },
             { "Infinity", "/Assets/Maps/Abyss.png" },
+            { "Corrode", "/Assets/Maps/Corrode.png" },
     
             // TDM Maps
             { "HURM_Alley", "/Assets/Maps/Piazza.png" },
@@ -75,5 +78,10 @@ public static  class MapData
             return displayName;
         }
         return "/Assets/Maps/Default.png";
+    }
+
+    public static string[] GetMapCodeNames()
+    {
+        return _mapNameMappings.Keys.ToArray();
     }
 }

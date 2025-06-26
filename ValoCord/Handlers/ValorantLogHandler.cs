@@ -30,8 +30,8 @@ public static partial class ValorantLogHandler
     private const string RoundStartRegex = @"Warning: Gameplay started at local time [0-9]*\.[0-9]+ \(server time ([+-]?(?=\.\d|\d)(?:\d+)?(?:\.?\d*))(?:[eE]([+-]?\d+))?\)";
     private const string MainMenuRegex = @"\[Map Name: ([A-Za-z0-9]+) \| Changed: [A-Za-z0-9]+\] \[Local World: [A-Za-z0-9]+ \| Changed: [A-Za-z0-9]+\] \[Match Setup: [A-Za-z0-9]+ \| Changed: [A-Za-z0-9]+\] \[Map Ready: ([A-Za-z0-9]+) \| Changed: [A-Za-z0-9]+\] \[Map Complete: ([A-Za-z0-9]+) \| Changed: [A-Za-z0-9]+\] \[URL: \/Game\/Maps\/[A-Za-z0-9]+\/[A-Za-z0-9]+\?Name=[\p{L}\p{N} ]+\?SubjectBase64=[A-Za-z0-9#]+]";
 
-    private static readonly string[] PlayableMaps =
-        { "Ascent", "Triad", "Duality", "Bonsai", "Port", "Foxtrot", "Canyon", "Pitt", "Infinity", "Juliett", "Jam", "HURM_Alley", "HURM_Yard", "HURM_Bowl", "HURM_Helix" };
+    private static readonly string[] PlayableMaps = MapData.GetMapCodeNames();
+        //{ "Ascent", "Triad", "Duality", "Bonsai", "Port", "Foxtrot", "Canyon", "Pitt", "Infinity", "Juliett", "Jam", "HURM_Alley", "HURM_Yard", "HURM_Bowl", "HURM_Helix", "Rook" };
 
     private static GameData? _gameData = null;
     static readonly Logger _logger = LogManager.GetLogger("Log Handler");
