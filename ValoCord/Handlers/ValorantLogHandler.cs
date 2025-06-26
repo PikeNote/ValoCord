@@ -280,10 +280,14 @@ public static partial class ValorantLogHandler
                     {
                         foreach (var playerStatKill in playerStat.kills)
                         { 
-                            gk.Add(new GameKill(playerStatKill.roundTime,playerStatKill.gameTime, 
-                                playerStatKill.finishingDamage.damageItem, 
-                                playerStatKill.victim, 
-                                playerStatKill.killer));
+                            gk.Add(new GameKill()
+                            {
+                                TimeKillIntoRound = playerStatKill.roundTime,
+                                TimeKillIntoGame = playerStatKill.gameTime, 
+                                GunUsed = playerStatKill.finishingDamage.damageItem, 
+                                AgentKilled = playerStatKill.victim, 
+                                AgentKilling = playerStatKill.killer
+                            });
                         }
                     }
                 }
@@ -315,7 +319,8 @@ public static partial class ValorantLogHandler
     {
         System.Diagnostics.Debug.WriteLine("Writing to JSON");
         // Implement JSON initalizer sometime down the line :derp: \
-        File.WriteAllText(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "ValoCord", "data", gd.matchId + ".json"), JsonConvert.SerializeObject(gd));
+        //File.WriteAllText(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "ValoCord", "data", gd.matchId + ".json"), JsonConvert.SerializeObject(gd));
+        DatabaseHandler.InsertGame(gd);
         ResetGd();
     }
 

@@ -41,36 +41,20 @@ public class VodsListViewModel : ViewModelBase, IActivatableViewModel
         IsLoading = true;
         RecordedVODs.Clear();
 
-        try
-        {
-            var gameDataList = await Task.Run(() =>
-            {
-                var loadedData = new List<GameData>();
-                string[] fileEntries = Directory.GetFiles(Paths.DefaultDataPath);
-                
-                foreach (string fileName in fileEntries)
-                {
-                    var fileContent = File.ReadAllText(fileName);
-                    var gameData = JsonConvert.DeserializeObject<GameData>(fileContent);
-                    if (gameData != null)
-                    {
-                        loadedData.Add(gameData);
-                    }
-                }
-                return loadedData;
-            });
+        try {
+            var loadedData = DatabaseHandler.GetRecentGames();
             
-            foreach (var gameData in gameDataList)
+            foreach (var gameData in loadedData)
             {
                 _completeRecordedVODs.Add(new VODListItemViewModel(gameData));
                 //RecordedVODs.Add(new VODListItemViewModel(gameData));
             }
-            _completeRecordedVODs.Sort((x, y) => y.RecordingStartTime.CompareTo(x.RecordingStartTime));
+        
+            //_completeRecordedVODs.Sort((x, y) => y.RecordingStartTime.CompareTo(x.RecordingStartTime));
             foreach (var vodListItemViewModel in _completeRecordedVODs)
             {
                 RecordedVODs.Add(vodListItemViewModel);
             }
-
         }
         catch (Exception ex)
         {

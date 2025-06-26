@@ -28,15 +28,11 @@ public class VODListItemViewModel : ViewModelBase, INotifyPropertyChanged
     {
         return new Bitmap(AssetLoader.Open(resourceUri));
     }
+
+    public string kda => $"{_gameData._players[_gameData.playerUUID].kills}/{_gameData._players[_gameData.playerUUID].deaths}/{_gameData._players[_gameData.playerUUID].assists}";
     
-    public String CombatScore
-    {
-        get
-        {
-            return $"{_gameData._players[_gameData.playerUUID].combat_score/_gameData.teams.First().roundsPlayed} ACS";
-        }
-    }
-    
+    public String CombatScore => $"{_gameData._players[_gameData.playerUUID].combat_score/_gameData.teams.First().roundsPlayed} ACS";
+
     public MatchData.Damage Damage {
         get
         {

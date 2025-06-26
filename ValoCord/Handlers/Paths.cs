@@ -13,6 +13,8 @@ public static class Paths
         Environment.SpecialFolder.LocalApplicationData), "ValoCord\\videos");
     public static readonly string DefaultDataPath = Path.Combine(Environment.GetFolderPath(
         Environment.SpecialFolder.LocalApplicationData), "ValoCord\\data");
+    public static readonly string DefaultDatabasePath = Path.Combine(Environment.GetFolderPath(
+        Environment.SpecialFolder.LocalApplicationData), "ValoCord\\data.db");
 
     public static String generateVideoPath(string matchID)
     {

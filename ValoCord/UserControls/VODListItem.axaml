@@ -6,6 +6,9 @@
              mc:Ignorable="d" d:DesignWidth="778" d:DesignHeight="99"
              x:Class="ValoCord.UserControls.VODListItem"
              x:DataType="viewModels:VODListItemViewModel" Height="130">
+    <Design.DataContext>
+        <viewModels:VODListItemViewModel/>
+    </Design.DataContext>
     <UserControl.Styles>
         <Style Selector="TextBlock">
             <Setter Property="FontFamily" Value="VALORANT"/>
@@ -64,7 +67,7 @@
                             <Run Text="{Binding GameMode}"/>
                             <Run Text=" )"/>
                         </TextBlock>
-                        <TextBlock Grid.Row="1" Text="{Binding Date}"/>
+                        <TextBlock Grid.Row="1" Text="{Binding kda}"/>
                         <StackPanel  Grid.Row="2" Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
                             <Image Source="{Binding AgentIcon}" Width="37" RenderOptions.BitmapInterpolationMode="LowQuality"/>
                             <Border CornerRadius="25" Height="22" Width="80" Background="#C3C750">

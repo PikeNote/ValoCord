@@ -222,6 +222,6 @@ public class VODViewerViewModel : ViewModelBase, INotifyPropertyChanged {
     {
         if (values[0] is not GameKill roundKill) return;
         if (values[1] is not int roundNum) return;
-        if (_mediaPlayer != null) _mediaPlayer.Position = (gd._roundStartTimeStamps[roundNum] - gd.recordingStartTime - 2000 + roundKill.TimeKillIntoRound)  / _mediaPlayer.Length;
+        if (_mediaPlayer != null) _mediaPlayer.Position = (gd._roundStartTimeStamps[roundNum] - gd.recordingStartTime - 3000 + roundKill.TimeKillIntoRound)  / _mediaPlayer.Length;
     }
 }
