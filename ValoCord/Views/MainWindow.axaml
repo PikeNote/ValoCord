@@ -56,6 +56,20 @@
                                  SelectedItem="{Binding SelectedMenuItem, Mode=TwoWay}"
                                  IsSettingsVisible="False"
                                  >
+            <controls:NavigationView.Styles>
+                <Style Selector="ContentControl#FooterContentBorder">
+                    <Setter Property="(Interaction.Behaviors)">
+                        <BehaviorCollectionTemplate>
+                            <BehaviorCollection>
+                                <DataTriggerBehavior Binding="{Binding #MainNav.IsPaneOpen}" ComparisonCondition="Equal" Value="False">
+                                    <ChangePropertyAction PropertyName="HorizontalAlignment" Value="Stretch" />
+                                </DataTriggerBehavior>
+                            </BehaviorCollection>
+                        </BehaviorCollectionTemplate>
+                    </Setter>
+                    <Setter Property="HorizontalAlignment" Value="Stretch" />
+                </Style>
+            </controls:NavigationView.Styles>
             <controls:NavigationView.MenuItemTemplate>
                 <DataTemplate>
                     <controls:NavigationViewItem Content="{Binding Content}" 
@@ -67,20 +81,23 @@
             <ContentControl Content="{Binding CurrentPage}"/>
             
             <controls:NavigationView.PaneFooter>
-                <StackPanel>
+                <StackPanel HorizontalAlignment="Center">
                     <TextBlock Text="ValoCord v1.0.0"
                                Margin="12"
-                               HorizontalAlignment="Center"/>
-                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                               HorizontalAlignment="Center"
+                               IsVisible="{Binding IsPaneOpen, ElementName=MainNav}"/>
+                    <StackPanel Orientation="Horizontal">
                         <TextBlock Text="Recording Status:"
-                                   HorizontalAlignment="Center"/>
+                                   HorizontalAlignment="Center"
+                                   IsVisible="{Binding IsPaneOpen, ElementName=MainNav}"/>
                         <Border CornerRadius="180" Width="13" Height="13" Margin="5 0 3 0">
-                           <Border.Background>
-                               <SolidColorBrush Color="{Binding Source={x:Static handlers:StatusBindingTunnel.Instance}, Path=StatusColor}"></SolidColorBrush>
-                           </Border.Background> 
+                            <Border.Background>
+                                <SolidColorBrush Color="{Binding Source={x:Static handlers:StatusBindingTunnel.Instance}, Path=StatusColor}"></SolidColorBrush>
+                            </Border.Background> 
                         </Border>
                         <TextBlock Text="{Binding Source={x:Static handlers:StatusBindingTunnel.Instance}, Path=StatusMessage}"
-                                   HorizontalAlignment="Center"/>
+                                   HorizontalAlignment="Center"
+                                   IsVisible="{Binding IsPaneOpen, ElementName=MainNav}"/>
                     </StackPanel>
                 </StackPanel>
             </controls:NavigationView.PaneFooter>
