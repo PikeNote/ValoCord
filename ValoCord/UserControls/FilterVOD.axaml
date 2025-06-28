@@ -7,7 +7,6 @@
              x:Class="ValoCord.UserControls.FilterVOD">
     <UserControl.Styles>
         <Style Selector="TextBlock">
-            <Setter Property="FontFamily" Value="VALORANT"/>
             <Setter Property="FontSize" Value="18"/>
         </Style>
     </UserControl.Styles>

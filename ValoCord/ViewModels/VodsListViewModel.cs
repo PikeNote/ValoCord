@@ -17,8 +17,6 @@ public class VodsListViewModel : ViewModelBase, IActivatableViewModel
 {
     public ViewModelActivator Activator { get; } = new();
     public ObservableCollection<VODListItemViewModel> RecordedVODs { get; set; } = new ObservableCollection<VODListItemViewModel>();
-    
-    private List<VODListItemViewModel> _completeRecordedVODs = new List<VODListItemViewModel>();
 
     private bool _isLoading;
     public bool IsLoading
@@ -43,17 +41,9 @@ public class VodsListViewModel : ViewModelBase, IActivatableViewModel
 
         try {
             var loadedData = DatabaseHandler.GetRecentGames();
-            
             foreach (var gameData in loadedData)
             {
-                _completeRecordedVODs.Add(new VODListItemViewModel(gameData));
-                //RecordedVODs.Add(new VODListItemViewModel(gameData));
-            }
-        
-            //_completeRecordedVODs.Sort((x, y) => y.RecordingStartTime.CompareTo(x.RecordingStartTime));
-            foreach (var vodListItemViewModel in _completeRecordedVODs)
-            {
-                RecordedVODs.Add(vodListItemViewModel);
+                RecordedVODs.Add(new VODListItemViewModel(gameData));
             }
         }
         catch (Exception ex)

@@ -19,6 +19,7 @@ namespace ValoCord
             AvaloniaXamlLoader.Load(this);
             ProcessHandler.Initialize();
             Logs.Initialize();
+            DatabaseHandler.Initialize();
             //ImageLoader.AsyncImageLoader = new DiskCachedWebImageLoader();
         }
 

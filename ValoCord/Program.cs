@@ -25,10 +25,7 @@ namespace ValoCord
         public static AppBuilder BuildAvaloniaApp()
             => AppBuilder.Configure<App>()
                 .UsePlatformDetect()
-                .ConfigureFonts(fontManager =>
-                {
-                    fontManager.AddFontCollection(new ValFontCollection());
-                })
+                .WithInterFont()
                 .LogToTrace()
                 .UseReactiveUI();
         

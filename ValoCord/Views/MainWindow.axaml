@@ -39,8 +39,7 @@
                            FontSize="12"
                            IsHitTestVisible="False"
                            VerticalAlignment="Center"
-                           Grid.Column="1"
-                           FontFamily="VALORANT">
+                           Grid.Column="1">
                     <TextBlock.IsVisible>
                         <OnPlatform Default="False">
                             <On Options="Windows" Content="True" />

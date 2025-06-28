@@ -14,8 +14,6 @@
     </UserControl.DataContext>
     <StackPanel>
         <userControls:FilterVOD/>
-        <controls:ProgressRing IsIndeterminate="True" BorderThickness="10" Width="100" Height="100" HorizontalAlignment="Center"
-                               IsVisible="{Binding IsLoading}" Margin="0 10 0 0 "/>
         <ItemsControl ItemsSource="{Binding RecordedVODs}">
             <ItemsControl.ItemsPanel>
                 <ItemsPanelTemplate>
@@ -28,5 +26,7 @@
                 </DataTemplate>
             </ItemsControl.ItemTemplate>
         </ItemsControl>
+        <controls:ProgressRing IsIndeterminate="True" BorderThickness="10" Width="100" Height="100" HorizontalAlignment="Center"
+                               IsVisible="{Binding IsLoading}" Margin="0 10 0 0 "/>
     </StackPanel>
 </reactiveUi:ReactiveUserControl>

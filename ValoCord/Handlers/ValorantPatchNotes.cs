@@ -24,10 +24,14 @@ public static class ValorantPatchNotes
         foreach (JToken result in newsObjects)
         {
             NewsData searchResult = result.ToObject<NewsData>();
+            if (!searchResult.action.payload.url.StartsWith("https://"))
+            {
+                searchResult.action.payload.url = "https://" + "playvalorant.com" + searchResult.action.payload.url;
+            }
             parsedNewsData.Add(searchResult);
         }
 
-        return parsedNewsData.Slice(0,7);
+        return parsedNewsData.Slice(0,6);
     }
 }
 

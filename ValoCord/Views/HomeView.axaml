@@ -4,20 +4,58 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:userControls="clr-namespace:ValoCord.UserControls"
              xmlns:viewModels="clr-namespace:ValoCord.ViewModels"
+             xmlns:controls="clr-namespace:FluentAvalonia.UI.Controls;assembly=FluentAvalonia"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="ValoCord.Views.HomeView"
              x:DataType="viewModels:HomeViewModel">
-    <Design.DataContext>
+    <UserControl.DataContext>
         <viewModels:HomeViewModel/>
-    </Design.DataContext>
-    <StackPanel>
-        <TextBlock Text="Latest Valorant News"/>
-        <ItemsControl Grid.Column="1" ItemsSource="{Binding RecentPatches}">
+    </UserControl.DataContext>
+    <UserControl.Styles>
+        <Style Selector="TextBlock.h2">
+            <Setter Property="FontSize" Value="20"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+        </Style>
+    </UserControl.Styles>
+    <StackPanel Margin="20">
+        <TextBlock Text="Recent Games" Classes="h2"/>
+        <ItemsControl ItemsSource="{Binding RecentVODCollection}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+            <ItemsControl.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <WrapPanel ItemSpacing="10" Background="Transparent"/>
+                </ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
             <ItemsControl.ItemTemplate>
                 <DataTemplate>
-                    <userControls:NewsItem/>
+                    <userControls:MiniVODListItem />
                 </DataTemplate>
             </ItemsControl.ItemTemplate>
         </ItemsControl>
+        <controls:ProgressRing IsIndeterminate="True" BorderThickness="10" Width="100" Height="100" HorizontalAlignment="Center"
+                               IsVisible="{Binding IsLoading}" Margin="0 10 0 0 "/>
+         <Grid ColumnDefinitions="* Auto" ColumnSpacing="10">
+             <StackPanel Grid.Column="0">
+                 <TextBlock Text="Latest Valorant News" Classes="h2"/>
+                 <ItemsControl ItemsSource="{Binding RecentPatches}">
+                     <ItemsControl.ItemTemplate>
+                         <DataTemplate>
+                             <userControls:NewsItem/>
+                         </DataTemplate>
+                     </ItemsControl.ItemTemplate>
+                 </ItemsControl>
+             </StackPanel>
+             <Grid Grid.Column="1" VerticalAlignment="Stretch" RowDefinitions="Auto *">
+                 <TextBlock Grid.Row="0" Text="Patch Notes" Classes="h2"/>
+                 <Border Grid.Row="1" Background="#211F1F" CornerRadius="10" Width="415" VerticalAlignment="Stretch" Margin="10"> 
+                     <TextBlock Margin="10">
+                         <TextBlock.Text>
+                             V1.0.0 - Initial Release
+                             
+                             =) TBD
+                         </TextBlock.Text>
+                     </TextBlock>
+                 </Border>
+             </Grid>
+         </Grid>
     </StackPanel>
 </UserControl>

@@ -23,7 +23,18 @@ public class VODListItemViewModel : ViewModelBase, INotifyPropertyChanged
     public Bitmap AgentIcon => LoadFromResource(new Uri($"avares://Valocord{AgentData.GetAgentIcons(Agent)}"));
     public Bitmap MapImage => LoadFromResource(new Uri($"avares://Valocord{MapData.GetFileName(_gameData.map)}"));
     public long RecordingStartTime => _gameData.recordingStartTime;
-    
+    public string TeamWon
+    {
+        get
+        {
+            if (_gameData.teams[0].roundsWon == _gameData.teams[1].roundsWon)
+                return "Draw";
+            var teamWon = _gameData.teams[0].roundsWon > _gameData.teams[1].roundsWon ? _gameData.teams[0].teamId : _gameData.teams[1].teamId;
+            if (teamWon == _gameData.playerTeam) 
+                return "Won";
+            return "Lost";
+        }
+    }
     public static Bitmap LoadFromResource(Uri resourceUri)
     {
         return new Bitmap(AssetLoader.Open(resourceUri));

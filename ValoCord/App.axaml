@@ -3,11 +3,14 @@
              xmlns:local="using:ValoCord"
              x:Class="ValoCord.App"
              xmlns:sty = "using:FluentAvalonia.Styling"
+             xmlns:converters="clr-namespace:ValoCord.Converters"
              RequestedThemeVariant="Dark">
     <Application.DataTemplates>
         <local:ViewLocator/>
     </Application.DataTemplates>
-
+    <Application.Resources>
+        <converters:StandingToColorConverter x:Key="StandingToColorConverter"/>
+    </Application.Resources>
     <Application.Styles>
         <sty:FluentAvaloniaTheme PreferUserAccentColor="True"/>
         <StyleInclude Source="avares://FluentAvalonia.ProgressRing/Styling/Controls/ProgressRing.axaml" />
