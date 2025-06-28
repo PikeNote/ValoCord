@@ -2,7 +2,6 @@
 using Avalonia.ReactiveUI;
 using System;
 using LibVLCSharp.Shared;
-using ValoCord.Fonts;
 
 namespace ValoCord
 {
