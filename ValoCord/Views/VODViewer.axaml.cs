@@ -1,19 +1,13 @@
 ﻿    using System;
-    using System.ComponentModel;
     using Avalonia;
     using Avalonia.Controls;
-    using Avalonia.Controls.Chrome;
     using Avalonia.Controls.Primitives;
     using Avalonia.Input;
     using Avalonia.Interactivity;
-    using Avalonia.Logging;
-    using Avalonia.Markup.Xaml;
-    using Avalonia.ReactiveUI;
-    using Avalonia.Threading;
     using FluentAvalonia.UI.Windowing;
-    using LibVLCSharp.Avalonia;
     using LibVLCSharp.Shared;
     using ValoCord.Data;
+    using ValoCord.Handlers;
     using ValoCord.ViewModels;
 
     namespace ValoCord.Views;
@@ -22,19 +16,16 @@
     {
         private VODViewerViewModel _viewModel;
         
-        private readonly LibVLC _libVLC;
         private readonly MediaPlayer _mediaPlayer;
         
         public VODViewer(GameData gd)
         {
-            _libVLC = new LibVLC();
-            _mediaPlayer = new MediaPlayer(_libVLC) {EnableHardwareDecoding = true};
+            _mediaPlayer = new MediaPlayer(LibVLCLoader.LibVLC) {EnableHardwareDecoding = true};
 
             InitializeComponent();
             
             _viewModel = new VODViewerViewModel()
             {
-                _libVLC = _libVLC,
                 MediaPlayer = _mediaPlayer,
                 gd = gd
             };

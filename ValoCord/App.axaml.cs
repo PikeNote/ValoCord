@@ -1,5 +1,4 @@
 using AsyncImageLoader;
-using AsyncImageLoader.Loaders;
 using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
@@ -21,6 +20,7 @@ namespace ValoCord
             Logs.Initialize();
             DatabaseHandler.Initialize();
             ImageLoader.AsyncImageLoader = new ScaledImageWebLoader(500);
+            LibVLCLoader.Initialize();
             //ImageLoader.AsyncImageLoader = new DiskCachedWebImageLoader();
         }
 

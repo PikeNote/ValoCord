@@ -16,7 +16,6 @@ public class VODViewerViewModel : ViewModelBase, INotifyPropertyChanged {
     private bool _isPlaying;
     private MediaPlayer? _mediaPlayer;
     
-    public LibVLC? _libVLC {get; set;}
     public MediaPlayer? MediaPlayer
     {
         get => _mediaPlayer;
@@ -192,14 +191,14 @@ public class VODViewerViewModel : ViewModelBase, INotifyPropertyChanged {
 
     public async Task PrepareVideoAsync()
     {
-        if (_libVLC == null || MediaPlayer == null) return;
+        if (MediaPlayer == null) return;
         
         IsVideoLoading = true;
 
         try
         {
             Media? media = null;
-            await Task.Run(() => { media = new Media(_libVLC, new Uri(VideoDirectory)); });
+            await Task.Run(() => { media = new Media(LibVLCLoader.LibVLC, new Uri(VideoDirectory)); });
 
             if (media != null)
             {
