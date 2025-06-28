@@ -37,7 +37,8 @@ public class VODListItemViewModel : ViewModelBase, INotifyPropertyChanged
     }
     public static Bitmap LoadFromResource(Uri resourceUri)
     {
-        return new Bitmap(AssetLoader.Open(resourceUri));
+        using var stream = AssetLoader.Open(resourceUri);
+        return Bitmap.DecodeToWidth(stream, 228);
     }
 
     public string kda => $"{_gameData._players[_gameData.playerUUID].kills}/{_gameData._players[_gameData.playerUUID].deaths}/{_gameData._players[_gameData.playerUUID].assists}";
