@@ -44,7 +44,6 @@ public static class ProcessHandler
                 _activeProcess = true;
                 await ValorantAPI.reAuthAttempt();
                 ValorantLogHandler.StartLogging();
-                ValorantRecorder.SetWindowHandler();
 
             }
         }

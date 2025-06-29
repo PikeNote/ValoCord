@@ -36,29 +36,38 @@ public static class ValorantRecorder
     private static IntPtr ValorantWindowHandler = IntPtr.Zero;
     private static Logger logger = LogManager.GetLogger("Video Recordinng");
     private static DisplayRecordingSource dispRecordingSource = null;
-    private static WindowWatcher _winWatcher = new WindowWatcher(ValorantWindowHandler);
+    private static WindowWatcher? _winWatcher;
 
     private static Recorder rd;
-    public static async void SetWindowHandler()
+    public static async Task SetWindowHandler(int maxRetries = 5, int delayMs = 500)
     {
-        await Task.Delay(3000);
-        foreach (Process pList in Process.GetProcesses())
+        int attempt = 0;
+
+        while (attempt < maxRetries)
         {
-            if (pList.MainWindowTitle.Contains("VALORANT"))
+            foreach (Process pList in Process.GetProcesses())
             {
-                ValorantWindowHandler = pList.MainWindowHandle;
-                if (ValorantWindowHandler == IntPtr.Zero)
+                if (pList.MainWindowTitle.Contains("VALORANT"))
                 {
+                    ValorantWindowHandler = pList.MainWindowHandle;
+                    _winWatcher = new WindowWatcher(ValorantWindowHandler);
+                        
+                    if (ValorantWindowHandler != IntPtr.Zero)
+                    {
+                        return;
+                    }
                     Console.WriteLine("Window handle not grabbed! Trying again...");
-                    SetWindowHandler();
                 }
-            }
-        }   
+            } 
+            attempt++;
+            await Task.Delay(delayMs);
+        }
     }
     
-    public static void StartRecording(String fileName)
+    public static async Task StartRecording(String fileName)
     {
         logger.Info("Video recording request: " + fileName);
+        await SetWindowHandler();
 
         GetWindowRect(ValorantWindowHandler, out RECT winRect);
         int winWidth  = winRect.Right  - winRect.Left;
@@ -138,8 +147,8 @@ public static class ValorantRecorder
             rec.OnStatusChanged += Rec_OnStatusChanged;
             
             String videoPath = Path.Combine(Paths.DefaultVideoPath, $"{fileName}.mp4");
-            rec.Record(videoPath);
             _winWatcher.Start();
+            rec.Record(videoPath);
         }
         else
         {
@@ -177,8 +186,11 @@ public static class ValorantRecorder
     private static void Rec_OnRecordingComplete(object? sender, RecordingCompleteEventArgs e)
     {
         //Get the file path if recorded to a file
-        string path = e.FilePath;	
-        _winWatcher.Stop();
+        string path = e.FilePath;
+        if (_winWatcher != null)
+        {
+            _winWatcher.Stop();
+        }
     }
     private static void Rec_OnRecordingFailed(object? sender, RecordingFailedEventArgs e)
     {

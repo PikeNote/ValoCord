@@ -52,11 +52,11 @@ public static partial class ValorantLogHandler
         Watcher.EnableRaisingEvents = true;
     }
 
-    private static void OnCreated(object sender, FileSystemEventArgs e)
+    private static async void OnCreated(object sender, FileSystemEventArgs e)
     {
         if (!e.FullPath.Equals(ValorantLogPath, StringComparison.OrdinalIgnoreCase) || _cts == null ||
             _cts is { Token.IsCancellationRequested: true }) return;
-        StopLogging();
+        await StopLogging();
         StartLogging();
     }
 
@@ -70,7 +70,7 @@ public static partial class ValorantLogHandler
             _logger.Info("Logging started!");
             
             _cts = new CancellationTokenSource();
-            _loggingTask = Task.Run(() => MonitorLog(_cts.Token));
+            _loggingTask = Task.Run(() => MonitorLog(_cts.Token), _cts.Token);
         }
     }
     
@@ -84,18 +84,33 @@ public static partial class ValorantLogHandler
             _activeFileStream = File.Open(ValorantLogPath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
             _activeStreamReader = new StreamReader(_activeFileStream);
 
-            _activeStreamReader.ReadToEnd(); // Skip existing content
-
+            await _activeStreamReader.ReadToEndAsync(token); // Skip existing content
+            StringBuilder buffer = new();
+            
             while (!token.IsCancellationRequested)
             {
-                if (!_activeStreamReader.EndOfStream)
+                string newLogText = await _activeStreamReader.ReadToEndAsync(token);
+                if (!string.IsNullOrEmpty(newLogText))
                 {
-                    string line = Regex.Replace(_activeStreamReader.ReadLine(), @"\t|\r", "");
-                    ProcessLogging(line);
+                    buffer.Append(newLogText);
+                    string bufferText = buffer.ToString();
+                    int lastNewline = bufferText.LastIndexOf('\n');
+
+                    if (lastNewline >= 0)
+                    {
+                        string[] lines = bufferText.Substring(0, lastNewline).Split('\n');
+                        foreach (var line in lines)
+                        {
+                            string processedLine = Regex.Replace(line, @"\t|\r", "");
+                            ProcessLogging(processedLine);
+                        }
+                        
+                        buffer.Remove(0, lastNewline + 1);
+                    }
                 }
                 else
                 {
-                    await Task.Delay(100); // Avoid tight loop
+                    await Task.Delay(100, token); // Avoid tight loop
                 }
             }
         }
@@ -324,21 +339,49 @@ public static partial class ValorantLogHandler
         ResetGd();
     }
 
-    public static void StopLogging()
+    public static async Task StopLogging()
     {
+        _logger.Info("Stopping logger...");
+        CancellationTokenSource ctsToCancel = null;
+        Task taskToAwait = null;
+        
         lock (_lock)
         {
-            _logger.Info("Stopping logger...");
-            _cts?.Cancel();
-            _cts?.Dispose();
-            _cts = null;
+            ctsToCancel = _cts;
+            taskToAwait = _loggingTask;
             
-            _activeStreamReader?.Dispose();
-            _activeFileStream?.Dispose();
-
-            _activeStreamReader = null;
-            _activeFileStream = null;
+            _cts = null;
+            _loggingTask = null;
         }
+        
+        ctsToCancel?.Cancel();
+        if (taskToAwait != null)
+        {
+            try
+            {
+                await taskToAwait.WaitAsync(TimeSpan.FromSeconds(3));
+            }
+            catch (Exception ex)
+            {
+                _logger.Error($"Error waiting for previous logging operation to close: {ex.Message}");
+            }
+        }
+        
+        lock(_lock)
+        {
+            if (_activeStreamReader != null)
+            {
+                _activeStreamReader.Dispose();
+                _activeStreamReader = null;
+            }
+            if (_activeFileStream != null)
+            {
+                _activeFileStream.Dispose();
+                _activeFileStream = null;
+            }
+            ctsToCancel?.Dispose();
+        }
+        _logger.Info("Logger stopped.");
     }
 
     public static void ResetGd()

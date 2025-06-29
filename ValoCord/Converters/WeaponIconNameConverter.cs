@@ -12,7 +12,8 @@ public class WeaponIconNameConverter : IMultiValueConverter
 {
     public object? Convert(IList<object>? values, Type targetType, object? parameter, CultureInfo culture)
     {
-        if(values[0] is not string weaponUUID || values[2] is not Dictionary<String, PlayerData> players || values[1] is not string killerUUID) {
+        string? weaponUUID = values[0] as string ?? "";
+        if(values[2] is not Dictionary<String, PlayerData> players || values[1] is not string killerUUID) {
             return null;
         }
 
