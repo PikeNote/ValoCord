@@ -3,7 +3,6 @@ using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
 using ValoCord.Handlers;
-using ValoCord.Video;
 using ValoCord.ViewModels;
 using ValoCord.Views;
 
@@ -11,8 +10,6 @@ namespace ValoCord
 {
     public partial class App : Application
     {
-        public static VLCPlayerService AppNativeVideoPlayerService = new VLCPlayerService();
-        
         public override void Initialize()
         {
             AvaloniaXamlLoader.Load(this);
