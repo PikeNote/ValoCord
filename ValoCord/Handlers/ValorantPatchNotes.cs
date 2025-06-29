@@ -31,7 +31,7 @@ public static class ValorantPatchNotes
             parsedNewsData.Add(searchResult);
         }
 
-        return parsedNewsData.Slice(0,6);
+        return parsedNewsData.Slice(0,8);
     }
 }
 

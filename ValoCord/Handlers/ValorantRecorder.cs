@@ -82,9 +82,6 @@ public static class ValorantRecorder
         
         if (ValorantWindowHandler != IntPtr.Zero)
         { 
-            SettingsProviderBase<SettingsData> _settingsProvider = new SettingsProviderBase<SettingsData>();
-            _settingsProvider.Load("settings.json");
-            
             List<RecordingSourceBase> rdSources = new List<RecordingSourceBase>();
             dispRecordingSource = new DisplayRecordingSource
             {
@@ -102,13 +99,13 @@ public static class ValorantRecorder
             String inputAudioDevice = "";
             String outputAudioDevice = "";
 
-            if (_settingsProvider.Value.SelectedInputDeviceName.DeviceName != "System Default")
+            if (ApplicationSettings.SettingsData.Value.SelectedInputDeviceName.DeviceName != "System Default")
             {
-                var audioDevice = inputDevices.Find(dev => dev.FriendlyName == _settingsProvider.Value.SelectedInputDeviceName.DeviceName);
+                var audioDevice = inputDevices.Find(dev => dev.FriendlyName == ApplicationSettings.SettingsData.Value.SelectedInputDeviceName.DeviceName);
                 if (audioDevice == null)
                 {
-                    _settingsProvider.Value.ResetInputDevice();
-                    _settingsProvider.Save("settings.json");
+                    ApplicationSettings.SettingsData.Value.ResetInputDevice();
+                    ApplicationSettings.SettingsData.Save("settings.json");
                 }
                 else
                 {
@@ -116,13 +113,13 @@ public static class ValorantRecorder
                 }
             }
             
-            if (_settingsProvider.Value.SelectedOutputDeviceName.DeviceName != "System Default")
+            if (ApplicationSettings.SettingsData.Value.SelectedOutputDeviceName.DeviceName != "System Default")
             {
-                var audioDevice = inputDevices.Find(dev => dev.FriendlyName == _settingsProvider.Value.SelectedOutputDeviceName.DeviceName);
+                var audioDevice = inputDevices.Find(dev => dev.FriendlyName == ApplicationSettings.SettingsData.Value.SelectedOutputDeviceName.DeviceName);
                 if (audioDevice == null)
                 {
-                    _settingsProvider.Value.ResetInputDevice();
-                    _settingsProvider.Save("settings.json");
+                    ApplicationSettings.SettingsData.Value.ResetInputDevice();
+                    ApplicationSettings.SettingsData.Save("settings.json");
                 }
                 else
                 {
@@ -149,19 +146,19 @@ public static class ValorantRecorder
                     IsAudioEnabled = true,
                     AudioInputDevice = inputAudioDevice,
                     AudioOutputDevice = outputAudioDevice,
-                    InputVolume = _settingsProvider.Value.SelectedInputDeviceName.Volume,
-                    OutputVolume = _settingsProvider.Value.SelectedOutputDeviceName.Volume,
+                    InputVolume = ApplicationSettings.SettingsData.Value.SelectedInputDeviceName.Volume,
+                    OutputVolume = ApplicationSettings.SettingsData.Value.SelectedOutputDeviceName.Volume,
                 },
                 VideoEncoderOptions = new VideoEncoderOptions
                 {
-                    Bitrate = _settingsProvider.Value.Bitrate,
-                    Framerate = _settingsProvider.Value.FrameRate,
+                    Bitrate = ApplicationSettings.SettingsData.Value.Bitrate,
+                    Framerate = ApplicationSettings.SettingsData.Value.FrameRate,
                     IsFixedFramerate = false,
-                    Encoder = _settingsProvider.Value.CreateVideoEncoder(),
+                    Encoder = ApplicationSettings.SettingsData.Value.CreateVideoEncoder(),
                     IsFragmentedMp4Enabled = true,
-                    IsThrottlingDisabled = !_settingsProvider.Value.ThrottlingEnabled,
-                    IsHardwareEncodingEnabled = _settingsProvider.Value.HardwareAcceleration,
-                    IsLowLatencyEnabled = _settingsProvider.Value.IsLowLatencyEnabled,
+                    IsThrottlingDisabled = !ApplicationSettings.SettingsData.Value.ThrottlingEnabled,
+                    IsHardwareEncodingEnabled = ApplicationSettings.SettingsData.Value.HardwareAcceleration,
+                    IsLowLatencyEnabled = ApplicationSettings.SettingsData.Value.IsLowLatencyEnabled,
                     IsMp4FastStartEnabled = false
                 },
                 MouseOptions = new MouseOptions

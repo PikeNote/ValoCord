@@ -15,7 +15,6 @@ namespace ValoCord.ViewModels;
 
 public class SettingsViewModel : ViewModelBase, INotifyPropertyChanged
 {
-    private SettingsProviderBase<SettingsData> _settingsProvider;
     private AudioDevice _selectedInputDevice;
     private AudioDevice _selectedOutputDevice;
     
@@ -30,7 +29,7 @@ public class SettingsViewModel : ViewModelBase, INotifyPropertyChanged
         set
         {
             this.RaiseAndSetIfChanged(ref _selectedInputDevice, value);
-            _settingsProvider.Value.SelectedInputDeviceName.DeviceName = SelectedInputDevice.FriendlyName;
+            ApplicationSettings.SettingsData.Value.SelectedInputDeviceName.DeviceName = SelectedInputDevice.FriendlyName;
             OnPropertyChanged(nameof(SelectedInputDevice));
         }
     }
@@ -41,64 +40,64 @@ public class SettingsViewModel : ViewModelBase, INotifyPropertyChanged
         set
         {
             this.RaiseAndSetIfChanged(ref _selectedOutputDevice, value);
-            _settingsProvider.Value.SelectedOutputDeviceName.DeviceName = SelectedOutputDevice.FriendlyName;
+            ApplicationSettings.SettingsData.Value.SelectedOutputDeviceName.DeviceName = SelectedOutputDevice.FriendlyName;
             OnPropertyChanged(nameof(SelectedOutputDevice));
         }
     }
 
     public int InputAudioVolume
     {
-        get => _settingsProvider.Value.SelectedInputDeviceName.Volume;
+        get => ApplicationSettings.SettingsData.Value.SelectedInputDeviceName.Volume;
         set
         {
-            _settingsProvider.Value.SelectedInputDeviceName.Volume = value;
+            ApplicationSettings.SettingsData.Value.SelectedInputDeviceName.Volume = value;
             OnPropertyChanged(nameof(InputAudioVolume));
         }
     }
     
     public int OutputAudioVolume
     {
-        get => _settingsProvider.Value.SelectedOutputDeviceName.Volume;
+        get => ApplicationSettings.SettingsData.Value.SelectedOutputDeviceName.Volume;
         set
         {
-            _settingsProvider.Value.SelectedOutputDeviceName.Volume = value; 
+            ApplicationSettings.SettingsData.Value.SelectedOutputDeviceName.Volume = value; 
             OnPropertyChanged(nameof(OutputAudioVolume));
         }
     }
     
     public int BitrateValue
     {
-        get => _settingsProvider.Value.Bitrate;
-        set => _settingsProvider.Value.Bitrate = value;
+        get => ApplicationSettings.SettingsData.Value.Bitrate;
+        set => ApplicationSettings.SettingsData.Value.Bitrate = value;
     }
     
     public int FramesPerSecondValue
     {
-        get => _settingsProvider.Value.FrameRate;
-        set => _settingsProvider.Value.FrameRate = value;
+        get => ApplicationSettings.SettingsData.Value.FrameRate;
+        set => ApplicationSettings.SettingsData.Value.FrameRate = value;
     }
 
-    public Boolean IsVBR => _settingsProvider.Value.EncoderBitRateMode == BitrateControlMode.VBR;
-    public int Quality => _settingsProvider.Value.Quality;
+    public Boolean IsVBR => ApplicationSettings.SettingsData.Value.EncoderBitRateMode == BitrateControlMode.VBR;
+    public int Quality => ApplicationSettings.SettingsData.Value.Quality;
     public Array VideoEncoderOptions => Enum.GetValues(typeof(VideoEncoderFormat));
     public Array BitRateControlOptions => Enum.GetValues(typeof(BitrateControlMode));
 
     public VideoEncoderFormat SelectedVideoEncoderFormat
     {
-        get => _settingsProvider.Value.Encoder;
+        get => ApplicationSettings.SettingsData.Value.Encoder;
         set
         {
-            _settingsProvider.Value.Encoder = value;
+            ApplicationSettings.SettingsData.Value.Encoder = value;
             OnPropertyChanged(nameof(SelectedVideoEncoderFormat));
         }
     }
     
     public BitrateControlMode SelectedBitRateControl
     {
-        get => _settingsProvider.Value.EncoderBitRateMode;
+        get => ApplicationSettings.SettingsData.Value.EncoderBitRateMode;
         set
         {
-            _settingsProvider.Value.EncoderBitRateMode = value;
+            ApplicationSettings.SettingsData.Value.EncoderBitRateMode = value;
             OnPropertyChanged(nameof(SelectedBitRateControl));
             OnPropertyChanged(nameof(IsVBR));
         }
@@ -106,26 +105,26 @@ public class SettingsViewModel : ViewModelBase, INotifyPropertyChanged
 
     public Boolean HardwareAccelerationEnabled
     {
-        get => _settingsProvider.Value.HardwareAcceleration;
-        set => _settingsProvider.Value.HardwareAcceleration = value;
+        get => ApplicationSettings.SettingsData.Value.HardwareAcceleration;
+        set => ApplicationSettings.SettingsData.Value.HardwareAcceleration = value;
     }
     
     public Boolean ThrottlingEnabled
     {
-        get => _settingsProvider.Value.ThrottlingEnabled;
-        set => _settingsProvider.Value.ThrottlingEnabled = value;
+        get => ApplicationSettings.SettingsData.Value.ThrottlingEnabled;
+        set => ApplicationSettings.SettingsData.Value.ThrottlingEnabled = value;
     }
 
     public Boolean LowLatencyEnabled
     {
-        get => _settingsProvider.Value.IsLowLatencyEnabled;
-        set => _settingsProvider.Value.IsLowLatencyEnabled = value;
+        get => ApplicationSettings.SettingsData.Value.IsLowLatencyEnabled;
+        set => ApplicationSettings.SettingsData.Value.IsLowLatencyEnabled = value;
     }
     
     public List<GameModeSettings> GameModeEnabled
     {
-        get => _settingsProvider.Value.EnabledGameModes;
-        set => _settingsProvider.Value.EnabledGameModes = value;
+        get => ApplicationSettings.SettingsData.Value.EnabledGameModes;
+        set => ApplicationSettings.SettingsData.Value.EnabledGameModes = value;
     }
     
     protected virtual void OnPropertyChanged(string propertyName)
@@ -135,9 +134,6 @@ public class SettingsViewModel : ViewModelBase, INotifyPropertyChanged
     
     public SettingsViewModel()
     {
-        _settingsProvider = new SettingsProviderBase<SettingsData>();
-        _settingsProvider.Load("settings.json");
-        
         var inputDevices = new List<AudioDevice>
         {
             new AudioDevice { FriendlyName = "System Default" }
@@ -152,9 +148,9 @@ public class SettingsViewModel : ViewModelBase, INotifyPropertyChanged
         outputDevices.AddRange(Recorder.GetSystemAudioDevices(AudioDeviceSource.OutputDevices));
         OutputAudioDevices = outputDevices;
         
-        SelectedInputDevice = InputAudioDevices.FirstOrDefault(d => d.FriendlyName == _settingsProvider.Value.SelectedInputDeviceName.DeviceName)
+        SelectedInputDevice = InputAudioDevices.FirstOrDefault(d => d.FriendlyName == ApplicationSettings.SettingsData.Value.SelectedInputDeviceName.DeviceName)
                               ?? InputAudioDevices.First();
-        SelectedOutputDevice = OutputAudioDevices.FirstOrDefault(d => d.FriendlyName == _settingsProvider.Value.SelectedOutputDeviceName.DeviceName)
+        SelectedOutputDevice = OutputAudioDevices.FirstOrDefault(d => d.FriendlyName == ApplicationSettings.SettingsData.Value.SelectedOutputDeviceName.DeviceName)
                                ?? OutputAudioDevices.First();
         
         var anyCheckChanged = this.GameModeEnabled
@@ -180,6 +176,6 @@ public class SettingsViewModel : ViewModelBase, INotifyPropertyChanged
 
     public void SaveSettings()
     {
-        _settingsProvider.Save("settings.json");
+        ApplicationSettings.SettingsData.Save("settings.json");
     }
 }

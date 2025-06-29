@@ -21,6 +21,7 @@ namespace ValoCord
             DatabaseHandler.Initialize();
             ImageLoader.AsyncImageLoader = new ScaledImageWebLoader(500);
             LibVLCLoader.Initialize();
+            ApplicationSettings.Initialize();
             //ImageLoader.AsyncImageLoader = new DiskCachedWebImageLoader();
         }
 
