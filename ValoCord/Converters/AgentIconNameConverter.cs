@@ -18,7 +18,7 @@ public class AgentIconNameConverter : IMultiValueConverter
             var uri = new Uri($"avares://Valocord{AgentData.GetAgentIcons(
                 AgentData.GetAgentNames("Jett")
             )}");
-            return new Bitmap(AssetLoader.Open(uri));
+            return Bitmap.DecodeToWidth(AssetLoader.Open(uri), 50);
         }
         
         try
@@ -27,7 +27,7 @@ public class AgentIconNameConverter : IMultiValueConverter
             var uri = new Uri($"avares://Valocord{AgentData.GetAgentIcons(
                 AgentData.GetAgentNames(player.character_played)
             )}");
-            return new Bitmap(AssetLoader.Open(uri));
+            return Bitmap.DecodeToWidth(AssetLoader.Open(uri), 50);
         }
         catch (KeyNotFoundException ex)
         {

@@ -24,7 +24,7 @@ public class SettingsData
     public VideoEncoderFormat  Encoder {get; set;} = VideoEncoderFormat.H264;
     
     [JsonConverter(typeof(StringEnumConverter))]
-    public BitrateControlMode  EncoderBitRateMode {get; set;} = BitrateControlMode.CBR;
+    public BitrateControlMode  EncoderBitRateMode {get; set;} = BitrateControlMode.VBR;
     
     public Boolean HardwareAcceleration { get; set; } = true;
 
@@ -32,7 +32,7 @@ public class SettingsData
 
     public Boolean IsLowLatencyEnabled { get; set; } = false;
     
-    public int Bitrate { get; set; } = 96000;
+    public int Bitrate { get; set; } = 8000000;
     
     public int FrameRate { get; set; } = 60;
 
@@ -42,47 +42,50 @@ public class SettingsData
     
     
     
-    public VideoEncoderOptions CreateVideoEncoder()
+    public IVideoEncoder CreateVideoEncoder()
     {
-        VideoEncoderOptions vdOptions = new VideoEncoderOptions
-        {
-            Bitrate = Bitrate,
-            Framerate = FrameRate,
-            IsFixedFramerate = true,
-            IsThrottlingDisabled = ThrottlingEnabled,
-            IsHardwareEncodingEnabled = HardwareAcceleration,
-            IsLowLatencyEnabled = IsLowLatencyEnabled,
-            Quality = Quality,
-        };
         switch (Encoder)
         {
             case VideoEncoderFormat.H264:
-                vdOptions.Encoder = new H264VideoEncoder
+                return new H264VideoEncoder
                 {
                     BitrateMode = (EncoderBitRateMode == BitrateControlMode.VBR) ? H264BitrateControlMode.Quality : H264BitrateControlMode.CBR,
                     EncoderProfile = H264Profile.Main,
-                };
-                break;
+                };  
 
             case VideoEncoderFormat.H265:
-                vdOptions.Encoder = new H265VideoEncoder
+                return new H265VideoEncoder
                 {
                     BitrateMode = (EncoderBitRateMode == BitrateControlMode.VBR) ? H265BitrateControlMode.Quality : H265BitrateControlMode.CBR,
                     EncoderProfile = H265Profile.Main,
                 };
-                break;
 
             default:
-                vdOptions.Encoder = new H264VideoEncoder
+                return new H264VideoEncoder
                 {
                     BitrateMode = (EncoderBitRateMode == BitrateControlMode.VBR) ? H264BitrateControlMode.Quality : H264BitrateControlMode.CBR,
                     EncoderProfile = H264Profile.Main,
                 };
-                break;
         }
-        return vdOptions;
     }
 
+    public void ResetInputDevice()
+    {
+        SelectedInputDeviceName = new AudioDevice()
+        {
+            DeviceName = "System Default",
+            Volume = 50
+        };
+    }
+
+    public void ResetOutputDevice()
+    {
+        SelectedOutputDeviceName = new AudioDevice()
+        {
+            DeviceName = "System Default",
+            Volume = 50
+        };
+    }
 }
 
 public class AudioDevice

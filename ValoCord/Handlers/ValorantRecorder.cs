@@ -6,7 +6,7 @@ using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using NLog;
 using ScreenRecorderLib;
-
+using ValoCord.Data;
 namespace ValoCord.Handlers;
 
 public static class ValorantRecorder
@@ -81,7 +81,10 @@ public static class ValorantRecorder
         int offsetY = winRect.Top  - mi.rcMonitor.Top;
         
         if (ValorantWindowHandler != IntPtr.Zero)
-        {
+        { 
+            SettingsProviderBase<SettingsData> _settingsProvider = new SettingsProviderBase<SettingsData>();
+            _settingsProvider.Load("settings.json");
+            
             List<RecordingSourceBase> rdSources = new List<RecordingSourceBase>();
             dispRecordingSource = new DisplayRecordingSource
             {
@@ -92,7 +95,42 @@ public static class ValorantRecorder
             };
             
             rdSources.Add(dispRecordingSource);
-             RecorderOptions options = new RecorderOptions
+            
+            List<ScreenRecorderLib.AudioDevice> inputDevices = Recorder.GetSystemAudioDevices(AudioDeviceSource.InputDevices);
+            List<ScreenRecorderLib.AudioDevice> outputDevices = Recorder.GetSystemAudioDevices(AudioDeviceSource.OutputDevices);
+
+            String inputAudioDevice = "";
+            String outputAudioDevice = "";
+
+            if (_settingsProvider.Value.SelectedInputDeviceName.DeviceName != "System Default")
+            {
+                var audioDevice = inputDevices.Find(dev => dev.FriendlyName == _settingsProvider.Value.SelectedInputDeviceName.DeviceName);
+                if (audioDevice == null)
+                {
+                    _settingsProvider.Value.ResetInputDevice();
+                    _settingsProvider.Save("settings.json");
+                }
+                else
+                {
+                    inputAudioDevice = audioDevice.DeviceName;
+                }
+            }
+            
+            if (_settingsProvider.Value.SelectedOutputDeviceName.DeviceName != "System Default")
+            {
+                var audioDevice = inputDevices.Find(dev => dev.FriendlyName == _settingsProvider.Value.SelectedOutputDeviceName.DeviceName);
+                if (audioDevice == null)
+                {
+                    _settingsProvider.Value.ResetInputDevice();
+                    _settingsProvider.Save("settings.json");
+                }
+                else
+                {
+                    outputAudioDevice = audioDevice.DeviceName;
+                }
+            }
+
+            RecorderOptions options = new RecorderOptions
             {
                 SourceOptions = new SourceOptions
                 {
@@ -109,22 +147,21 @@ public static class ValorantRecorder
                     Bitrate = AudioBitrate.bitrate_128kbps,
                     Channels = AudioChannels.Stereo,
                     IsAudioEnabled = true,
+                    AudioInputDevice = inputAudioDevice,
+                    AudioOutputDevice = outputAudioDevice,
+                    InputVolume = _settingsProvider.Value.SelectedInputDeviceName.Volume,
+                    OutputVolume = _settingsProvider.Value.SelectedOutputDeviceName.Volume,
                 },
                 VideoEncoderOptions = new VideoEncoderOptions
                 {
-                    Quality = 50,
-                    Framerate = 144,
+                    Bitrate = _settingsProvider.Value.Bitrate,
+                    Framerate = _settingsProvider.Value.FrameRate,
                     IsFixedFramerate = false,
-                    Encoder = new H264VideoEncoder()
-                    {
-                        BitrateMode = H264BitrateControlMode.Quality,
-                        EncoderProfile = H264Profile.Main,
-
-                    },
+                    Encoder = _settingsProvider.Value.CreateVideoEncoder(),
                     IsFragmentedMp4Enabled = true,
-                    IsThrottlingDisabled = false,
-                    IsHardwareEncodingEnabled = true,
-                    IsLowLatencyEnabled = false,
+                    IsThrottlingDisabled = !_settingsProvider.Value.ThrottlingEnabled,
+                    IsHardwareEncodingEnabled = _settingsProvider.Value.HardwareAcceleration,
+                    IsLowLatencyEnabled = _settingsProvider.Value.IsLowLatencyEnabled,
                     IsMp4FastStartEnabled = false
                 },
                 MouseOptions = new MouseOptions

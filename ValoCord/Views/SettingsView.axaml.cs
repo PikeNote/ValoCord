@@ -16,6 +16,8 @@ public partial class SettingsView : UserControl
         InputVolume.AddHandler(PointerReleasedEvent, InputElement_OnPointerReleased, RoutingStrategies.Tunnel);
         OutputVolume.AddHandler(PointerReleasedEvent, InputElement_OnPointerReleased, RoutingStrategies.Tunnel);
         BitrateBox.AddHandler(KeyDownEvent, InputElement_OnKeyDown, RoutingStrategies.Tunnel);
+        FrameRateBox.AddHandler(KeyDownEvent, InputElement_OnKeyDown, RoutingStrategies.Tunnel);
+        QualityBox.AddHandler(KeyDownEvent, InputElement_OnKeyDown, RoutingStrategies.Tunnel);
     }
 
     private void InputElement_OnPointerReleased(object? sender, PointerReleasedEventArgs e)

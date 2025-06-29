@@ -72,6 +72,14 @@ public class SettingsViewModel : ViewModelBase, INotifyPropertyChanged
         set => _settingsProvider.Value.Bitrate = value;
     }
     
+    public int FramesPerSecondValue
+    {
+        get => _settingsProvider.Value.FrameRate;
+        set => _settingsProvider.Value.FrameRate = value;
+    }
+
+    public Boolean IsVBR => _settingsProvider.Value.EncoderBitRateMode == BitrateControlMode.VBR;
+    public int Quality => _settingsProvider.Value.Quality;
     public Array VideoEncoderOptions => Enum.GetValues(typeof(VideoEncoderFormat));
     public Array BitRateControlOptions => Enum.GetValues(typeof(BitrateControlMode));
 
@@ -92,6 +100,7 @@ public class SettingsViewModel : ViewModelBase, INotifyPropertyChanged
         {
             _settingsProvider.Value.EncoderBitRateMode = value;
             OnPropertyChanged(nameof(SelectedBitRateControl));
+            OnPropertyChanged(nameof(IsVBR));
         }
     }
 

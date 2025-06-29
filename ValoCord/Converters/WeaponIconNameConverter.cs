@@ -43,7 +43,7 @@ public class WeaponIconNameConverter : IMultiValueConverter
                     uri = new Uri($"avares://Valocord{WeaponData.GetFileName(WeaponData.GetDisplayName(weaponUUID))}");
                     break;
             }
-            return new Bitmap(AssetLoader.Open(uri));
+            return Bitmap.DecodeToWidth(AssetLoader.Open(uri), 200);
         }
         catch (Exception)
         {

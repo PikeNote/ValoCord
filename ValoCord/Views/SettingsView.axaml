@@ -10,9 +10,19 @@
          <UserControl.DataContext>
              <viewModels:SettingsViewModel />
          </UserControl.DataContext>
-         <StackPanel Margin="10">
+         <UserControl.Styles>
+             <Style Selector="TextBlock.h2">
+                 <Setter Property="FontSize" Value="20"/>
+                 <Setter Property="FontWeight" Value="Bold"/>
+             </Style>
+             
+             <Style Selector="TextBox#InputBox">
+                 <Setter Property="VerticalContentAlignment" Value="Center"/>
+             </Style>
+         </UserControl.Styles>
+         <StackPanel Margin="10" Spacing="10">
              <StackPanel Spacing="10">
-                 <TextBlock Text="Input/Output Settings"/>
+                 <TextBlock Text="Input/Output Settings" Classes="h2"/>
                  <StackPanel Orientation="Horizontal" Spacing="10">
                      <StackPanel Width="400">
                          <controls:FAComboBox Header="Input Audio Devices" IsEditable="False" IsTextSearchEnabled="True" ItemsSource="{Binding InputAudioDevices}"
@@ -48,8 +58,8 @@
              </StackPanel>
              
              <StackPanel Spacing="10">
-                 <TextBlock Text="Encoder Settings"/>
-                 <Grid ColumnDefinitions="Auto,Auto,Auto" ColumnSpacing="10" Focusable="True">
+                 <TextBlock Text="Encoder Settings" Classes="h2"/>
+                 <Grid ColumnDefinitions="Auto,Auto,Auto, Auto" ColumnSpacing="10" Focusable="True">
                      <controls:FAComboBox Grid.Column="0"  Header="Encoder" IsEditable="False" IsTextSearchEnabled="True" 
                                           ItemsSource="{Binding VideoEncoderOptions}"
                                           SelectedItem="{Binding SelectedVideoEncoderFormat}" Width="250">  
@@ -69,9 +79,15 @@
                              </DataTemplate>
                          </controls:FAComboBox.ItemTemplate>
                      </controls:FAComboBox>
-                     <controls:NumberBox Grid.Column="2" Name="BitrateBox" Header="Bitrate"
-                                         Value="{Binding BitrateValue, Mode=TwoWay}" VerticalAlignment="Stretch"
+                     <controls:NumberBox Grid.Column="2" Name="FrameRateBox" Header="Framerate"
+                                         Value="{Binding FramesPerSecondValue, Mode=TwoWay}" VerticalAlignment="Stretch"
                                          TextAlignment="Center" Width="250"/>
+                     <controls:NumberBox Grid.Column="3" Name="BitrateBox" Header="Bitrate"
+                                         Value="{Binding BitrateValue, Mode=TwoWay}" VerticalAlignment="Stretch"
+                                         TextAlignment="Center" Width="250" IsVisible="{Binding !IsVBR}"/>
+                     <controls:NumberBox Grid.Column="3" Name="QualityBox" Header="Quality"
+                                         Value="{Binding Quality, Mode=TwoWay}" VerticalAlignment="Stretch"
+                                         TextAlignment="Center" Width="250" IsVisible="{Binding IsVBR}"/>
                  </Grid>
                  <StackPanel Orientation="Horizontal" Spacing="25">
                      <ToggleSwitch IsChecked="{Binding HardwareAccelerationEnabled, Mode=TwoWay}">Hardware Acceleration</ToggleSwitch>
@@ -80,7 +96,7 @@
                  </StackPanel>
              </StackPanel>
              <StackPanel Spacing="10">
-                 <TextBlock Text="Game Settings"></TextBlock>
+                 <TextBlock Text="Game Settings" Classes="h2"></TextBlock>
                  <StackPanel>
                      <TextBlock Text="Enabled Modes:"></TextBlock>
                      <ItemsControl ItemsSource="{Binding GameModeEnabled}">
