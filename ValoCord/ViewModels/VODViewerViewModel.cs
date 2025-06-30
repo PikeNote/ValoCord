@@ -98,6 +98,7 @@ public class VODViewerViewModel : ViewModelBase, INotifyPropertyChanged {
     public List<RoundData> RoundDataList => gd._roundEvents;
     public string TeamWon => gd.playerTeam;
     public string PlayerTeam => gd.playerTeam;
+    public string PlayerRecordingUUID => gd.playerUUID;
     public ReactiveCommand<IList<object>, Unit> ChangeTimeCommand { get; }
     public string GameTime => DateTimeOffset.FromUnixTimeMilliseconds(gd.matchStartTime).ToString("yyyy/MM/dd - hh:mm tt");
     public string GameDescription => $"{GameMode} - {MapData.GetDisplayName(gd.map)}";
@@ -134,6 +135,7 @@ public class VODViewerViewModel : ViewModelBase, INotifyPropertyChanged {
 
     public VODViewerViewModel()
     {
+        MediaPlayer = new MediaPlayer(LibVLCLoader.LibVLC) {EnableHardwareDecoding = true};
         ChangeTimeCommand = ReactiveCommand.Create<IList<object>>(ChangeTime);
     }
     

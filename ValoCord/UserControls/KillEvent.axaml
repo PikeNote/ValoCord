@@ -22,6 +22,7 @@
             <Binding Path="AgentKilling"/>
             <Binding Path="DataContext.AllPlayers" RelativeSource="{RelativeSource AncestorType=views:VODViewer}"/>
             <Binding Path="DataContext.TeamWon" RelativeSource="{RelativeSource AncestorType=views:VODViewer}"/>
+            <Binding Path="DataContext.PlayerRecordingUUID" RelativeSource="{RelativeSource AncestorType=views:VODViewer}"/>
         </MultiBinding>
     </UserControl.Background>
     <Grid ColumnDefinitions="* 2* * 1.25*" Height="50" HorizontalAlignment="Stretch" ColumnSpacing="5" Margin="0 10 0 10 ">

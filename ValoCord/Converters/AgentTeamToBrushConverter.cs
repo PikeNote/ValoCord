@@ -34,6 +34,17 @@ public class AgentTeamToBrushConverter: IMultiValueConverter
         }
     };
     
+    private readonly LinearGradientBrush currentPlayerBrush = new LinearGradientBrush
+    {
+        StartPoint = new RelativePoint(0, 0, RelativeUnit.Relative),
+        EndPoint = new RelativePoint(1, 1, RelativeUnit.Relative),
+        GradientStops = new GradientStops
+        {
+            new GradientStop(Color.Parse("#756b49"), 0),
+            new GradientStop(Colors.Transparent, 0.7)
+        }
+    };
+    
     public object? Convert(IList<object>? values, Type targetType, object? parameter, CultureInfo culture)
     {
         if (values.Count < 3)
@@ -42,12 +53,17 @@ public class AgentTeamToBrushConverter: IMultiValueConverter
         var playerUUID = values[0] as string;
         var allPlayers = values[1] as Dictionary<string, PlayerData>;
         var playerTeam = values[2] as string;
+        var recordingPlayerUUID = values[3] as string;
         
-        if (playerUUID != null && allPlayers != null && playerTeam != null && allPlayers.TryGetValue(playerUUID, out var player))
+        if (playerUUID != null && allPlayers != null && playerTeam != null && allPlayers.TryGetValue(playerUUID, out var player) && recordingPlayerUUID != null)
         {
 
             if (player.team_id == playerTeam)
             {
+                if (recordingPlayerUUID == playerUUID)
+                {
+                    return currentPlayerBrush;
+                }
                 return currentTeamBrush;
             }
 

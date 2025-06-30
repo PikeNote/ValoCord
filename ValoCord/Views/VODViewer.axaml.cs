@@ -20,19 +20,17 @@
         
         public VODViewer(GameData gd)
         {
-            _mediaPlayer = new MediaPlayer(LibVLCLoader.LibVLC) {EnableHardwareDecoding = true};
-
             InitializeComponent();
             
             _viewModel = new VODViewerViewModel()
             {
-                MediaPlayer = _mediaPlayer,
                 gd = gd
             };
             
             DataContext = _viewModel;
-            
-            Opened += MainWindow_Opened;
+
+
+            VODVideoView.Loaded += MainWindow_Opened;
             VideoProgress.AddHandler(PointerPressedEvent, InputElement_OnPointerPressed, RoutingStrategies.Tunnel);
             VideoProgress.AddHandler(PointerReleasedEvent, InputElement_OnPointerReleased, RoutingStrategies.Tunnel);
             TitleBar.ExtendsContentIntoTitleBar = true;
