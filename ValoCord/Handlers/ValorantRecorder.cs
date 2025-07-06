@@ -146,8 +146,8 @@ public static class ValorantRecorder
                     IsAudioEnabled = true,
                     AudioInputDevice = inputAudioDevice,
                     AudioOutputDevice = outputAudioDevice,
-                    InputVolume = ApplicationSettings.SettingsData.Value.SelectedInputDeviceName.Volume,
-                    OutputVolume = ApplicationSettings.SettingsData.Value.SelectedOutputDeviceName.Volume,
+                    InputVolume = ApplicationSettings.SettingsData.Value.SelectedInputDeviceName.Volume / 100,
+                    OutputVolume = ApplicationSettings.SettingsData.Value.SelectedOutputDeviceName.Volume / 100,
                 },
                 VideoEncoderOptions = new VideoEncoderOptions
                 {
