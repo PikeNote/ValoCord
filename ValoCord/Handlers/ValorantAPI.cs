@@ -1,18 +1,10 @@
-using System.Collections.Generic;
-using System.Threading.Tasks;
 using NLog;
 
 namespace ValoCord.Handlers;
 using ValAPINet;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 using RestSharp;
 using System;
-using System.IO;
-using System.Net;
-using System.Net.Security;
-using System.Security.Cryptography.X509Certificates;
-using System.Text;
 
 public class ValorantAPI
 {

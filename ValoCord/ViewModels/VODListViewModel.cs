@@ -1,5 +1,4 @@
 ﻿using System.Collections.ObjectModel;
-using System.Reactive.Disposables;
 using System.Windows;
 using CommunityToolkit.Mvvm.ComponentModel;
 using ReactiveUI;

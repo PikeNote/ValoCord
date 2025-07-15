@@ -1,13 +1,6 @@
 ﻿using System.ComponentModel;
-using System.Reactive;
-using System.Reactive.Linq;
-using System.Windows.Controls;
-using System.Windows.Input;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using LibMPVSharp;
-using LibVLCSharp.Shared;
-using ReactiveUI;
 using Unosquare.FFME.Common;
 using ValoCord.Data;
 using ValoCord.Handlers;

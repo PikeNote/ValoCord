@@ -1,5 +1,4 @@
 ﻿using ValoCord.Data;
-using ValoCord.Data;
 
 namespace ValoCord.Handlers;
 

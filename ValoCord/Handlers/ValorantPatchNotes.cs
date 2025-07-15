@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using HtmlAgilityPack;
-using Newtonsoft.Json;
+﻿using HtmlAgilityPack;
 using Newtonsoft.Json.Linq;
 using ValoCord.Data;
 

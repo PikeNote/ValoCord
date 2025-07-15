@@ -1,15 +1,12 @@
 ﻿using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
-using System.Windows.Input;
-using System.Windows.Threading;
 using CommunityToolkit.Mvvm.Input;
 using LibVLCSharp.Shared;
 using Unosquare.FFME.Common;
 using ValoCord.Data;
 using ValoCord.ViewModels;
 using Wpf.Ui.Controls;
-using Action = System.Action;
 
 namespace ValoCord.Views;
 

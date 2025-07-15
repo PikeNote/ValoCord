@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-
-namespace ValoCord.Data;
+﻿namespace ValoCord.Data;
 
 public static  class MapData
 {

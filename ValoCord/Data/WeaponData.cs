@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace ValoCord.Data;
+﻿namespace ValoCord.Data;
 
 public static class WeaponData
 {

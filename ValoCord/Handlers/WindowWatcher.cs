@@ -1,11 +1,9 @@
-﻿using System.Threading;
-using NLog;
+﻿using NLog;
 
 namespace ValoCord.Handlers;
 
 using System;
 using System.Runtime.InteropServices;
-using ScreenRecorderLib;
 
 class WindowWatcher
 {

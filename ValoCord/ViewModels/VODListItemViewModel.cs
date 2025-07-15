@@ -1,11 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
+﻿using System.ComponentModel;
 using System.Windows.Media.Imaging;
 using ValAPINet;
 using ValoCord.Data;
 using ValoCord.Extentions;
-using ValoCord.Handlers;
 
 namespace ValoCord.ViewModels;
 
