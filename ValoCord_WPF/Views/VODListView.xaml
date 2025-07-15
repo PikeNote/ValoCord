@@ -1,0 +1,40 @@
+﻿<Page x:Class="ValoCord_WPF.Views.VODListView"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+      xmlns:local="clr-namespace:ValoCord_WPF.Views"
+      xmlns:userControls="clr-namespace:ValoCord_WPF.Handlers.UserControls"
+      xmlns:viewModels="clr-namespace:ValoCord_WPF.ViewModels"
+      xmlns:userControls1="clr-namespace:ValoCord_WPF.UserControls"
+      xmlns:handlers="clr-namespace:ValoCord_WPF.Handlers"
+      xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+      mc:Ignorable="d"
+      Title="VODListView"
+      HorizontalAlignment="Stretch"
+      VerticalAlignment="Stretch">
+    <Page.DataContext>
+        <viewModels:VODListViewModel />
+    </Page.DataContext>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <userControls:FilterVOD/>
+        <ItemsControl  Grid.Row="1" ItemsSource="{Binding RecordedVODs}" HorizontalAlignment="Stretch">
+            <ItemsControl.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <StackPanel  Margin="5" Background="Transparent" HorizontalAlignment="Stretch"/>
+                </ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
+            <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                    <userControls1:VODListItem />
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+        </ItemsControl>
+        <ui:ProgressRing IsIndeterminate="True" BorderThickness="10" Width="100" Height="100" HorizontalAlignment="Center"
+                               Visibility="{Binding IsLoading}" Margin="0 10 0 0 "/>
+    </Grid>
+</Page>

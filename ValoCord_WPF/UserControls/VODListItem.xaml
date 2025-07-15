@@ -1,0 +1,156 @@
+﻿<UserControl x:Class="ValoCord_WPF.UserControls.VODListItem"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:local="clr-namespace:ValoCord_WPF.UserControls"
+             xmlns:viewModels="clr-namespace:ValoCord_WPF.ViewModels"
+             xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+             xmlns:components="clr-namespace:ValoCord_WPF.UserControls.Components"
+             xmlns:handlers="clr-namespace:ValoCord_WPF.Handlers"
+             xmlns:svgc="http://sharpvectors.codeplex.com/svgc/"
+             mc:Ignorable="d"
+             d:DesignHeight="300" d:DesignWidth="1200"
+             Background="Transparent"
+             d:DataContext="{d:DesignInstance Type=viewModels:VODListItemViewModel,IsDesignTimeCreatable=True}">
+    <UserControl.Resources>
+        <Style TargetType="TextBlock">
+            <Setter Property="FontSize" Value="16"/>
+            <Setter Property="Foreground" Value="White"></Setter>
+        </Style>
+        <Style x:Key="h3" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="20"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+        </Style>    
+        <Style x:Key="ScoreLine" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="25"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+        </Style>    
+        <Style x:Key="HitStatText" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="16"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+            <Setter Property="Foreground" Value="White"></Setter>
+        </Style>    
+        
+        <Style x:Key="HitStatBorder"  TargetType="Border">
+            <Setter Property="Width" Value="50"/>
+            <Setter Property="HorizontalAlignment" Value="Center"/>
+        </Style>    
+    </UserControl.Resources>
+    
+    <Border CornerRadius="10">
+            <Button Click="ButtonBase_OnClick" Background="Transparent" HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch" BorderThickness="0">
+                <Border Background="#211F1F" CornerRadius="10" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="0" ClipToBounds="True" Height="100">
+                    <Grid VerticalAlignment="Stretch" >
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"></ColumnDefinition>
+                            <ColumnDefinition Width="230"></ColumnDefinition>
+                            <ColumnDefinition Width="*"></ColumnDefinition>
+                            <ColumnDefinition Width="*"></ColumnDefinition>
+                            <ColumnDefinition Width="Auto"></ColumnDefinition>
+                        </Grid.ColumnDefinitions>
+                        <components:ResultIndicator Grid.Column="0"/>
+                        <Grid Grid.Column="1" VerticalAlignment="Stretch">
+                            <Border ClipToBounds="True" Height="117">
+                                <Image
+                                    d:Source="pack://application:,,,/Assets/Maps/Ascent.png"
+                                    Source="{Binding MapImage, FallbackValue='/Assets/Maps/Ascent.png'}"
+                                    d:DesignSource="/Assets/Maps/Ascent.png"
+                                    Stretch="UniformToFill"
+                                    VerticalAlignment="Stretch"
+                                    HorizontalAlignment="Stretch"
+                                />
+                            </Border>
+
+                            <Rectangle
+                                Fill="#80000000"
+                                HorizontalAlignment="Stretch"
+                                VerticalAlignment="Stretch" />
+                                
+                            <TextBlock HorizontalAlignment="Center"
+                                       VerticalAlignment="Center" TextAlignment="Center" Style="{StaticResource ScoreLine}" Text="{Binding Score}"/>
+                        </Grid>
+                        <Grid Grid.Column="2" Margin="5" handlers:GridSpacingHelper.RowSpacing="5" VerticalAlignment="Stretch">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="*"/>
+                            </Grid.RowDefinitions>
+                            <TextBlock Grid.Row="0" Style="{StaticResource h3}">
+                                <Run Text="{Binding MapName, Mode=OneWay}"/>
+                                <Run Text="("/>
+                                <Run Text="{Binding GameMode, Mode=OneWay}"/>
+                                <Run Text=")"/>
+                            </TextBlock>
+                            <TextBlock Grid.Row="1" Text="{Binding kda, Mode=OneWay}"/>
+                            <Grid Grid.Row="2" VerticalAlignment="Center" handlers:GridSpacingHelper.ColumnSpacing="5">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"></ColumnDefinition>
+                                    <ColumnDefinition Width="Auto"></ColumnDefinition>
+                                    <ColumnDefinition Width="Auto"></ColumnDefinition>
+                                </Grid.ColumnDefinitions>
+                                <Border Grid.Column="0">
+                                    <Image  Source="{Binding AgentIcon}" Width="37" RenderOptions.BitmapScalingMode="LowQuality" VerticalAlignment="Center"/>
+                                </Border>
+                                <Border Grid.Column="1">
+                                    <components:StandingPill VerticalAlignment="Center"/>
+                                </Border>
+                                
+                                <Border Grid.Column="2">
+                                    <TextBlock  Foreground="White" VerticalAlignment="Center" Text="{Binding CombatScore}" />
+                                </Border>
+                            </Grid>
+                        </Grid>
+                        <Grid Grid.Column="3" Margin="10" HorizontalAlignment="Center"  VerticalAlignment="Center" handlers:GridSpacingHelper.ColumnSpacing="10">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                            <StackPanel Grid.Column="0" handlers:SpacingSetter.Spacing="1">
+                                <Image HorizontalAlignment="Center" Source="{svgc:SvgImage Source='pack://application:,,,/Assets/SVG/Person/Head.svg'}" Width="17"/>
+                                <Image HorizontalAlignment="Center" Source="{svgc:SvgImage Source='pack://application:,,,/Assets/SVG/Person/Body.svg'}" Width="36"/>
+                                <Image HorizontalAlignment="Center" Source="{svgc:SvgImage Source='pack://application:,,,/Assets/SVG/Person/Legs.svg'}" Width="28"/>
+                            </StackPanel>
+                            <StackPanel Grid.Column="1">
+                                <StackPanel Orientation="Horizontal" handlers:SpacingSetter.Spacing="8"  VerticalAlignment="Center">
+                                    <TextBlock
+                                        Text="HEAD:"
+                                        FontWeight="SemiBold"
+                                         Style="{StaticResource HitStatText}"
+                                        Width="50"/>
+                                    <TextBlock
+                                        Text="{Binding Path=HeadPecentage}"
+                                        Foreground="LightGray" Style="{StaticResource HitStatText}"/>
+                                </StackPanel>
+                                
+                                <StackPanel Orientation="Horizontal" handlers:SpacingSetter.Spacing="8" VerticalAlignment="Center">
+                                    <TextBlock
+                                        Text="BODY:"
+                                        FontWeight="SemiBold"
+                                        VerticalAlignment="Center"  Width="50"/>
+                                    <TextBlock
+                                        Text="{Binding Path=BodyPercentage}"
+                                        VerticalAlignment="Center"
+                                        Foreground="LightGray"/>
+                                </StackPanel>
+
+                                <StackPanel Orientation="Horizontal"  handlers:SpacingSetter.Spacing="8" VerticalAlignment="Center">
+                                    <TextBlock
+                                        Text="LEGS:"
+                                        FontWeight="SemiBold"
+                                        VerticalAlignment="Center"  Width="50"/>
+                                    <TextBlock
+                                        Text="{Binding Path=LegPercentage}"
+                                        VerticalAlignment="Center"
+                                        Foreground="LightGray"/>
+                                </StackPanel>
+                            </StackPanel>
+                        </Grid>
+                        <TextBlock Grid.Column="4" VerticalAlignment="Bottom" Margin= "10" Text="{Binding Date}"/>
+                    
+                    </Grid>
+                </Border>
+        </Button>
+    </Border>
+</UserControl>
