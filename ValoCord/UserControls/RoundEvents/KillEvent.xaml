@@ -1,0 +1,76 @@
+﻿<UserControl x:Class="ValoCord.UserControls.KillEvent"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:converters="clr-namespace:ValoCord.Converters"
+             xmlns:views="clr-namespace:ValoCord.Views"
+             xmlns:data="clr-namespace:ValoCord.Data"
+             xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+             xmlns:handlers="clr-namespace:ValoCord.Handlers"
+             mc:Ignorable="d"
+             d:DesignHeight="100" d:DesignWidth="600"
+             d:DataContext="{d:DesignInstance Type=data:GameKill,IsDesignTimeCreatable=True}"
+             
+             >
+    <UserControl.Resources>
+        <converters:AgentIconNameConverter x:Key="AgentImageConverter" />
+        <converters:WeaponIconNameConverter x:Key="WeaponImageConverter" />
+        <converters:AgentTeamToBrushConverter x:Key="AgentTeamToBrushConverter" />
+    </UserControl.Resources>
+    <UserControl.Background>
+        <MultiBinding Converter="{StaticResource AgentTeamToBrushConverter}">
+            <Binding Path="AgentKilling"/>
+            <Binding Path="DataContext.AllPlayers" RelativeSource="{RelativeSource AncestorType=views:VODViewer}"/>
+            <Binding Path="DataContext.TeamWon" RelativeSource="{RelativeSource AncestorType=views:VODViewer}"/>
+            <Binding Path="DataContext.PlayerRecordingUUID" RelativeSource="{RelativeSource AncestorType=views:VODViewer}"/>
+        </MultiBinding>
+    </UserControl.Background>
+    
+    <Grid Height="50" HorizontalAlignment="Stretch" handlers:GridSpacer.ColumnSpacing="5" Margin="0 10 0 10 ">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="2*"/>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="1.25*"/>
+        </Grid.ColumnDefinitions>
+        <Border Grid.Column="0" ClipToBounds="True" CornerRadius="180">
+            <Image>
+                <Image.Source>
+                    <MultiBinding Converter="{StaticResource AgentImageConverter}">
+                        <Binding Path="AgentKilling"/>
+                        <Binding Path="DataContext.AllPlayers" RelativeSource="{RelativeSource AncestorType=views:VODViewer}"/>
+                    </MultiBinding>
+                </Image.Source>
+            </Image>
+        </Border>
+        <Image Grid.Column="1" Width="200" >
+            <Image.Source>
+                <MultiBinding Converter="{StaticResource WeaponImageConverter}">
+                    <Binding Path="GunUsed"/>
+                    <Binding Path="AgentKilling"/>
+                    <Binding Path="DataContext.AllPlayers" RelativeSource="{RelativeSource AncestorType=views:VODViewer}"/>
+                </MultiBinding>
+            </Image.Source>
+        </Image>
+        <Border Grid.Column="2"  ClipToBounds="True" CornerRadius="180">
+            <Image HorizontalAlignment="Center">
+                <Image.Source>
+                    <MultiBinding Converter="{StaticResource AgentImageConverter}">
+                        <Binding Path="AgentKilled"/>
+                        <Binding Path="DataContext.AllPlayers" RelativeSource="{RelativeSource AncestorType=views:VODViewer}"/>
+                    </MultiBinding>
+                </Image.Source>
+            </Image>
+        </Border>
+        <Border Grid.Column="3" ClipToBounds="True" CornerRadius="180" BorderBrush="White" BorderThickness="2" Width="40" Height="40"
+                HorizontalAlignment="Center" VerticalAlignment="Center">
+            <Button Command="{Binding ChangeTimeCommand, RelativeSource={RelativeSource AncestorType=views:VODViewer}}"
+                    Padding="0" HorizontalAlignment="Center" VerticalAlignment="Center"
+                    CommandParameter="{Binding}">
+                <ui:SymbolIcon Symbol="Play24" FontSize="25" Foreground="White" />  
+            </Button>
+            
+        </Border>
+    </Grid>
+</UserControl>

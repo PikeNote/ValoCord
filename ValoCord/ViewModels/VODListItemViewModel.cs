@@ -1,0 +1,134 @@
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Windows.Media.Imaging;
+using ValAPINet;
+using ValoCord.Data;
+using ValoCord.Extentions;
+using ValoCord.Handlers;
+
+namespace ValoCord.ViewModels;
+
+public class VODListItemViewModel : ViewModelBase, INotifyPropertyChanged
+{
+    public GameData _gameData { get; set; }
+
+    public string MapName => $"{MapData.GetDisplayName(_gameData.map)}";
+    public string GameMode => GameModes.ConvertGameMode(_gameData.mode);
+    public string Date => _gameData.date;
+    public string Agent => AgentData.GetAgentNames(_gameData.agent);
+    public string Standing => _gameData.standing.ToOrdinal();
+    public BitmapImage AgentIcon => LoadFromResource(new Uri($"pack://application:,,,{AgentData.GetAgentIcons(Agent)}"));
+    public BitmapImage MapImage => LoadFromResource(new Uri($"pack://application:,,,{MapData.GetFileName(_gameData.map)}"));
+    public long RecordingStartTime => _gameData.recordingStartTime;
+    public string TeamWon
+    {
+        get
+        {
+            if (_gameData.teams[0].roundsWon == _gameData.teams[1].roundsWon)
+                return "Draw";
+            var teamWon = _gameData.teams[0].roundsWon > _gameData.teams[1].roundsWon ? _gameData.teams[0].teamId : _gameData.teams[1].teamId;
+            if (teamWon == _gameData.playerTeam) 
+                return "Won";
+            return "Lost";
+        }
+    }
+
+    public static BitmapImage LoadFromResource(Uri resourceUri)
+    {
+        var bitmapimage = new BitmapImage();
+        bitmapimage.BeginInit();
+        bitmapimage.CacheOption = BitmapCacheOption.OnLoad;
+        bitmapimage.DecodePixelWidth = 228;
+        bitmapimage.UriSource = resourceUri;
+        bitmapimage.EndInit();
+        bitmapimage.Freeze();
+
+        return bitmapimage;
+    }
+
+    public string kda => $"{_gameData._players[_gameData.playerUUID].kills}/{_gameData._players[_gameData.playerUUID].deaths}/{_gameData._players[_gameData.playerUUID].assists}";
+    
+    public String CombatScore => $"{_gameData._players[_gameData.playerUUID].combat_score/_gameData.teams.First().roundsPlayed} ACS";
+
+    public MatchData.Damage Damage {
+        get
+        {
+            var damage = new MatchData.Damage();
+            var damageList = _gameData._players[_gameData.playerUUID].damage_breakdown;
+            foreach (var roundDamages in damageList)
+            {
+                foreach (var damageGiven in roundDamages)
+                {
+                    damage.headshots += damageGiven.headshots;
+                    damage.bodyshots += damageGiven.bodyshots;
+                    damage.legshots += damageGiven.legshots;
+                }
+            }
+
+            return damage;
+        }
+    }
+
+    public int TotalShots => Damage.headshots + Damage.bodyshots + Damage.legshots;
+
+    public String HeadPecentage
+    {
+        get
+        {
+            if (TotalShots == 0)
+            {
+                return "0.0% (0)";
+            }
+            
+            double percentage = (double)Damage.headshots / TotalShots * 100;
+            return $"{percentage:F1}% ({Damage.headshots})";
+        }
+    }
+    public String BodyPercentage     
+    {
+        get
+        {
+            if (TotalShots == 0)
+            {
+                return "0.0% (0)";
+            }
+            
+            double percentage = (double)Damage.bodyshots / TotalShots * 100;
+            return $"{percentage:F1}% ({Damage.bodyshots})";
+        }
+    }
+    public String LegPercentage
+    {
+        get
+        {
+            if (TotalShots == 0)
+            {
+                return "0.0% (0)";
+            }
+            
+            double percentage = (double)Damage.legshots / TotalShots * 100;
+            return $"{percentage:F1}% ({Damage.legshots})";
+        }
+    }
+    
+    
+
+    public string Score
+    {
+        get
+        {
+            var playerScore = _gameData.teams.First(team => team.teamId == _gameData.playerTeam);
+            var nonPlayerScore = _gameData.teams.First(team => team.teamId != _gameData.playerTeam);
+            return $"{playerScore.roundsWon}-{nonPlayerScore.roundsWon}";
+        }
+    }
+    
+    public VODListItemViewModel() { }
+    
+    public GameData GetGameData()
+    {
+        return _gameData;
+    }
+
+}

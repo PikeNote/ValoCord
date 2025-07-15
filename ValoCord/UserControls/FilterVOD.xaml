@@ -1,0 +1,41 @@
+﻿<UserControl x:Class="ValoCord.Handlers.UserControls.FilterVOD"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+             xmlns:handlers="clr-namespace:ValoCord.Handlers"
+             mc:Ignorable="d"
+             d:DesignHeight="300" d:DesignWidth="950">
+    <UserControl.Resources>
+        <Style TargetType="TextBlock">
+            <Setter Property="FontSize" Value="18"/>
+            <Setter Property="Foreground" Value="White"/>
+        </Style>
+        <Style x:Key="ControlBaseStyle" TargetType="{x:Type ui:SymbolIcon}">
+            <Setter Property="Foreground" Value="White" />
+        </Style>
+
+    </UserControl.Resources>
+    
+    
+    <Border Background="#211F1F" MaxHeight="99" CornerRadius="10" Margin="10">
+        <StackPanel Margin="10" handlers:PanelSpacer.Margin="10">
+            <TextBlock> Sort By: </TextBlock>
+            <StackPanel Orientation="Horizontal" handlers:PanelSpacer.Margin="20">
+                <StackPanel Orientation="Horizontal" handlers:PanelSpacer.Margin="0 0 5 0 ">
+                    <ui:SymbolIcon Symbol="Calendar48" FontSize="30" Foreground="White" />
+                    <ui:CalendarDatePicker Width="180" Height="21"/>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" handlers:PanelSpacer.Margin="0 0 5 0 ">
+                    <ui:SymbolIcon Symbol="Person28" FontSize="30" />
+                    <ui:DropDownButton Width="180" Height="21"></ui:DropDownButton>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" handlers:PanelSpacer.Margin="0 0 5 0 ">
+                    <ui:SymbolIcon Symbol="Games28" FontSize="30"/>
+                    <ui:DropDownButton Width="180" Height="21"></ui:DropDownButton>
+                </StackPanel>
+            </StackPanel>
+        </StackPanel>
+    </Border>
+</UserControl>
