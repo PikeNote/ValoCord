@@ -5,35 +5,39 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
              xmlns:handlers="clr-namespace:ValoCord.Handlers"
+             xmlns:viewModels="clr-namespace:ValoCord.ViewModels"
+             xmlns:local="clr-namespace:ValoCord.Data"
              mc:Ignorable="d"
-             d:DesignHeight="300" d:DesignWidth="950">
+             d:DesignHeight="300" d:DesignWidth="950"
+             d:DataContext="{d:DesignInstance viewModels:VodListViewModel}"
+             >
     <UserControl.Resources>
         <Style TargetType="TextBlock">
             <Setter Property="FontSize" Value="18"/>
             <Setter Property="Foreground" Value="White"/>
         </Style>
-        <Style x:Key="ControlBaseStyle" TargetType="{x:Type ui:SymbolIcon}">
+        <Style TargetType="{x:Type ui:SymbolIcon}">
             <Setter Property="Foreground" Value="White" />
         </Style>
 
     </UserControl.Resources>
     
     
-    <Border Background="#211F1F" MaxHeight="99" CornerRadius="10" Margin="10">
-        <StackPanel Margin="10" handlers:PanelSpacer.Margin="10">
+    <Border Background="#211F1F" MaxHeight="100" CornerRadius="10" Margin="10">
+        <StackPanel Margin="10" handlers:SpacingSetter.Spacing="2">
             <TextBlock> Sort By: </TextBlock>
-            <StackPanel Orientation="Horizontal" handlers:PanelSpacer.Margin="20">
-                <StackPanel Orientation="Horizontal" handlers:PanelSpacer.Margin="0 0 5 0 ">
-                    <ui:SymbolIcon Symbol="Calendar48" FontSize="30" Foreground="White" />
-                    <ui:CalendarDatePicker Width="180" Height="21"/>
+            <StackPanel Orientation="Horizontal" handlers:SpacingSetter.Spacing="10">
+                <StackPanel Orientation="Horizontal" handlers:SpacingSetter.Spacing="5" HorizontalAlignment="Stretch">
+                    <ui:SymbolIcon Symbol="CalendarEmpty32" FontSize="30" />
+                    <DatePicker MinWidth="200" />
                 </StackPanel>
-                <StackPanel Orientation="Horizontal" handlers:PanelSpacer.Margin="0 0 5 0 ">
+                <StackPanel Orientation="Horizontal" handlers:SpacingSetter.Spacing="5">
                     <ui:SymbolIcon Symbol="Person28" FontSize="30" />
-                    <ui:DropDownButton Width="180" Height="21"></ui:DropDownButton>
+                    <ComboBox MinWidth="200"  ItemsSource="{Binding Source={x:Static local:AgentData.AgentList}}" />
                 </StackPanel>
-                <StackPanel Orientation="Horizontal" handlers:PanelSpacer.Margin="0 0 5 0 ">
+                <StackPanel Orientation="Horizontal" handlers:SpacingSetter.Spacing="5">
                     <ui:SymbolIcon Symbol="Games28" FontSize="30"/>
-                    <ui:DropDownButton Width="180" Height="21"></ui:DropDownButton>
+                    <ComboBox MinWidth="200" ItemsSource="{Binding Source={x:Static local:GameModes.GameModeList}}"/>
                 </StackPanel>
             </StackPanel>
         </StackPanel>

@@ -2,11 +2,11 @@
 
 namespace ValoCord.Data;
 
-public class GameModes
+public static class GameModes
 {
     private static readonly Regex gameModeRegex = new Regex("\\/[A-Za-z0-9]+\\/[A-Za-z0-9]+\\/([A-Za-z0-9]+)\\/");
     
-    private static readonly Dictionary<string, string> _gameModeMappings = 
+    private static readonly Dictionary<string, string> GameModeMappings = 
         new(StringComparer.OrdinalIgnoreCase)
         {
             {"QuickBomb", "Spike Rush"},
@@ -18,13 +18,17 @@ public class GameModes
             {"Bomb", "Unrated"}
         };
 
+    public static List<string> GameModeList => new[] { "(None)" }
+        .Concat(GameModeMappings.Values)
+        .ToList();
+
     public static String ConvertGameMode(string gameMode, Boolean isCompetetive = false)
     {
         if(isCompetetive) { return "Competitive" ;}
         Match gameModeString = gameModeRegex.Match(gameMode);
         if (gameModeString.Captures.Count > 0)
         {
-            if (_gameModeMappings.TryGetValue(gameModeString.Groups[1].Value, out var convertedGameMode))
+            if (GameModeMappings.TryGetValue(gameModeString.Groups[1].Value, out var convertedGameMode))
             {
                 return convertedGameMode;
             };
@@ -35,7 +39,7 @@ public class GameModes
     public static List<GameModeSettings> GetDefaultGameModeSettings()
     {
         var gameModeSettings = new List<GameModeSettings>();
-        foreach (var value in _gameModeMappings.Values)
+        foreach (var value in GameModeMappings.Values)
         {
             gameModeSettings.Add(new GameModeSettings(){ GameMode = value, Enabled = true});
         }
