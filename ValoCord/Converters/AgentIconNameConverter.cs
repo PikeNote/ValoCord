@@ -30,7 +30,7 @@ public class AgentIconNameConverter : IMultiValueConverter
         {
             var player = players[agentUUID];
             var uri = new Uri($"pack://application:,,,{AgentData.GetAgentIcons(
-                AgentData.GetAgentNames(player.character_played)
+                AgentData.GetAgentNames(player.CharacterPlayed)
             )}");
             BitmapImage bitmapImage = new BitmapImage();
             bitmapImage.BeginInit();
@@ -43,6 +43,7 @@ public class AgentIconNameConverter : IMultiValueConverter
         }
         catch (KeyNotFoundException ex)
         {
+            Console.WriteLine($"Error while loading agent icon: {ex.Message}");
             return null;
         }
     }

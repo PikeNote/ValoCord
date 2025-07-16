@@ -59,6 +59,6 @@ public class ProgramStatusHandler : ObservableObject
 
 public class ProgramStatus
 {
-    public string StatusMessage { get; set; }
-    public SolidColorBrush StatusColor { get; set; }
+    public required string StatusMessage { get; set; }
+    public required SolidColorBrush StatusColor { get; set; }
 }

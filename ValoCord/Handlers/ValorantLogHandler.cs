@@ -9,12 +9,12 @@ namespace ValoCord.Handlers;
 
 public static partial class ValorantLogHandler
 {
-    private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
+    private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
     private static readonly string ValorantLogPath = Path.Combine(Environment.GetFolderPath(
-        Environment.SpecialFolder.LocalApplicationData), "VALORANT\\Saved\\Logs\\ShooterGame.log");
+        Environment.SpecialFolder.LocalApplicationData), @"VALORANT\Saved\Logs\ShooterGame.log");
     private static readonly string ValorantLogFolderPath = Path.Combine(Environment.GetFolderPath(
-        Environment.SpecialFolder.LocalApplicationData), "VALORANT\\Saved\\Logs");
+        Environment.SpecialFolder.LocalApplicationData), @"VALORANT\Saved\Logs");
 
     private const string MapLoadRegex = @"\[Map Name: ([_A-Za-z0-9]+) \| Changed: [A-Za-z0-9]+\] \[Local World: [A-Za-z0-9]+ \| Changed: [A-Za-z0-9]+\] \[Match Setup: [A-Za-z0-9]+ \| Changed: [A-Za-z0-9]+\] \[Map Ready: ([A-Za-z0-9]+) \| Changed: [A-Za-z0-9]+\] \[Map Complete: ([A-Za-z0-9]+) \| Changed: [A-Za-z0-9]+\] \[URL: (?:(?:25[0-5]|(?:2[0-4]|1\d|[1-9]|)\d)\.?\b){4}:(?:[+-]?(?=\.\d|\d)(?:\d+)?(?:\.?\d*))(?:[eE](?:[+-]?\d+))?\/Game\/Maps\/[A-Za-z0-9]+\/[\/_A-Za-z0-9]+\?Name=[\p{L}\p{N} ]+\?SubjectBase64=[A-Za-z0-9]+\?game=\/Game\/GameModes\/[\/_A-Za-z0-9]+\/([_A-Za-z0-9]+(?:\.[_A-Za-z0-9]+)+)_C#([a-zA-Z]+)]";
     private const string RoundStartRegex = @"Warning: Gameplay started at local time [0-9]*\.[0-9]+ \(server time ([+-]?(?=\.\d|\d)(?:\d+)?(?:\.?\d*))(?:[eE]([+-]?\d+))?\)";
@@ -24,13 +24,13 @@ public static partial class ValorantLogHandler
         //{ "Ascent", "Triad", "Duality", "Bonsai", "Port", "Foxtrot", "Canyon", "Pitt", "Infinity", "Juliett", "Jam", "HURM_Alley", "HURM_Yard", "HURM_Bowl", "HURM_Helix", "Rook" };
 
     private static GameData? _gameData = null;
-    static readonly Logger _logger = LogManager.GetLogger("Log Handler");
+    private static readonly Logger ValorantLogsLogger = LogManager.GetLogger("Log Handler");
     
     private static readonly FileSystemWatcher Watcher;
 
     private static CancellationTokenSource? _cts;
     private static Task? _loggingTask;
-    private static object _lock = new();
+    private static readonly object Lock = new();
     
     private static FileStream? _activeFileStream;
     private static StreamReader? _activeStreamReader;
@@ -52,12 +52,12 @@ public static partial class ValorantLogHandler
 
     public static void StartLogging()
     {
-        lock (_lock)
+        lock (Lock)
         {
             if (_loggingTask != null && !_loggingTask.IsCompleted)
                 return;
 
-            _logger.Info("Logging started!");
+            ValorantLogsLogger.Info("Logging started!");
             
             _cts = new CancellationTokenSource();
             _loggingTask = Task.Run(() => MonitorLog(_cts.Token), _cts.Token);
@@ -112,7 +112,7 @@ public static partial class ValorantLogHandler
 
     private static void ProcessLogging(String input)
     {
-        LogData ld = new LogData(input);
+        LogData ld = new LogData(){Msg = input};
         switch (ld.ServiceCaller)
         {
             case "LogMapLoadModel": // Map loaded
@@ -125,26 +125,26 @@ public static partial class ValorantLogHandler
                     if (_gameData == null && mapLine.Groups[3].Value != "TRUE")
                     {
                         //https://glz-ap-1.ap.a.pvp.net/core-game/v1/players/{$playerId}
-                        String mid = ValorantAPI.GetCoreMatchID();
+                        String mid = ValorantApi.GetCoreMatchId();
                         
                         
                         if (string.IsNullOrWhiteSpace(mid))
                         {
-                            _logger.Info("Mid match ID invalid");
-                            mid = ValorantAPI.GetPreMatchID();
-                            _logger.Info("Prematch ID fetching: " + mid);
+                            ValorantLogsLogger.Info("Mid match ID invalid");
+                            mid = ValorantApi.GetPreMatchId();
+                            ValorantLogsLogger.Info("Prematch ID fetching: " + mid);
                         } // Attempt to get both pre and core to see which one can be gotten
-                        _logger.Info("Match ID Fetched: " + mid);
+                        ValorantLogsLogger.Info("Match ID Fetched: " + mid);
                         if (!string.IsNullOrWhiteSpace(mid))
                         {
-                            ValorantRecorder.StartRecording(mid);
+                            _ = ValorantRecorder.StartRecording(mid);
                             _gameData = new GameData
                             {
-                                map = mapLine.Groups[1].Value,
-                                agent = mapLine.Groups[5].Value,
-                                matchId = mid,
-                                recordingStartTime = DateTimeOffset.Now.ToUnixTimeMilliseconds(),
-                                mode = ValorantAPI.GetCorematchMap(mid)
+                                Map = mapLine.Groups[1].Value,
+                                Agent = mapLine.Groups[5].Value,
+                                MatchId = mid,
+                                RecordingStartTime = DateTimeOffset.Now.ToUnixTimeMilliseconds(),
+                                Mode = ValorantApi.GetCoreMatchMap(mid)
                             };
                         }
                     }
@@ -155,15 +155,15 @@ public static partial class ValorantLogHandler
                             break;
                         }
 
-                        _logger.Info("Game ended");
+                        ValorantLogsLogger.Info("Game ended");
                         if (mapLine.Groups[3].Value == "TRUE")
                         {
                            
                         }
                         else
                         {
-                            _logger.Info("Skip recording");
-                            _logger.Info(input);
+                            ValorantLogsLogger.Info("Skip recording");
+                            ValorantLogsLogger.Info(input);
                             // Skip writing if the game data was ever initialized at all in the first place
                             
                             ValorantRecorder.StopRecording();
@@ -180,7 +180,7 @@ public static partial class ValorantLogHandler
 
                     if (_gameData != null)
                     {
-                        Match lobbyCheck = GeneratedMainMenuRegex().Match(ld.Msg);
+                        var lobbyCheck = GeneratedMainMenuRegex().Match(ld.Msg);
                         System.Diagnostics.Debug.WriteLine(lobbyCheck.Groups.Count);
                         System.Threading.Thread.Sleep(1000);
                         if (lobbyCheck.Captures.Count > 0 && lobbyCheck.Groups.Count >= 4 &&
@@ -206,7 +206,7 @@ public static partial class ValorantLogHandler
                         if (float.Parse(rdStart.Groups[1].Value)> 1)
                         {
                             _gameData.AddRoundTimestamp();
-                            _logger.Info("Round started");
+                            ValorantLogsLogger.Info("Round started");
                         }
                     }
                 }
@@ -220,121 +220,124 @@ public static partial class ValorantLogHandler
     public static Boolean RetrieveMatchData(this GameData gd) // Should be only called at the end of game as designated by log
     {
         Logger logger = LogManager.GetLogger("Match Data");
-        gd.playerUUID = ValorantAPI.getCurrentUser();
-        System.Diagnostics.Debug.WriteLine(gd.matchId);
-        MatchData? md = ValorantAPI.GetMatchData(gd.matchId);
-        logger.Info("MD Status:" + md.StatusCode);
-        logger.Info("Match Data:" + gd.matchId); 
-        
-        if (md != null & md.StatusCode == 200)
+        gd.PlayerUuid = ValorantApi.GetCurrentUser();
+        System.Diagnostics.Debug.WriteLine(gd.MatchId);
+        MatchData? md = ValorantApi.GetMatchData(gd.MatchId);
+        if (md != null)
         {
-            MatchData.Player currentPlayer = md.players.First(user => user.subject == gd.playerUUID);
-            if (md.matchInfo.gameMode != null)
+            logger.Info("MD Status:" + md.StatusCode);
+            logger.Info("Match Data:" + gd.MatchId);
+
+            if (md.StatusCode == 200)
             {
-                gd.mode = md.matchInfo.gameMode;
-            }
-            gd.date = DateTime.Today.ToString("MM/dd/yyyy");
-            gd.mode = md.matchInfo.gameMode;
-            gd.teams = md.teams;
-            gd.playerTeam = currentPlayer.teamId;
-            gd.matchStartTime = md.matchInfo.gameStartMillis;
-            gd.agent = currentPlayer.characterId;
-            gd.isCompetetive = md.matchInfo.isRanked;
-            System.Diagnostics.Debug.WriteLine(md.StatusCode);
-            foreach (var userInfo in md.players)
-            {
-                List<List<MatchData.Damage>> damages = new List<List<MatchData.Damage>>();
-                foreach (var mdRoundResult in md.roundResults)
+                MatchData.Player currentPlayer = md.players.First(user => user.subject == gd.PlayerUuid);
+                if (md.matchInfo.gameMode != null)
                 {
-                    
-                    var currentPlayerStat = mdRoundResult.playerStats.FirstOrDefault(user => user.subject == userInfo.subject);
-                    if (currentPlayerStat != null)
-                    {
-                        damages.Add(currentPlayerStat.damage);
-                    }
-                    
+                    gd.Mode = md.matchInfo.gameMode;
                 }
 
-                gd._players.Add(userInfo.subject, new PlayerData()
+                gd.Date = DateTime.Today.ToString("MM/dd/yyyy");
+                gd.Mode = md.matchInfo.gameMode ?? "";
+                gd.Teams = md.teams;
+                gd.PlayerTeam = currentPlayer.teamId;
+                gd.MatchStartTime = md.matchInfo.gameStartMillis;
+                gd.Agent = currentPlayer.characterId;
+                gd.IsCompetetive = md.matchInfo.isRanked;
+                System.Diagnostics.Debug.WriteLine(md.StatusCode);
+                foreach (var userInfo in md.players)
                 {
-                    uuid = userInfo.subject,
-                    character_played = userInfo.characterId,
-                    team_id = userInfo.teamId,
-                    username = userInfo.gameName,
-                    tag = userInfo.tagLine,
-                    kills = userInfo.stats.kills,
-                    deaths = userInfo.stats.deaths,
-                    assists = userInfo.stats.assists,
-                    combat_score = userInfo.stats.score,
-                    damage_breakdown = damages
-                });
-                
-                gd.standing = gd._players.Values
-                    .OrderByDescending(player => player.combat_score)
-                    .ToList()
-                    .FindIndex(p => p.uuid == gd.playerUUID) + 1;
-
-            }
-            
-            foreach (var mdRoundResult in md.roundResults)
-            {
-                List<RoundEvent> gk = new List<RoundEvent>();
-                foreach (var playerStat in mdRoundResult.playerStats)
-                {
-                    if (playerStat.kills.Count > 0)
+                    List<List<MatchData.Damage>> damages = new List<List<MatchData.Damage>>();
+                    foreach (var mdRoundResult in md.roundResults)
                     {
-                        foreach (var playerStatKill in playerStat.kills)
-                        { 
-                            gk.Add(new GameKill()
-                            {
-                                TimeIntoRound = playerStatKill.roundTime,
-                                TimeKillIntoGame = playerStatKill.gameTime, 
-                                GunUsed = playerStatKill.finishingDamage.damageItem, 
-                                AgentKilled = playerStatKill.victim, 
-                                AgentKilling = playerStatKill.killer,
-                                EventType = RoundEventType.KillEvent
-                            });
+                        var currentPlayerStat =
+                            mdRoundResult.playerStats.FirstOrDefault(user => user.subject == userInfo.subject);
+                        if (currentPlayerStat != null)
+                        {
+                            damages.Add(currentPlayerStat.damage);
                         }
                     }
-                }
 
-                if (mdRoundResult.defuseRoundTime != 0)
-                {
-                    gk.Add(new RoundEvent()
+                    gd.Players.Add(userInfo.subject, new PlayerData()
                     {
-                        EventType = RoundEventType.BombDefused,
-                        TimeIntoRound = mdRoundResult.defuseRoundTime
-                    } );
+                        Uuid = userInfo.subject,
+                        CharacterPlayed = userInfo.characterId,
+                        TeamId = userInfo.teamId,
+                        Username = userInfo.gameName,
+                        Tag = userInfo.tagLine,
+                        Kills = userInfo.stats.kills,
+                        Deaths = userInfo.stats.deaths,
+                        Assists = userInfo.stats.assists,
+                        CombatScore = userInfo.stats.score,
+                        DamageBreakdown = damages
+                    });
+
+                    gd.Standing = gd.Players.Values
+                        .OrderByDescending(player => player.CombatScore)
+                        .ToList()
+                        .FindIndex(p => p.Uuid == gd.PlayerUuid) + 1;
                 }
 
-                if (mdRoundResult.plantRoundTime != 0)
+                foreach (var mdRoundResult in md.roundResults)
                 {
-                    gk.Add(new RoundEvent()
+                    List<RoundEvent> gk = new List<RoundEvent>();
+                    foreach (var playerStat in mdRoundResult.playerStats)
                     {
-                        EventType = RoundEventType.BombPlanted,
-                        TimeIntoRound = mdRoundResult.plantRoundTime
-                    } );
-                }
-                
-                gk.Sort((x,y)=>x.TimeIntoRound.CompareTo(y.TimeIntoRound));
+                        if (playerStat.kills.Count > 0)
+                        {
+                            foreach (var playerStatKill in playerStat.kills)
+                            {
+                                gk.Add(new GameKill()
+                                {
+                                    TimeIntoRound = playerStatKill.roundTime,
+                                    TimeKillIntoGame = playerStatKill.gameTime,
+                                    GunUsed = playerStatKill.finishingDamage.damageItem,
+                                    AgentKilled = playerStatKill.victim,
+                                    AgentKilling = playerStatKill.killer,
+                                    EventType = RoundEventType.KillEvent
+                                });
+                            }
+                        }
+                    }
 
-                
-                gd._roundEvents.Add(new RoundData()
+                    if (mdRoundResult.defuseRoundTime != 0)
+                    {
+                        gk.Add(new RoundEvent()
+                        {
+                            EventType = RoundEventType.BombDefused,
+                            TimeIntoRound = mdRoundResult.defuseRoundTime
+                        });
+                    }
+
+                    if (mdRoundResult.plantRoundTime != 0)
+                    {
+                        gk.Add(new RoundEvent()
+                        {
+                            EventType = RoundEventType.BombPlanted,
+                            TimeIntoRound = mdRoundResult.plantRoundTime
+                        });
+                    }
+
+                    gk.Sort((x, y) => x.TimeIntoRound.CompareTo(y.TimeIntoRound));
+
+
+                    gd.RoundEvents.Add(new RoundData()
                     {
                         EndType = mdRoundResult.roundResult,
                         RoundEvents = gk,
                         RoundNumber = mdRoundResult.roundNum + 1,
                         TeamWon = mdRoundResult.winningTeam
                     });
+                }
+
+                logger.Info("Match data processed");
+                return true;
             }
-            logger.Info("Match data processed");
-            return true;
-            
+            else
+            {
+                return false;
+            }
         }
-        else
-        {
-            return false;
-        }
+        return false;
         // Process events into:
         // A list of rounds with Losses/Wins, Kills that happened (also time?)
     }
@@ -350,11 +353,11 @@ public static partial class ValorantLogHandler
 
     public static async Task StopLogging()
     {
-        _logger.Info("Stopping logger...");
-        CancellationTokenSource ctsToCancel = null;
-        Task taskToAwait = null;
+        ValorantLogsLogger.Info("Stopping logger...");
+        CancellationTokenSource? ctsToCancel = null;
+        Task? taskToAwait = null;
         
-        lock (_lock)
+        lock (Lock)
         {
             ctsToCancel = _cts;
             taskToAwait = _loggingTask;
@@ -363,20 +366,20 @@ public static partial class ValorantLogHandler
             _loggingTask = null;
         }
         
-        ctsToCancel?.Cancel();
+        await ctsToCancel?.CancelAsync()!;
         if (taskToAwait != null)
         {
             try
             {
-                await taskToAwait.WaitAsync(TimeSpan.FromSeconds(3));
+                await taskToAwait.WaitAsync(TimeSpan.FromSeconds(3), ctsToCancel.Token);
             }
             catch (Exception ex)
             {
-                _logger.Error($"Error waiting for previous logging operation to close: {ex.Message}");
+                ValorantLogsLogger.Error($"Error waiting for previous logging operation to close: {ex.Message}");
             }
         }
         
-        lock(_lock)
+        lock(Lock)
         {
             if (_activeStreamReader != null)
             {
@@ -390,10 +393,10 @@ public static partial class ValorantLogHandler
             }
             ctsToCancel?.Dispose();
         }
-        _logger.Info("Logger stopped.");
+        ValorantLogsLogger.Info("Logger stopped.");
     }
 
-    public static void ResetGd()
+    private static void ResetGd()
     {
         _gameData = null;
     }
@@ -402,26 +405,32 @@ public static partial class ValorantLogHandler
     private static partial Regex GeneratedMainMenuRegex();
 }
 
-class LogData
+internal partial class LogData
 {
-    private const String LogRegex = @"\[([^\]]*)]\[([^\]]*)]([a-zA-Z]+):([A-Za-z0-9 _].+)";
+    private const string LogRegex = @"\[([^\]]*)]\[([^\]]*)]([a-zA-Z]+):([A-Za-z0-9 _].+)";
     public DateTime Dt { get; set; }
     public int EventType { get; set; }
-    public String ServiceCaller { get; set; } 
-    public String Msg { get; set; }
-
-    public LogData(String inputString)
+    public string ServiceCaller { init; get; } = "";
+    private readonly string _msg = "";
+    public required string Msg
     {
-        Match logLine = Regex.Match(inputString, LogRegex); // [2022.11.19-06.34.51:565][982]LogUMGSequenceTickManager: Warning: User widget GenericTooltipWrapper is playing a looping animation while invisible/collapsed.
+        get => _msg;
+        init
+        {   
+            var logLine = LogMatchRegex().Match(value); // [2022.11.19-06.34.51:565][982]LogUMGSequenceTickManager: Warning: User widget GenericTooltipWrapper is playing a looping animation while invisible/collapsed.
 
-        if (!(logLine.Captures.Count > 0 && logLine.Groups.Count >= 4))
-        {
-            return;
+            if (!(logLine.Captures.Count > 0 && logLine.Groups.Count >= 4))
+            {
+                return;
+            }
+
+            Dt = DateTime.ParseExact(logLine.Groups[1].Value,"yyyy.MM.dd-HH.mm.ss:fff",null); // 2022.11.19-06.34.54:081
+            EventType = int.Parse(logLine.Groups[2].Value);
+            ServiceCaller = logLine.Groups[3].Value;
+            _msg = logLine.Groups[4].Value;
         }
-
-        Dt = DateTime.ParseExact(logLine.Groups[1].Value,"yyyy.MM.dd-HH.mm.ss:fff",null); // 2022.11.19-06.34.54:081
-        EventType = Int32.Parse(logLine.Groups[2].Value);
-        ServiceCaller = logLine.Groups[3].Value;
-        Msg = logLine.Groups[4].Value;
     }
+
+    [GeneratedRegex(LogRegex)]
+    private static partial Regex LogMatchRegex();
 }

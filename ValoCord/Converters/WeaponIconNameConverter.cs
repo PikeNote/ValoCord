@@ -22,16 +22,16 @@ public class WeaponIconNameConverter : IMultiValueConverter
             switch (weaponUUID)
             {
                 case "ultimate":
-                    uri = new Uri($"pack://application:,,,{AgentData.GetUltimateImage(AgentData.GetAgentNames(players[killerUUID].character_played))}");
+                    uri = new Uri($"pack://application:,,,{AgentData.GetUltimateImage(AgentData.GetAgentNames(players[killerUUID].CharacterPlayed))}");
                     break;
                 case "ability1":
-                    uri = new Uri($"pack://application:,,,{AgentData.GetAbility1Image(AgentData.GetAgentNames(players[killerUUID].character_played))}");
+                    uri = new Uri($"pack://application:,,,{AgentData.GetAbility1Image(AgentData.GetAgentNames(players[killerUUID].CharacterPlayed))}");
                     break;
                 case "ability2":
-                    uri = new Uri($"pack://application:,,,{AgentData.GetAbility2Image(AgentData.GetAgentNames(players[killerUUID].character_played))}");
+                    uri = new Uri($"pack://application:,,,{AgentData.GetAbility2Image(AgentData.GetAgentNames(players[killerUUID].CharacterPlayed))}");
                     break;
                 case "grenadeability":
-                    uri = new Uri($"pack://application:,,,{AgentData.GetGrenadeImage(AgentData.GetAgentNames(players[killerUUID].character_played))}");
+                    uri = new Uri($"pack://application:,,,{AgentData.GetGrenadeImage(AgentData.GetAgentNames(players[killerUUID].CharacterPlayed))}");
                     break;
                 case "":
                     uri = new Uri($"pack://application:,,,{WeaponData.GetFileName("Melee")}");

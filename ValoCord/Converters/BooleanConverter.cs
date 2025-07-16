@@ -4,30 +4,21 @@ using System.Windows.Data;
 
 namespace ValoCord.Converters;
 
-public class BooleanConverter<T> : IValueConverter
+public class BooleanConverter<T>(T trueValue, T falseValue) : IValueConverter
 {
-    public BooleanConverter(T trueValue, T falseValue)
+    public T True { get; set; } = trueValue;
+    public T False { get; set; } = falseValue;
+
+    public virtual object? Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
     {
-        True = trueValue;
-        False = falseValue;
+        return (value is true ? True : False) ?? False;
     }
 
-    public T True { get; set; }
-    public T False { get; set; }
-
-    public virtual object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+    public virtual object ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
     {
-        return value is bool && ((bool) value) ? True : False;
-    }
-
-    public virtual object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
-    {
-        return value is T && EqualityComparer<T>.Default.Equals((T) value, True);
+        return value is T value1 && EqualityComparer<T>.Default.Equals(value1, True);
     }
 }
 
-public sealed class BooleanToVisibilityConverter : BooleanConverter<Visibility>
-{
-    public BooleanToVisibilityConverter() : 
-        base(Visibility.Visible, Visibility.Collapsed) {}
-}
+public sealed class BooleanToVisibilityConverter()
+    : BooleanConverter<Visibility>(Visibility.Visible, Visibility.Collapsed);

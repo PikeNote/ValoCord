@@ -12,23 +12,20 @@ namespace ValoCord.Views;
 
 public partial class VODViewer : FluentWindow
 {
-    private VODViewerViewModel _viewModel;
-        
-    private readonly MediaPlayer _mediaPlayer;
+
     
-    private bool _isDragging = false;
-    private bool _wasPlaying = false;
+    private bool _isDragging;
+    private bool _wasPlaying;
+    
     public VODViewer(GameData gd)
     {
         InitializeComponent();
-        _viewModel = new VODViewerViewModel()
+        DataContext = new VodViewerViewModel()
         {
             gd = gd
         };
         
         Wpf.Ui.Appearance.ApplicationThemeManager.Apply(Wpf.Ui.Appearance.ApplicationTheme.Dark);
-            
-        DataContext = _viewModel;
 
         Media.Loaded += MainWindow_Opened;
 
@@ -36,10 +33,10 @@ public partial class VODViewer : FluentWindow
     
     private async void MainWindow_Opened(object? sender, System.EventArgs e)
     {
-        if (DataContext is VODViewerViewModel ViewModel)
+        if (DataContext is VodViewerViewModel viewModel)
         {
             
-            await Media.Open(new Uri(ViewModel.VideoDirectory));
+            await Media.Open(new Uri(viewModel.VideoDirectory));
 
             VideoProgress.AddHandler(Thumb.DragStartedEvent, new DragStartedEventHandler(Thumb_DragStarted), true);
             VideoProgress.AddHandler(Thumb.DragCompletedEvent, new DragCompletedEventHandler(Thumb_DragCompleted), true);
@@ -75,12 +72,10 @@ public partial class VODViewer : FluentWindow
         _wasPlaying = false;
     }
 
-    private void SeekToMediaPosition(Slider slider)
+    private void SeekToMediaPosition(Slider? slider)
     {
-        if (Media.IsLoaded)
-        {
-            Media.Position = TimeSpan.FromMilliseconds(slider.Value);
-        }
+        if (!Media.IsLoaded) return;
+        if (slider != null) Media.Position = TimeSpan.FromMilliseconds(slider.Value);
     }
     
     private void VideoProgress_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
@@ -105,7 +100,7 @@ public partial class VODViewer : FluentWindow
 
     private void Media_OnMediaOpened(object? sender, MediaOpenedEventArgs e)
     {
-        if (DataContext is VODViewerViewModel ViewModel)
+        if (DataContext is VodViewerViewModel ViewModel)
         {
             ViewModel.MediaDuration = Media.NaturalDuration ?? TimeSpan.Zero;
         }
@@ -114,10 +109,10 @@ public partial class VODViewer : FluentWindow
     [RelayCommand]
     public void ChangeTime(object values)
     {
-        if (DataContext is VODViewerViewModel ViewModel)
+        if (DataContext is VodViewerViewModel ViewModel)
         {
             if (values is not RoundEvent roundEvent) return;
-            Media.Position = TimeSpan.FromMilliseconds(ViewModel.gd._roundStartTimeStamps[ViewModel.SelectedRound] - ViewModel.gd.recordingStartTime - 3000 + roundEvent.TimeIntoRound);
+            Media.Position = TimeSpan.FromMilliseconds(ViewModel.gd.RoundStartTimeStamps[ViewModel.SelectedRound] - ViewModel.gd.RecordingStartTime - 3000 + roundEvent.TimeIntoRound);
         }
     }
 }

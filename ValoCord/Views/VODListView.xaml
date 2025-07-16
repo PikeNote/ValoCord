@@ -12,7 +12,7 @@
       HorizontalAlignment="Stretch"
       VerticalAlignment="Stretch">
     <Page.DataContext>
-        <viewModels:VODListViewModel />
+        <viewModels:VodListViewModel />
     </Page.DataContext>
     <Grid>
         <Grid.RowDefinitions>

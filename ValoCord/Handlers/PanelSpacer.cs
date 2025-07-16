@@ -21,7 +21,7 @@ public class PanelSpacer {
 
         DependencyProperty.RegisterAttached("Margin", typeof (Thickness), typeof (PanelSpacer), new UIPropertyMetadata(new Thickness(), MarginChangedCallback));
 
-    public static void MarginChangedCallback(object sender, DependencyPropertyChangedEventArgs e)
+    private static void MarginChangedCallback(object sender, DependencyPropertyChangedEventArgs e)
 
     {
         var panel = sender as Panel;
@@ -33,15 +33,14 @@ public class PanelSpacer {
     static void panel_Loaded(object sender, RoutedEventArgs e)
     {
         var panel = sender as Panel;
-        
-        foreach(var child in panel.Children)
+
+        if (panel?.Children == null) return;
+        foreach (var child in panel.Children)
         {
             var fe = child as FrameworkElement;
             if (fe == null) continue;
             fe.Margin = PanelSpacer.GetMargin(panel);
-
         }
-
     }
 }
 
@@ -60,7 +59,7 @@ public class PanelSpacer {
         public static readonly DependencyProperty SpacingProperty =
             DependencyProperty.RegisterAttached("Spacing", typeof(double), typeof(SpacingSetter), new UIPropertyMetadata(0.0, SpacingChangedCallback));
 
-        public static void SpacingChangedCallback(object sender, DependencyPropertyChangedEventArgs e)
+        private static void SpacingChangedCallback(object sender, DependencyPropertyChangedEventArgs e)
         {
             if (sender is not Panel panel) return;
             

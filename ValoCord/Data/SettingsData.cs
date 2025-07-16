@@ -87,7 +87,7 @@ public class SettingsData
 
 public class AudioDevice
 {
-    public string DeviceName { get; set; }
+    public string DeviceName { get; set; } = String.Empty;
     public int Volume { get; set; }
     
 }
@@ -106,6 +106,6 @@ public enum BitrateControlMode
 
 public class GameModeSettings
 {
-    public string GameMode { get; set; }
+    public string GameMode { get; init; } = String.Empty;
     public Boolean Enabled { get; set; }
 }

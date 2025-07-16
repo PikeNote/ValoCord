@@ -6,7 +6,7 @@
              xmlns:viewModels="clr-namespace:ValoCord.ViewModels"
              mc:Ignorable="d"
              d:DesignHeight="300" d:DesignWidth="300"
-             d:DataContext="{d:DesignInstance viewModels:VODListItemViewModel}">
+             d:DataContext="{d:DesignInstance viewModels:VodListItemViewModel}">
     <Border CornerRadius="10" Width="70" Background="{Binding Standing, Converter={StaticResource StandingToColorConverter}}">
         <TextBlock TextAlignment="Center" Text="{Binding Standing}"/>
     </Border>

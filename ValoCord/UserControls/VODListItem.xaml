@@ -10,7 +10,7 @@
              mc:Ignorable="d"
              d:DesignHeight="300" d:DesignWidth="1200"
              Background="Transparent"
-             d:DataContext="{d:DesignInstance Type=viewModels:VODListItemViewModel,IsDesignTimeCreatable=True}">
+             d:DataContext="{d:DesignInstance Type=viewModels:VodListItemViewModel,IsDesignTimeCreatable=True}">
     <UserControl.Resources>
         <Style TargetType="TextBlock">
             <Setter Property="FontSize" Value="16"/>
@@ -81,7 +81,7 @@
                                 <Run Text="{Binding GameMode, Mode=OneWay}"/>
                                 <Run Text=")"/>
                             </TextBlock>
-                            <TextBlock Grid.Row="1" Text="{Binding kda, Mode=OneWay}"/>
+                            <TextBlock Grid.Row="1" Text="{Binding Kda, Mode=OneWay}"/>
                             <Grid Grid.Row="2" VerticalAlignment="Center" handlers:GridSpacer.ColumnSpacing="5">
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="Auto"></ColumnDefinition>

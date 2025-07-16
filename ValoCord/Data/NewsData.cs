@@ -2,32 +2,32 @@
 
 public class Action
 {
-    public Payload payload { get; set; }
+    public Payload Payload { get; set; } = new ();
 }
 
 public class Description
 {
-    public string type { get; set; }
-    public string body { get; set; }
+    public string Type { get; set; } = "";
+    public string Body { get; set; } = "";
 }
 
 public class NewsMedia
 {
-    public string url { get; set; }
+    public string Url { get; set; } = "";
 }
 
 public class Payload
 {
-    public string url { get; set; }
-    public bool? isExternal { get; set; }
+    public string url { get; set; } = "";
+    public bool? IsExternal { get; set; } = false;
 }
 
 
 public class NewsData
 {
-    public string title { get; set; }
-    public string publishedAt { get; set; }
-    public Action action { get; set; }
-    public NewsMedia media { get; set; }
-    public Description description { get; set; }
+    public string Title { get; set; } = "";
+    public string PublishedAt { get; set; } = "";
+    public Action Action { get; set; } = new();
+    public NewsMedia Media { get; set; } = new();
+    public Description Description { get; set; } = new();
 }

@@ -6,23 +6,24 @@ using ScreenRecorderLib;
 
 namespace ValoCord.Handlers;
 
-public static class ValorantRecorder
+public static partial class ValorantRecorder
 {
-    [DllImport("user32.dll")] 
-    static extern bool GetWindowRect(IntPtr hWnd, out RECT lpRect);
+    [LibraryImport("user32.dll")]
+    [return: MarshalAs(UnmanagedType.Bool)]
+    private static partial bool GetWindowRect(IntPtr hWnd, out Rect lpRect);
+    [LibraryImport("user32.dll")]
+    private static partial IntPtr MonitorFromWindow(IntPtr hwnd, uint dwFlags);
     [DllImport("user32.dll", CharSet = CharSet.Auto)]
-    static extern IntPtr MonitorFromWindow(IntPtr hwnd, uint dwFlags);
-    [DllImport("user32.dll", CharSet = CharSet.Auto)]
-    static extern bool GetMonitorInfo(IntPtr hMonitor, ref MONITORINFOEX lpmi);
+    private static extern bool GetMonitorInfo(IntPtr hMonitor, ref Monitorinfoex lpmi);
 
     [StructLayout(LayoutKind.Sequential)]
-    struct RECT { public int Left, Top, Right, Bottom; }
+    private struct Rect { public int Left, Top, Right, Bottom; }
 
     [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Auto)]
-    struct MONITORINFOEX {
+    private struct Monitorinfoex {
         public int cbSize;
-        public RECT rcMonitor;
-        public RECT rcWork;
+        public Rect rcMonitor;
+        public Rect rcWork;
         public uint dwFlags;
         [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 32)]
         public string szDevice;
@@ -31,11 +32,11 @@ public static class ValorantRecorder
     private static bool _recordingInProgress = false;
     // ReSharper disable once InconsistentNaming
     private static IntPtr ValorantWindowHandler = IntPtr.Zero;
-    private static Logger logger = LogManager.GetLogger("Video Recordinng");
-    private static DisplayRecordingSource dispRecordingSource = null;
+    private static readonly Logger Logger = LogManager.GetLogger("Video Recording");
+    private static DisplayRecordingSource? _dispRecordingSource;
     private static WindowWatcher? _winWatcher;
 
-    private static Recorder rd;
+    private static Recorder? _rd;
     public static async Task SetWindowHandler(int maxRetries = 5, int delayMs = 500)
     {
         int attempt = 0;
@@ -63,15 +64,15 @@ public static class ValorantRecorder
     
     public static async Task StartRecording(String fileName)
     {
-        logger.Info("Video recording request: " + fileName);
+        Logger.Info("Video recording request: " + fileName);
         await SetWindowHandler();
 
-        GetWindowRect(ValorantWindowHandler, out RECT winRect);
+        GetWindowRect(ValorantWindowHandler, out Rect winRect);
         int winWidth  = winRect.Right  - winRect.Left;
         int winHeight = winRect.Bottom - winRect.Top;
         
         var hMon = MonitorFromWindow(ValorantWindowHandler, 2);
-        var mi   = new MONITORINFOEX { cbSize = Marshal.SizeOf<MONITORINFOEX>() };
+        var mi   = new Monitorinfoex { cbSize = Marshal.SizeOf<Monitorinfoex>() };
         GetMonitorInfo(hMon, ref mi);
         
         int offsetX = winRect.Left - mi.rcMonitor.Left;
@@ -79,8 +80,8 @@ public static class ValorantRecorder
         
         if (ValorantWindowHandler != IntPtr.Zero)
         { 
-            List<RecordingSourceBase> rdSources = new List<RecordingSourceBase>();
-            dispRecordingSource = new DisplayRecordingSource
+            List<RecordingSourceBase?> rdSources = [];
+            _dispRecordingSource = new DisplayRecordingSource
             {
                 DeviceName = DisplayRecordingSource.MainMonitor.DeviceName,
                 RecorderApi = RecorderApi.DesktopDuplication,
@@ -88,10 +89,10 @@ public static class ValorantRecorder
                 IsVideoCaptureEnabled = true
             };
             
-            rdSources.Add(dispRecordingSource);
+            rdSources.Add(_dispRecordingSource);
             
-            List<ScreenRecorderLib.AudioDevice> inputDevices = Recorder.GetSystemAudioDevices(AudioDeviceSource.InputDevices);
-            List<ScreenRecorderLib.AudioDevice> outputDevices = Recorder.GetSystemAudioDevices(AudioDeviceSource.OutputDevices);
+            List<AudioDevice> inputDevices = Recorder.GetSystemAudioDevices(AudioDeviceSource.InputDevices);
+            List<AudioDevice> outputDevices = Recorder.GetSystemAudioDevices(AudioDeviceSource.OutputDevices);
 
             String inputAudioDevice = "";
             String outputAudioDevice = "";
@@ -102,7 +103,7 @@ public static class ValorantRecorder
                 if (audioDevice == null)
                 {
                     ApplicationSettings.SettingsData.Value.ResetInputDevice();
-                    ApplicationSettings.SettingsData.Save("settings.json");
+                    await ApplicationSettings.SettingsData.Save("settings.json");
                 }
                 else
                 {
@@ -112,11 +113,11 @@ public static class ValorantRecorder
             
             if (ApplicationSettings.SettingsData.Value.SelectedOutputDeviceName.DeviceName != "System Default")
             {
-                var audioDevice = inputDevices.Find(dev => dev.FriendlyName == ApplicationSettings.SettingsData.Value.SelectedOutputDeviceName.DeviceName);
+                var audioDevice = outputDevices.Find(dev => dev.FriendlyName == ApplicationSettings.SettingsData.Value.SelectedOutputDeviceName.DeviceName);
                 if (audioDevice == null)
                 {
                     ApplicationSettings.SettingsData.Value.ResetInputDevice();
-                    ApplicationSettings.SettingsData.Save("settings.json");
+                    await ApplicationSettings.SettingsData.Save("settings.json");
                 }
                 else
                 {
@@ -170,15 +171,15 @@ public static class ValorantRecorder
                 }
             };
 
-            Recorder rec = Recorder.CreateRecorder(options);
-            rd = rec;
+            Recorder? rec = Recorder.CreateRecorder(options);
+            _rd = rec;
             
             rec.OnRecordingComplete += Rec_OnRecordingComplete;
             rec.OnRecordingFailed += Rec_OnRecordingFailed;
             rec.OnStatusChanged += Rec_OnStatusChanged;
             
             String videoPath = Path.Combine(Paths.DefaultVideoPath, $"{fileName}.mp4");
-            _winWatcher.Start();
+            _winWatcher?.Start();
             rec.Record(videoPath);
         }
         else
@@ -192,40 +193,39 @@ public static class ValorantRecorder
     public static void DisableSource()
     {
         if(!_recordingInProgress) { return; }
-        
-        dispRecordingSource.IsVideoCaptureEnabled = false;
-        rd.GetDynamicOptionsBuilder()
-            .SetUpdatedRecordingSource(dispRecordingSource)
+
+        if (_dispRecordingSource == null) return;
+        _dispRecordingSource.IsVideoCaptureEnabled = false;
+        _rd?.GetDynamicOptionsBuilder()
+            .SetUpdatedRecordingSource(_dispRecordingSource)
             .Apply();
     }
     
     public static void EnableSource()
     {
         if(!_recordingInProgress) { return; }
-        
-        dispRecordingSource.IsVideoCaptureEnabled = true;
-        rd.GetDynamicOptionsBuilder()
-            .SetUpdatedRecordingSource(dispRecordingSource)
+
+        if (_dispRecordingSource == null) return;
+        _dispRecordingSource.IsVideoCaptureEnabled = true;
+        _rd?.GetDynamicOptionsBuilder()
+            .SetUpdatedRecordingSource(_dispRecordingSource)
             .Apply();
     }
 
     
     public static void StopRecording()
     {
-        rd.Stop(); 
+        _rd?.Stop(); 
     }
     private static void Rec_OnRecordingComplete(object? sender, RecordingCompleteEventArgs e)
     {
         //Get the file path if recorded to a file
-        string path = e.FilePath;
-        if (_winWatcher != null)
-        {
-            _winWatcher.Stop();
-        }
+        var path = e.FilePath;
+        _winWatcher?.Stop();
     }
     private static void Rec_OnRecordingFailed(object? sender, RecordingFailedEventArgs e)
     {
-        logger.Info(e.Error);
+        Logger.Info(e.Error);
     }
     private static void Rec_OnStatusChanged(object? sender, RecordingStatusEventArgs e)
     {
@@ -233,7 +233,7 @@ public static class ValorantRecorder
         {
             ProgramStatusHandler.Instance.CurrentStatus = ProgramStatusHandler.RecordingInProgress;
             _recordingInProgress = true;
-            logger.Info("Recording started");
+            Logger.Info("Recording started");
         }
         else
         {

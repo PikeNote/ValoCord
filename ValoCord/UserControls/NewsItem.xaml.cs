@@ -18,12 +18,12 @@ public partial class NewsItem : UserControl
     
     private void NewsItem_DataContextChanged(object sender, DependencyPropertyChangedEventArgs e)
     {
-        if (this.DataContext is NewsData nd && nd.media != null && !string.IsNullOrEmpty(nd.media.url))
+        if (this.DataContext is NewsData nd && nd.Media != null && !string.IsNullOrEmpty(nd.Media.Url))
         {
 
                 var bitmap = new BitmapImage();
                 bitmap.BeginInit();
-                bitmap.UriSource = new Uri(nd.media.url, UriKind.Absolute);
+                bitmap.UriSource = new Uri(nd.Media.Url, UriKind.Absolute);
                 bitmap.DecodePixelWidth = 500;
                 bitmap.CacheOption = BitmapCacheOption.OnLoad;
                 bitmap.EndInit();
@@ -40,7 +40,7 @@ public partial class NewsItem : UserControl
     {
         if (DataContext is NewsData nd)
         {
-            var url = nd.action.payload.url;
+            var url = nd.Action.Payload.url;
             try
             {
                 Process.Start(new ProcessStartInfo { FileName = url, UseShellExecute = true });

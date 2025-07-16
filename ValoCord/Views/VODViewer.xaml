@@ -12,7 +12,7 @@
         xmlns:ffme="clr-namespace:Unosquare.FFME;assembly=ffme.win"
         mc:Ignorable="d"
         Title="{Binding WindowTitle}"
-        d:DataContext="{d:DesignInstance Type=viewModels:VODViewerViewModel,IsDesignTimeCreatable=True}"
+        d:DataContext="{d:DesignInstance Type=viewModels:VodViewerViewModel,IsDesignTimeCreatable=True}"
         Closing="Window_OnClosing"
         ResizeMode="CanResize"
         MinHeight="965" MinWidth="1700"

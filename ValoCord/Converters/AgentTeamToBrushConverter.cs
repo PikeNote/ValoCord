@@ -45,29 +45,16 @@ public class AgentTeamToBrushConverter: IMultiValueConverter
     
     public object? Convert(object[]? values, Type targetType, object? parameter, CultureInfo culture)
     {
-        if (values.Length < 3)
+        if (values is { Length: < 3 })
             return Brushes.Transparent;
-        
-        var playerUUID = values[0] as string;
-        var allPlayers = values[1] as Dictionary<string, PlayerData>;
-        var playerTeam = values[2] as string;
-        var recordingPlayerUUID = values[3] as string;
-        
-        if (playerUUID != null && allPlayers != null && playerTeam != null && allPlayers.TryGetValue(playerUUID, out var player) && recordingPlayerUUID != null)
-        {
 
-            if (player.team_id == playerTeam)
-            {
-                if (recordingPlayerUUID == playerUUID)
-                {
-                    return currentPlayerBrush;
-                }
-                return currentTeamBrush;
-            }
+        var recordingPlayerUuid = values?[3] as string;
 
-            return opposingTeamBrush;
-        }
-        return null;
+        if (values?[0] is not string playerUuid || values[1] is not Dictionary<string, PlayerData> allPlayers ||
+            values[2] is not string playerTeam || !allPlayers.TryGetValue(playerUuid, out var player) ||
+            recordingPlayerUuid == null) return null;
+        if (player.TeamId != playerTeam) return opposingTeamBrush;
+        return recordingPlayerUuid == playerUuid ? currentPlayerBrush : currentTeamBrush;
     }
 
     public object[] ConvertBack(object? value, Type[] targetType, object? parameter, CultureInfo culture)

@@ -8,7 +8,7 @@
              xmlns:handlers="clr-namespace:ValoCord.Handlers"
              mc:Ignorable="d"
              d:DesignHeight="300" d:DesignWidth="300"
-             d:DataContext="{d:DesignInstance Type=viewModels:VODListItemViewModel,IsDesignTimeCreatable=True}">
+             d:DataContext="{d:DesignInstance Type=viewModels:VodListItemViewModel,IsDesignTimeCreatable=True}">
     <UserControl.Resources>
         <Style TargetType="TextBlock">
             <Setter Property="FontSize" Value="15"/>
@@ -67,7 +67,7 @@
                             </Grid.ColumnDefinitions>
 
                             <Image Grid.Column="0" Source="{Binding AgentIcon}" Width="30" RenderOptions.BitmapScalingMode="LowQuality"/>
-                            <TextBlock Grid.Column="1" Text="{Binding kda}" VerticalAlignment="Center"></TextBlock>
+                            <TextBlock Grid.Column="1" Text="{Binding Kda}" VerticalAlignment="Center"></TextBlock>
                             <TextBlock Grid.Column="2"  Foreground="White" VerticalAlignment="Center" Text="{Binding CombatScore}"/>
                         </Grid>
                     </Grid>

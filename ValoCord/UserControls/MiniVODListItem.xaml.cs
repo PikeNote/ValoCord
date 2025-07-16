@@ -14,7 +14,7 @@ public partial class MiniVODListItem : UserControl
 
     private void ButtonBase_OnClick(object sender, RoutedEventArgs e)
     {
-        if (DataContext is VODListItemViewModel viewModel)
+        if (DataContext is VodListItemViewModel viewModel)
         {
             var vodWindow = new VODViewer(viewModel.GetGameData());
             vodWindow.Show();

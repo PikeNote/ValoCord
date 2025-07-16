@@ -14,19 +14,24 @@ public static class ValorantPatchNotes
         var doc = web.Load(url);
         
         List<NewsData> parsedNewsData = new();
-        var newsJson =  doc.DocumentNode.SelectSingleNode("/html/body/script[1]").InnerText;
-        var newsObjects = JObject.Parse(newsJson)["props"]["pageProps"]["page"]["blades"][2]["items"].Children().ToList();
-            
-        foreach (JToken result in newsObjects)
+        var newsJson =  doc.DocumentNode.SelectSingleNode("/html/body/script[1]")?.InnerText;
+        if (newsJson != null)
         {
-            NewsData searchResult = result.ToObject<NewsData>();
-            if (!searchResult.action.payload.url.StartsWith("https://"))
-            {
-                searchResult.action.payload.url = "https://" + "playvalorant.com" + searchResult.action.payload.url;
-            }
+            var newsObjects = JObject.Parse(newsJson)["props"]?["pageProps"]?["page"]?["blades"]?[2]?["items"]?.Children().ToList();
 
-            searchResult.description.body = searchResult.description.body.Replace("\n", " ");
-            parsedNewsData.Add(searchResult);
+            if (newsObjects != null)
+                foreach (JToken result in newsObjects)
+                {
+                    NewsData searchResult = result.ToObject<NewsData>() ?? new NewsData();
+                    if (!searchResult.Action.Payload.url.StartsWith("https://"))
+                    {
+                        searchResult.Action.Payload.url =
+                            "https://" + "playvalorant.com" + searchResult.Action.Payload.url;
+                    }
+
+                    searchResult.Description.Body = searchResult.Description.Body.Replace("\n", " ");
+                    parsedNewsData.Add(searchResult);
+                }
         }
 
         return parsedNewsData.Slice(0,8);
@@ -35,9 +40,9 @@ public static class ValorantPatchNotes
 
 public class Patches
 {
-    public string PatchName { get; set; }
-    public string Description { get; set; }
-    public string Date { get; set; }
-    public string ImageUrl { get; set; }
-    public string RedirectURL { get; set; }
+    public string PatchName { get; set; } = "Unknown";
+    public string Description { get; set; } = "";
+    public string Date { get; set; } = "";
+    public string ImageUrl { get; set; } = "";
+    public string RedirectUrl { get; set; } = "";
 }

@@ -28,9 +28,9 @@
                         <RowDefinition Height="*"/>
                         <RowDefinition Height="Auto"/>
                     </Grid.RowDefinitions>
-                    <TextBlock Grid.Row="0" Text="{Binding title}" Style="{StaticResource h3}"/>
-                    <TextBlock Grid.Row="1" Text="{Binding description.body}" TextWrapping="NoWrap"/>
-                    <TextBlock Grid.Row="2" Text="{Binding publishedAt}"/>
+                    <TextBlock Grid.Row="0" Text="{Binding Title}" Style="{StaticResource h3}"/>
+                    <TextBlock Grid.Row="1" Text="{Binding Description.Body}" TextWrapping="NoWrap"/>
+                    <TextBlock Grid.Row="2" Text="{Binding PublishedAt}"/>
                 </Grid>
             </Border>
         </Grid>

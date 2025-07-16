@@ -100,8 +100,8 @@ public partial class SettingsViewModel : ViewModelBase
             .Subscribe(_ => SaveSettings());
     }
 
-    partial void OnSelectedInputDeviceChanged(AudioDevice value) => ApplicationSettings.SettingsData.Value.SelectedInputDeviceName.DeviceName = value?.FriendlyName;
-    partial void OnSelectedOutputDeviceChanged(AudioDevice value) => ApplicationSettings.SettingsData.Value.SelectedOutputDeviceName.DeviceName = value?.FriendlyName;
+    partial void OnSelectedInputDeviceChanged(AudioDevice value) => ApplicationSettings.SettingsData.Value.SelectedInputDeviceName.DeviceName = value.FriendlyName ?? "System Default";
+    partial void OnSelectedOutputDeviceChanged(AudioDevice value) => ApplicationSettings.SettingsData.Value.SelectedOutputDeviceName.DeviceName = value.FriendlyName ?? "System Default";
     partial void OnInputAudioVolumeChanged(int value) => ApplicationSettings.SettingsData.Value.SelectedInputDeviceName.Volume = value;
     partial void OnOutputAudioVolumeChanged(int value) => ApplicationSettings.SettingsData.Value.SelectedOutputDeviceName.Volume = value;
     partial void OnBitrateValueChanged(int value) => ApplicationSettings.SettingsData.Value.Bitrate = value;
@@ -115,6 +115,6 @@ public partial class SettingsViewModel : ViewModelBase
     
     public void SaveSettings()
     {
-        ApplicationSettings.SettingsData.Save("settings.json");
+        _ = ApplicationSettings.SettingsData.Save("settings.json");
     }
 }

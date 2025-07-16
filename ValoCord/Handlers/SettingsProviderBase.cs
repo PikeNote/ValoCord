@@ -32,11 +32,12 @@ public class SettingsProviderBase<T>
         }
         catch (FileNotFoundException e)
         {
-            Save(path);
+            Console.WriteLine($"Error while loading settings file: {e.Message}");
+            _ = Save(path);
         }
         catch (FileLoadException e)
         {
-
+            Console.WriteLine($"Error while loading settings file: {e.Message}");
         }
         return new T();
     }

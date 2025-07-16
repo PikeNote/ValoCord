@@ -35,7 +35,7 @@ public partial class App : Application
         services.AddTransient<HomeViewModel>();
 
         services.AddTransient<VODListView>();
-        services.AddTransient<VODListViewModel>();
+        services.AddTransient<VodListViewModel>();
         
         services.AddTransient<Settings>();
         services.AddTransient<SettingsViewModel>();

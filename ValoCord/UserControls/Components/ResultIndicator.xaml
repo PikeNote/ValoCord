@@ -6,7 +6,7 @@
              xmlns:viewModels="clr-namespace:ValoCord.ViewModels"
              mc:Ignorable="d"
              d:DesignHeight="300" d:DesignWidth="300"
-             d:DataContext="{d:DesignInstance Type=viewModels:VODListItemViewModel,IsDesignTimeCreatable=True}">
+             d:DataContext="{d:DesignInstance Type=viewModels:VodListItemViewModel,IsDesignTimeCreatable=True}">
     <Border Width="6" VerticalAlignment="Stretch" Background="#7AC343" CornerRadius="10 0 0 10">
         <Border.Style>
             <Style TargetType="Border">

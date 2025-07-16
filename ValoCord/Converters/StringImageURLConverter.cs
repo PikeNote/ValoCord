@@ -6,7 +6,7 @@ namespace ValoCord.Converters;
 
 public class StringImageUrlConverter : IValueConverter
 {
-    public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+    public object? Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
     {
         if (value is not string url || string.IsNullOrEmpty(url))
         {
@@ -34,7 +34,7 @@ public class StringImageUrlConverter : IValueConverter
         }
     }
 
-    public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+    public object ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
     {
         throw new NotImplementedException();
     }

@@ -1,42 +1,38 @@
 ﻿using System.Collections.ObjectModel;
 using System.Windows;
 using CommunityToolkit.Mvvm.ComponentModel;
-using ValoCord.Data;
+using ReactiveUI;
 using ValoCord.Handlers;
 
 namespace ValoCord.ViewModels;
 
-public partial class HomeViewModel : ViewModelBase
+public partial class VodListViewModel : ViewModelBase
 {
-    public ObservableCollection<NewsData> RecentPatches { get; set; } = new ObservableCollection<NewsData>();
-    
+    public ViewModelActivator Activator { get; } = new();
+    public ObservableCollection<VodListItemViewModel> RecordedVODs { get; set; } = new ObservableCollection<VodListItemViewModel>();
+
     [ObservableProperty]
     private Visibility _isLoading;
-    public ObservableCollection<VodListItemViewModel> RecentVodCollection { get; set; } = new ObservableCollection<VodListItemViewModel>();
-
-
-    public HomeViewModel()
+    
+    public VodListViewModel()
     {
-        var patches = ValorantPatchNotes.FetchLatestPatch();
-        foreach (var patch in patches)
-        {
-            RecentPatches.Add(patch);
-        }
         _ = LoadVodsAsync();
     }
+
 
     private async Task LoadVodsAsync()
     {
         await Task.Run(() =>
         {
             IsLoading = Visibility.Visible;
-            RecentVodCollection.Clear();
+            RecordedVODs.Clear();
 
-            try {
+            try
+            {
                 var loadedData = DatabaseHandler.GetRecentGames();
                 foreach (var gameData in loadedData)
                 {
-                    RecentVodCollection.Add(new VodListItemViewModel{GameData = gameData});
+                    RecordedVODs.Add(new VodListItemViewModel { GameData = gameData });
                 }
             }
             catch (Exception ex)
