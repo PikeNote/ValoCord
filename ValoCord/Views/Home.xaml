@@ -7,6 +7,7 @@
       xmlns:userControls="clr-namespace:ValoCord.UserControls"
       xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
       xmlns:handlers="clr-namespace:ValoCord.Handlers"
+      xmlns:converters="clr-namespace:ValoCord.Converters"
       mc:Ignorable="d"
       Title="Home"
       d:DesignHeight="500"
@@ -16,7 +17,10 @@
         <viewModels:HomeViewModel />
     </Page.DataContext>
     <Page.Resources>
-    
+        <converters:BooleanToVisibilityConverter 
+            x:Key="BooleanToVisibilityConverter" 
+            True="Collapsed" 
+            False="Visible" />
         <Style TargetType="TextBlock">
             <Setter Property="Foreground" Value="White"/>
         </Style>
@@ -50,17 +54,8 @@
             <TextBlock Text="No recent VODs found."
                        HorizontalAlignment="Center"
                        VerticalAlignment="Center"
-                       FontSize="16">
-                <TextBlock.Style>
-                    <Style TargetType="TextBlock" BasedOn="{StaticResource {x:Type TextBlock}}">
-                        <Setter Property="Visibility" Value="Collapsed"/>
-                        <Style.Triggers>
-                            <DataTrigger Binding="{Binding HasItems, ElementName=RecentVODsCollection}" Value="False">
-                                <Setter Property="Visibility" Value="Visible"/>
-                            </DataTrigger>
-                        </Style.Triggers>
-                    </Style>
-                </TextBlock.Style>
+                       FontSize="16"
+                       Visibility="{Binding Path=HasItems, Converter={StaticResource BooleanToVisibilityConverter}, ElementName=RecentVODsCollection}">
             </TextBlock>
         </Grid>
         <ui:ProgressRing Grid.Row="2" IsIndeterminate="True" BorderThickness="10" Width="100" Height="100" HorizontalAlignment="Center"

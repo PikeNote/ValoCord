@@ -84,9 +84,10 @@ public static partial class ValorantRecorder
             _dispRecordingSource = new DisplayRecordingSource
             {
                 DeviceName = DisplayRecordingSource.MainMonitor.DeviceName,
-                RecorderApi = RecorderApi.DesktopDuplication,
+                RecorderApi = ApplicationSettings.SettingsData.Value.RecorderApi,
                 SourceRect = new ScreenRect(offsetX, offsetY, winWidth, winHeight),
-                IsVideoCaptureEnabled = true
+                IsVideoCaptureEnabled = true,
+                IsBorderRequired = ApplicationSettings.SettingsData.Value.IsBorderEnabled
             };
             
             rdSources.Add(_dispRecordingSource);

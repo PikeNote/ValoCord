@@ -44,7 +44,7 @@
                 </Image.Source>
             </Image>
         </Border>
-        <Image Grid.Column="1" Width="200" >
+        <Image Grid.Column="1" Stretch="Uniform" >
             <Image.Source>
                 <MultiBinding Converter="{StaticResource WeaponImageConverter}">
                     <Binding Path="GunUsed"/>

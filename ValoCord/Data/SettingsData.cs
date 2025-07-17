@@ -23,6 +23,11 @@ public class SettingsData
     [JsonConverter(typeof(StringEnumConverter))]
     public BitrateControlMode  EncoderBitRateMode {get; set;} = BitrateControlMode.VBR;
     
+    [JsonConverter(typeof(StringEnumConverter))]
+    public RecorderApi  RecorderApi {get; set;} = RecorderApi.DesktopDuplication;
+
+    public Boolean IsBorderEnabled { get; set; } = false; 
+    
     public Boolean HardwareAcceleration { get; set; } = true;
 
     public Boolean ThrottlingEnabled { get; set; } = true;
@@ -90,12 +95,6 @@ public class AudioDevice
     public string DeviceName { get; set; } = String.Empty;
     public int Volume { get; set; }
     
-}
-
-public enum VideoCodec
-{
-    H264,
-    H265
 }
 
 public enum BitrateControlMode

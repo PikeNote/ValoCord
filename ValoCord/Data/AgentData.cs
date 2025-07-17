@@ -88,7 +88,8 @@ public static class AgentData
         {
             { "Raze", "/Assets/Abilities/Ability1/Raze.png" },
             { "Skye", "/Assets/Abilities/Ability1/Skye.png" },
-            { "Sova", "/Assets/Abilities/Ability1/Sova.png" }
+            { "Sova", "/Assets/Abilities/Ability1/Sova.png" },
+            { "Phoenix", "/Assets/Abilities/Ability1/Phoenix.png" },
         };
     
     private static readonly Dictionary<string, string> Ability2ImageMappings = 
@@ -107,7 +108,8 @@ public static class AgentData
             { "Killjoy", "/Assets/Abilities/Grenade/Killjoy.png" },
             { "Raze", "/Assets/Abilities/Grenade/Raze.png" },
             { "Viper", "/Assets/Abilities/Grenade/Viper.png" },
-            { "Vyse", "/Assets/Abilities/Grenade/Vyse.png" }
+            { "Vyse", "/Assets/Abilities/Grenade/Vyse.png" },
+            { "Phoenix", "/Assets/Abilities/Grenade/Phoenix.png" },
         };
     public static string GetAgentIcons(string codeName)
     {

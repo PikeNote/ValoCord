@@ -27,26 +27,25 @@ public partial class HomeViewModel : ViewModelBase
 
     private async Task LoadVodsAsync()
     {
-        await Task.Run(() =>
+        IsLoading = Visibility.Visible;
+        RecentVodCollection.Clear();
+        
+        try 
         {
-            IsLoading = Visibility.Visible;
-            RecentVodCollection.Clear();
-
-            try {
-                var loadedData = DatabaseHandler.GetRecentGames();
-                foreach (var gameData in loadedData)
-                {
-                    RecentVodCollection.Add(new VodListItemViewModel{GameData = gameData});
-                }
-            }
-            catch (Exception ex)
+            var loadedData = await Task.Run(() => DatabaseHandler.GetRecentGames());
+            
+            foreach (var gameData in loadedData)
             {
-                Console.WriteLine($"An error occurred while loading VODs: {ex.Message}");
+                RecentVodCollection.Add(new VodListItemViewModel{GameData = gameData});
             }
-            finally
-            {
-                IsLoading = Visibility.Collapsed;
-            }
-        });
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"An error occurred while loading VODs: {ex.Message}");
+        }
+        finally
+        {
+            IsLoading = Visibility.Collapsed;
+        }
     }
 }

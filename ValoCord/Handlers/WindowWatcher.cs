@@ -1,4 +1,5 @@
 ﻿using NLog;
+// ReSharper disable InconsistentNaming
 
 namespace ValoCord.Handlers;
 
@@ -57,7 +58,7 @@ partial class WindowWatcher
 
             _logger.Info("Window Watcher started");
             
-            Msg msg;
+            MSG msg;
             while (_running && GetMessage(out msg, IntPtr.Zero, 0, 0))
             {
                 TranslateMessage(ref msg);
@@ -113,7 +114,7 @@ partial class WindowWatcher
     private const int WM_QUIT = 0x0012;
     
     [StructLayout(LayoutKind.Sequential)]
-    private struct Msg
+    private struct MSG
     {
         public IntPtr hwnd;
         public uint message;
@@ -130,19 +131,18 @@ partial class WindowWatcher
         public int y;
     }
     
-    [LibraryImport("user32.dll")]
-    [return: MarshalAs(UnmanagedType.Bool)]
-    private static partial bool GetMessage(out Msg lpMsg, IntPtr hWnd, uint wMsgFilterMin, uint wMsgFilterMax);
+    [DllImport("user32.dll")]
+    private static extern bool GetMessage(out MSG lpMsg, IntPtr hWnd, uint wMsgFilterMin, uint wMsgFilterMax); 
 
     [LibraryImport("user32.dll")]
     [return: MarshalAs(UnmanagedType.Bool)]
-    private static partial bool TranslateMessage(ref Msg lpMsg);
+    private static partial bool TranslateMessage(ref MSG lpMsg);
 
-    [LibraryImport("user32.dll")]
-    private static partial IntPtr DispatchMessage(ref Msg lpMsg);
+    [LibraryImport("user32.dll", EntryPoint = "DispatchMessageW")]
+    private static partial IntPtr DispatchMessage(ref MSG lpMsg);
 
-    [LibraryImport("user32.dll")]
-    private static partial IntPtr SetWinEventHook(
+    [DllImport("user32.dll")]
+    private static extern IntPtr SetWinEventHook(
         uint eventMin, uint eventMax,
         IntPtr hmodWinEventProc,
         WinEventDelegate lpfnWinEventProc,
@@ -153,9 +153,9 @@ partial class WindowWatcher
     [return: MarshalAs(UnmanagedType.Bool)]
     private static partial bool UnhookWinEvent(IntPtr hWinEventHook);
 
-    [LibraryImport("user32.dll")]
+    [LibraryImport("user32.dll", EntryPoint = "PostThreadMessageW")]
     [return: MarshalAs(UnmanagedType.Bool)]
-    private static partial bool PostThreadMessage(uint idThread, uint Msg, IntPtr wParam, IntPtr lParam);
+    private static partial bool PostThreadMessage(uint idThread, uint MSG, IntPtr wParam, IntPtr lParam);
 
     [DllImport("kernel32.dll")]
     private static extern uint GetThreadId(Thread thread);

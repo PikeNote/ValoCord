@@ -27,6 +27,12 @@ public partial class SettingsViewModel : ViewModelBase
 
     [ObservableProperty]
     private VideoEncoderFormat _selectedVideoEncoderFormat;
+    
+    [ObservableProperty]
+    private RecorderApi _selectedRecorderApi;
+
+    [ObservableProperty] 
+    private bool _borderEnabled;
 
     [ObservableProperty]
     private int _inputAudioVolume;
@@ -53,8 +59,10 @@ public partial class SettingsViewModel : ViewModelBase
     private bool _lowLatencyEnabled;
     
     public bool IsVBR => SelectedBitRateControl == BitrateControlMode.VBR;
+    public bool IsWindowApiEnabled => SelectedRecorderApi == RecorderApi.WindowsGraphicsCapture;
     public Array VideoEncoderOptions => Enum.GetValues(typeof(VideoEncoderFormat));
     public Array BitRateControlOptions => Enum.GetValues(typeof(BitrateControlMode));
+    public Array RecorderApiOptions => Enum.GetValues(typeof(RecorderApi));
     public List<GameModeSettings> GameModeEnabled => ApplicationSettings.SettingsData.Value.EnabledGameModes;
 
     
@@ -81,16 +89,38 @@ public partial class SettingsViewModel : ViewModelBase
         _hardwareAccelerationEnabled = settings.HardwareAcceleration;
         _throttlingEnabled = settings.ThrottlingEnabled;
         _lowLatencyEnabled = settings.LowLatencyEnabled;
+        _borderEnabled = settings.IsBorderEnabled;
+        _selectedRecorderApi = settings.RecorderApi;
         
         var anyGameModeChanged = this.GameModeEnabled
             .Select(item => item.WhenAnyValue(x => x.Enabled))
-            .Merge();
+            .Merge()
+            .Select(_ => Unit.Default);
         
-        var settingsChanged = Observable.Merge(
-            this.WhenAnyValue(x => x.SelectedInputDevice, x => x.SelectedOutputDevice, x => x.SelectedVideoEncoderFormat,
-                x => x.ThrottlingEnabled, x => x.HardwareAccelerationEnabled, x => x.LowLatencyEnabled).Select(_ => Unit.Default),
-            anyGameModeChanged.Select(_ => Unit.Default)
-        );
+        var settingsChanged1 = this.WhenAnyValue(
+                x => x.SelectedInputDevice,
+                x => x.SelectedOutputDevice,
+                x => x.InputAudioVolume,
+                x => x.OutputAudioVolume,
+                x => x.BitrateValue,
+                x => x.FramesPerSecondValue,
+                x => x.Quality)
+            .Select(_ => Unit.Default);
+        
+        var settingsChanged2 = this.WhenAnyValue(
+                x => x.SelectedVideoEncoderFormat,
+                x => x.SelectedBitRateControl,
+                x => x.SelectedRecorderApi,
+                x => x.BorderEnabled,
+                x => x.HardwareAccelerationEnabled,
+                x => x.ThrottlingEnabled,
+                x => x.LowLatencyEnabled)
+            .Select(_ => Unit.Default);
+
+        var settingsChanged = settingsChanged1
+            .Merge(settingsChanged2)
+            .Merge(anyGameModeChanged);
+
 
         
         settingsChanged
@@ -112,6 +142,12 @@ public partial class SettingsViewModel : ViewModelBase
     partial void OnHardwareAccelerationEnabledChanged(bool value) => ApplicationSettings.SettingsData.Value.HardwareAcceleration = value;
     partial void OnThrottlingEnabledChanged(bool value) => ApplicationSettings.SettingsData.Value.ThrottlingEnabled = value;
     partial void OnLowLatencyEnabledChanged(bool value) => ApplicationSettings.SettingsData.Value.LowLatencyEnabled = value;
+    partial void OnSelectedRecorderApiChanged(RecorderApi value)
+    {
+        ApplicationSettings.SettingsData.Value.RecorderApi = value;
+        OnPropertyChanged(nameof(IsWindowApiEnabled));
+    }
+    partial void OnBorderEnabledChanged(bool value) => ApplicationSettings.SettingsData.Value.IsBorderEnabled = value;
     
     public void SaveSettings()
     {

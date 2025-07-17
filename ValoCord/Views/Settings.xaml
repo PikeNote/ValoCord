@@ -5,6 +5,7 @@
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
       xmlns:viewModels="clr-namespace:ValoCord.ViewModels"
       xmlns:handlers="clr-namespace:ValoCord.Handlers"
+      xmlns:converters="clr-namespace:ValoCord.Converters"
       mc:Ignorable="d"
       Title="Settings" d:DesignHeight="450" d:DesignWidth="1400"
       d:DataContext="{d:DesignInstance Type=viewModels:SettingsViewModel,IsDesignTimeCreatable=True}"
@@ -18,8 +19,8 @@
             <Setter Property="FontSize" Value="20"/>
             <Setter Property="FontWeight" Value="Bold"/>
         </Style>
-        
-
+        <BooleanToVisibilityConverter x:Key="BoolToVisibility" />
+        <converters:BooleanToVisibilityConverter x:Key="InverseBoolToVisibility" True="Collapsed" False="Visible"/>
     </Page.Resources>
     <Page.DataContext>
         <viewModels:SettingsViewModel/>
@@ -73,6 +74,29 @@
              
              <StackPanel handlers:SpacingSetter.Spacing="10">
                  <TextBlock Text="Encoder Settings" Style="{StaticResource h2}"/>
+                 <Grid Focusable="True" HorizontalAlignment="Left" handlers:GridSpacer.ColumnSpacing="10">
+                     <Grid.ColumnDefinitions>
+                         <ColumnDefinition Width="Auto"/>
+                         <ColumnDefinition Width="Auto"/>
+                     </Grid.ColumnDefinitions>
+                     <StackPanel Grid.Column="0" Width="250">
+                         <TextBlock Text="Recorder API"/>
+                         <ComboBox  IsEditable="False" IsTextSearchEnabled="True" 
+                                    ItemsSource="{Binding RecorderApiOptions}"
+                                    SelectedItem="{Binding SelectedRecorderApi, Mode=TwoWay}">
+                         </ComboBox>
+                     </StackPanel>
+                     <StackPanel Grid.Column="1" Orientation="Horizontal" Visibility="{Binding Path=IsWindowApiEnabled, Converter={StaticResource BoolToVisibility}}" VerticalAlignment="Bottom">
+                         <CheckBox x:Name="BorderEnabledCheck"
+                                   IsChecked="{Binding BorderEnabled, Mode=TwoWay}"
+                                   VerticalAlignment="Center"/>
+              
+                         <Label Target="{Binding ElementName=BorderEnabledCheck}" 
+                                Content="Border Enabled" 
+                                VerticalAlignment="Center"
+                                Margin="0,0,25,0"/>
+                     </StackPanel>
+                 </Grid>
                  <Grid handlers:GridSpacer.ColumnSpacing="10" Focusable="True">
                      <Grid.ColumnDefinitions>
                          <ColumnDefinition Width="Auto"/>
@@ -85,16 +109,14 @@
                          <TextBlock Text="Encoder"/>
                          <ComboBox  IsEditable="False" IsTextSearchEnabled="True" 
                                      ItemsSource="{Binding VideoEncoderOptions}"
-                                     SelectedItem="{Binding SelectedVideoEncoderFormat}">
+                                     SelectedItem="{Binding SelectedVideoEncoderFormat, Mode=TwoWay}">
                          </ComboBox>
                      </StackPanel>
                      <StackPanel Grid.Column="1" Width="250">
                          <TextBlock Text="Bitrate Control"/>
                          <ComboBox  IsEditable="False"
                                     IsTextSearchEnabled="True" ItemsSource="{Binding BitRateControlOptions}"
-                                    SelectedItem="{Binding SelectedBitRateControl}"
-                                    >
-                         </ComboBox>
+                                    SelectedItem="{Binding SelectedBitRateControl, Mode=TwoWay}"/>
                      </StackPanel>
                      <StackPanel Grid.Column="2" Width="250">
                          <TextBlock Text="Framerate"/>
@@ -102,32 +124,12 @@
                      </StackPanel>
 
                      <StackPanel Grid.Column="3" Width="250">
-                         <StackPanel>
-                             <StackPanel.Style>
-                                 <Style TargetType="StackPanel">
-                                     <Setter Property="Visibility" Value="Visible"/>
-                                     <Style.Triggers>
-                                         <DataTrigger Binding="{Binding IsVBR}" Value="True">
-                                             <Setter Property="Visibility" Value="Collapsed"/>
-                                         </DataTrigger>
-                                     </Style.Triggers>
-                                 </Style>
-                             </StackPanel.Style>
+                         <StackPanel Visibility="{Binding Path=IsVBR, Converter={StaticResource InverseBoolToVisibility}}">
                              <TextBlock Text="Bitrate"/>
                              <TextBox Text="{Binding BitrateValue, Mode=TwoWay}" TextAlignment="Center"/>
                          </StackPanel>
             
-                         <StackPanel>
-                             <StackPanel.Style>
-                                 <Style TargetType="StackPanel">
-                                     <Setter Property="Visibility" Value="Collapsed"/>
-                                     <Style.Triggers>
-                                         <DataTrigger Binding="{Binding IsVBR}" Value="True">
-                                             <Setter Property="Visibility" Value="Visible"/>
-                                         </DataTrigger>
-                                     </Style.Triggers>
-                                 </Style>
-                             </StackPanel.Style>
+                         <StackPanel Visibility="{Binding Path=IsVBR, Converter={StaticResource BoolToVisibility}}">
                              <TextBlock Text="Quality"/>
                              <TextBox Text="{Binding Quality, Mode=TwoWay}" TextAlignment="Center"/>
                          </StackPanel>
