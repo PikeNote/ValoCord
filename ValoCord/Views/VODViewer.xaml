@@ -48,7 +48,7 @@
             
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="3*"></ColumnDefinition>
-                <ColumnDefinition Width="*"></ColumnDefinition>
+                <ColumnDefinition Width="Auto"></ColumnDefinition>
             </Grid.ColumnDefinitions>
             
 
@@ -189,7 +189,7 @@
                 </StackPanel>
                 
             </Grid>
-            <ItemsControl Grid.Column="1" ItemsSource="{Binding CurrentRound.RoundEvents}">
+            <ItemsControl Grid.Column="1" ItemsSource="{Binding CurrentRound.RoundEvents}" Width="400">
                 <ItemsControl.ItemContainerStyle>
                     <Style TargetType="ContentPresenter">
                         <Setter Property="Margin" Value="0" />
