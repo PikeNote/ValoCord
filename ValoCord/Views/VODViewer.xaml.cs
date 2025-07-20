@@ -7,13 +7,14 @@ using Unosquare.FFME.Common;
 using ValoCord.Data;
 using ValoCord.ViewModels;
 using Wpf.Ui.Controls;
+using MenuItem = Wpf.Ui.Controls.MenuItem;
 
 namespace ValoCord.Views;
 
 public partial class VODViewer : FluentWindow
 {
 
-    
+    private MenuItem _lastCheckedMenuItem;
     private bool _isDragging;
     private bool _wasPlaying;
     
@@ -114,5 +115,70 @@ public partial class VODViewer : FluentWindow
             if (values is not RoundEvent roundEvent) return;
             Media.Position = TimeSpan.FromMilliseconds(ViewModel.gd.RoundStartTimeStamps[ViewModel.SelectedRound] - ViewModel.gd.RecordingStartTime - 3000 + roundEvent.TimeIntoRound);
         }
+    }
+
+    private void FrameworkElement_OnLoaded(object sender, RoutedEventArgs e)
+    {
+        foreach (var item in TimerControl.Items)
+        {
+            if (item is MenuItem { IsChecked: true } menuItem)
+            {
+                _lastCheckedMenuItem = menuItem;
+                break;
+            }
+        }
+    }
+
+    private void MenuItem_OnClick(object sender, RoutedEventArgs e)
+    {
+        if (sender is not MenuItem clickedMenuItem)
+        {
+            return;
+        }
+
+        if (clickedMenuItem == _lastCheckedMenuItem)
+        {
+            clickedMenuItem.IsChecked = true;
+            return;
+        }
+        
+        _lastCheckedMenuItem.IsChecked = false;
+        clickedMenuItem.IsChecked = true;
+        _lastCheckedMenuItem = clickedMenuItem;
+
+        if (clickedMenuItem.Header is string header)
+        {
+            string playbackSpeed = header.TrimEnd('x');
+            if (double.TryParse(playbackSpeed, out double newSpeed))
+            {
+                Media.SpeedRatio = newSpeed;
+                PlaybackSelector.Content = header;
+            }
+        }
+        else
+        {
+            double newPlaybackSpeed = Math.Round(PlaybackSpeedSlider.Value, 2);
+            Media.SpeedRatio = newPlaybackSpeed;
+            PlaybackSelector.Content = $"{newPlaybackSpeed}x";
+        }
+    }
+
+    private void PlaybackSpeedSlider_OnValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+    {
+        if (_lastCheckedMenuItem.Header is string)
+        {
+            foreach (var item in TimerControl.Items)
+            {
+                if (item is MenuItem { Header: StackPanel } menuItem)
+                {
+                    MenuItem_OnClick(menuItem, new RoutedEventArgs());
+                    break;
+                }
+            }
+        }
+        
+        double newPlaybackSpeed = Math.Round(e.NewValue,2);
+        Media.SpeedRatio = newPlaybackSpeed;
+        PlaybackSelector.Content = $"{newPlaybackSpeed}x";
     }
 }

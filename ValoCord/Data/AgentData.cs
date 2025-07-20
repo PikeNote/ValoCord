@@ -31,6 +31,7 @@ public static class AgentData
             { "Yoru", "/Assets/Agents/Yoru.png" },
             { "Waylay", "/Assets/Agents/Waylay.png" },
             { "Vyse", "/Assets/Agents/Vyse.png" },
+            { "Tejo", "/Assets/Agents/Tejo.png" },
 
         };
 

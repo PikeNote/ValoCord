@@ -114,37 +114,77 @@
                                    FontSize="12"
                                    HorizontalAlignment="Right" />
                     </Grid>
-                    <StackPanel Orientation="Horizontal" Grid.Row="0"
-                                VerticalAlignment="Bottom"
-                                HorizontalAlignment="Center"
-                                handlers:SpacingSetter.Spacing="20">
-                        <ui:SymbolIcon Symbol="ArrowPrevious24" FontSize="30" Foreground="White"/>
-                        <Button Command="{Binding TogglePlayPauseCommand}"
-                                CommandParameter="{Binding ElementName=Media}" Background="Transparent"
-                                BorderThickness="0"
-                                Foreground="White" FontSize="30" >
-                            <Button.Style>
-                                <Style TargetType="Button">
-                                    <Setter Property="Content">
-                                        <Setter.Value>
-                                            <ui:SymbolIcon Symbol="Play28"/>
-                                        </Setter.Value>
-                                    </Setter>
+                    <Grid>
+                        <StackPanel Orientation="Horizontal" Grid.Row="0"
+                                    VerticalAlignment="Bottom"
+                                    HorizontalAlignment="Center"
+                                    handlers:SpacingSetter.Spacing="20">
+                            <ui:SymbolIcon Symbol="ArrowPrevious24" FontSize="30" Foreground="White"/>
+                            <Button Command="{Binding TogglePlayPauseCommand}"
+                                    CommandParameter="{Binding ElementName=Media}" Background="Transparent"
+                                    BorderThickness="0"
+                                    Foreground="White" FontSize="30" >
+                                <Button.Style>
+                                    <Style TargetType="Button">
+                                        <Setter Property="Content">
+                                            <Setter.Value>
+                                                <ui:SymbolIcon Symbol="Play28"/>
+                                            </Setter.Value>
+                                        </Setter>
             
-                                    <Style.Triggers>
-                                        <DataTrigger Binding="{Binding ElementName=Media, Path=MediaState}" Value="Play">
-                                            <Setter Property="Content">
-                                                <Setter.Value>
-                                                    <ui:SymbolIcon Symbol="Pause28" />
-                                                </Setter.Value>
-                                            </Setter>
-                                        </DataTrigger>
-                                    </Style.Triggers>
-                                </Style>
-                            </Button.Style>
-                        </Button>
-                        <ui:SymbolIcon Symbol="ArrowNext24" FontSize="30" Foreground="White" />
-                    </StackPanel>
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding ElementName=Media, Path=MediaState}" Value="Play">
+                                                <Setter Property="Content">
+                                                    <Setter.Value>
+                                                        <ui:SymbolIcon Symbol="Pause28" />
+                                                    </Setter.Value>
+                                                </Setter>
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </Button.Style>
+                            </Button>
+                            <ui:SymbolIcon Symbol="ArrowNext24" FontSize="30" Foreground="White" />
+                        </StackPanel>
+                        <Grid HorizontalAlignment="Right" handlers:GridSpacer.ColumnSpacing="20" Margin="0 0 40 0">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"></ColumnDefinition>
+                                <ColumnDefinition Width="Auto"></ColumnDefinition>
+                            </Grid.ColumnDefinitions>
+                            <StackPanel Orientation="Horizontal">
+                                <ui:SymbolIcon Symbol="Speaker032" FontSize="30" Foreground="White"/>
+                                <Slider Minimum="0" Maximum="1" Value="{Binding ElementName=Media, Path=Volume}" VerticalAlignment="Center"/>
+                            </StackPanel>
+                            <StackPanel Grid.Column="1" Orientation="Horizontal">
+                                <ui:DropDownButton Content="1.00x" Width="100" x:Name="PlaybackSelector">
+                                    <ui:DropDownButton.Flyout>
+                                        <ContextMenu Placement="Top" x:Name="TimerControl" Loaded="FrameworkElement_OnLoaded">
+                                            <ui:MenuItem IsCheckable="True" Click="MenuItem_OnClick">
+                                                <MenuItem.Header>
+                                                    <StackPanel Grid.Column="1">
+                                                        <TextBlock Text="Custom" />
+                                                        <Slider x:Name="PlaybackSpeedSlider"
+                                                            MinWidth="120"
+                                                            ValueChanged="PlaybackSpeedSlider_OnValueChanged"
+                                                            Maximum="4"
+                                                        />
+                                                    </StackPanel>
+                                                </MenuItem.Header>
+                                            </ui:MenuItem>
+                                            <ui:MenuItem IsCheckable="True" Header="0.25x" Click="MenuItem_OnClick"/>
+                                            <ui:MenuItem IsCheckable="True" Header="0.50x" Click="MenuItem_OnClick"/>
+                                            <ui:MenuItem IsCheckable="True" Header="0.75x" Click="MenuItem_OnClick"/>
+                                            <ui:MenuItem IsCheckable="True" IsChecked="True" Header="1.00x" Click="MenuItem_OnClick" />
+                                            <ui:MenuItem IsCheckable="True" Header="1.25x" Click="MenuItem_OnClick"/>
+                                            <ui:MenuItem IsCheckable="True" Header="1.50x" Click="MenuItem_OnClick"/>
+                                            <ui:MenuItem IsCheckable="True" Header="1.75x" Click="MenuItem_OnClick"/>
+                                            <ui:MenuItem IsCheckable="True" Header="2.00x" Click="MenuItem_OnClick"/>
+                                        </ContextMenu>
+                                    </ui:DropDownButton.Flyout>
+                                </ui:DropDownButton>
+                            </StackPanel>
+                        </Grid>
+                    </Grid>
                                             
                 </StackPanel>
                 
