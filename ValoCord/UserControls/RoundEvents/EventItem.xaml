@@ -20,6 +20,9 @@
                     <DataTemplate x:Key="BombPlantedEvent">
                         <local:BombPlantedEvent />
                     </DataTemplate>
+                    <DataTemplate x:Key="BombDefusedEvent">
+                        <local:BombDefusedEvent />
+                    </DataTemplate>
                 </Style.Resources>
             
                 <Setter Property="ContentTemplate" Value="{StaticResource KilLEvent}" />
@@ -30,7 +33,7 @@
                     </DataTrigger>
                 
                     <DataTrigger Binding="{Binding EventType}" Value="BombDefused">
-                        <Setter Property="ContentTemplate" Value="{StaticResource BombPlantedEvent}" />
+                        <Setter Property="ContentTemplate" Value="{StaticResource BombDefusedEvent}" />
                     </DataTrigger>
                     
                     <DataTrigger Binding="{Binding EventType}" Value="BombPlanted">

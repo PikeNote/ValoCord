@@ -8,15 +8,23 @@
              xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
              mc:Ignorable="d"
              d:DesignHeight="100" d:DesignWidth="600"
-             >
+             BorderThickness="0.7">
     <UserControl.Background>
         <LinearGradientBrush StartPoint="0 0" EndPoint="1 1">
             <LinearGradientBrush.GradientStops>
-                <GradientStop Offset="0" Color="#32efeeb2" />
+                <GradientStop Offset="0" Color="#325885af" />
                 <GradientStop Offset="0.7" Color="Transparent" />
             </LinearGradientBrush.GradientStops>
         </LinearGradientBrush>
     </UserControl.Background>
+    <UserControl.BorderBrush>
+        <LinearGradientBrush StartPoint="0 0" EndPoint="1 1">
+            <LinearGradientBrush.GradientStops>
+                <GradientStop Offset="0" Color="#20ffffff" />
+                <GradientStop Offset="0.7" Color="#55456b8f" />
+            </LinearGradientBrush.GradientStops>
+        </LinearGradientBrush>
+    </UserControl.BorderBrush>
     <Grid Height="50" HorizontalAlignment="Stretch" handlers:GridSpacer.ColumnSpacing="5" Margin="0 10 0 10 ">
         
         

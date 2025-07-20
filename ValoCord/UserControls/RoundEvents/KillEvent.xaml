@@ -11,12 +11,13 @@
              mc:Ignorable="d"
              d:DesignHeight="100" d:DesignWidth="600"
              d:DataContext="{d:DesignInstance Type=data:GameKill,IsDesignTimeCreatable=True}"
-             
+             BorderThickness="0.7"
              >
     <UserControl.Resources>
         <converters:AgentIconNameConverter x:Key="AgentImageConverter" />
         <converters:WeaponIconNameConverter x:Key="WeaponImageConverter" />
         <converters:AgentTeamToBrushConverter x:Key="AgentTeamToBrushConverter" />
+        <converters:AgentTeamToBorderConverter x:Key="AgentTeamToBorderConverter" />
     </UserControl.Resources>
     <UserControl.Background>
         <MultiBinding Converter="{StaticResource AgentTeamToBrushConverter}">
@@ -26,6 +27,15 @@
             <Binding Path="DataContext.PlayerRecordingUUID" RelativeSource="{RelativeSource AncestorType=views:VODViewer}"/>
         </MultiBinding>
     </UserControl.Background>
+    
+    <UserControl.BorderBrush>
+        <MultiBinding Converter="{StaticResource AgentTeamToBorderConverter}">
+            <Binding Path="AgentKilling"/>
+            <Binding Path="DataContext.AllPlayers" RelativeSource="{RelativeSource AncestorType=views:VODViewer}"/>
+            <Binding Path="DataContext.TeamWon" RelativeSource="{RelativeSource AncestorType=views:VODViewer}"/>
+            <Binding Path="DataContext.PlayerRecordingUUID" RelativeSource="{RelativeSource AncestorType=views:VODViewer}"/>
+        </MultiBinding>
+    </UserControl.BorderBrush>
     
     <Grid Height="50" HorizontalAlignment="Stretch" handlers:GridSpacer.ColumnSpacing="5" Margin="0 10 0 10 ">
         <Grid.ColumnDefinitions>
