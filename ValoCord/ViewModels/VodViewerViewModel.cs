@@ -45,7 +45,7 @@ public partial class VodViewerViewModel : ViewModelBase, INotifyPropertyChanged 
     public string TeamWon => gd.PlayerTeam;
     public string PlayerTeam => gd.PlayerTeam;
     public string PlayerRecordingUUID => gd.PlayerUuid;
-    public string GameTime => DateTimeOffset.FromUnixTimeMilliseconds(gd.MatchStartTime).ToString("yyyy/MM/dd - hh:mm tt");
+    public string GameTime => DateTimeOffset.FromUnixTimeMilliseconds(gd.MatchStartTime).ToLocalTime().ToString("yyyy/MM/dd - hh:mm tt");
     public string GameDescription => $"{GameMode} - {MapData.GetDisplayName(gd.Map)}";
     public string WindowTitle => $"ValoCord - {GameMode} ({MapData.GetDisplayName(gd.Map)}) - {AgentData.GetAgentNames(gd.Agent)}";
     private string GameMode => GameModes.ConvertGameMode(gd.Mode);
